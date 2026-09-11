@@ -1,0 +1,9 @@
+{
+  "code-a-cuisine": {
+    "meta": {
+      "schemaVersion": 2,
+      "storage": "firebase-realtime-database",
+      "owner": "code-a-cuisine"
+    }
+  }
+}

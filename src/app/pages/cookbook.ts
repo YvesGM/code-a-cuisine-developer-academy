@@ -6,7 +6,7 @@ import { LibraryList } from '../shared/library-list';
   selector: 'app-cookbook',
   imports: [RouterLink, LibraryList],
   template: `<h1>Rezeptebibliothek</h1>
-    <p>Öffentliche gespeicherte Rezepte ohne Account. Development: nur diese App-Sitzung.</p>
+    <p>Öffentliche gespeicherte Rezepte ohne Account.</p>
     <nav aria-label="Kochstil filtern">
       <a routerLink="/cookbook">Alle</a>
       @for (cuisine of cuisines; track cuisine) {

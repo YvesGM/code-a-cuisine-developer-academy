@@ -32,4 +32,4 @@ Alle gespeicherten Rezepte werden in Seiten zu 20 dargestellt. Bei maximal 20 er
 
 ## Reload und Veröffentlichung
 
-Der In-Memory-Development-Adapter verliert gespeicherte Daten beim Reload. Eine alte URL zeigt dann Nicht-gefunden, keine kaputte Seite. Mit eingetragenen Supabase-Werten und angewendeter Migration verwendet dieselbe UI die dauerhafte öffentliche Bibliothek und direkte Detail-URLs bleiben erhalten. SPA-Hosting benötigt index.html-Fallback. Impressumsplatzhalter müssen vor Veröffentlichung durch reale Angaben ersetzt werden.
+Der In-Memory-Development-Adapter verliert gespeicherte Daten beim Reload. Eine alte URL zeigt dann Nicht-gefunden, keine kaputte Seite. Mit veröffentlichter n8n-Library-API verwendet dieselbe UI die dauerhafte Firebase-Bibliothek und direkte Detail-URLs bleiben erhalten. SPA-Hosting benötigt index.html-Fallback. Impressumsplatzhalter müssen vor Veröffentlichung durch reale Angaben ersetzt werden.

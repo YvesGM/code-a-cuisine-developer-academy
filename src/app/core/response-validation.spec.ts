@@ -21,6 +21,11 @@ describe('Response validation', () => {
   ])('rejects empty or invalid envelopes %j', (response) =>
     expect(() => validateResponse(response, request)).toThrow(),
   );
+  it('accepts the server persistence marker and rejects non-boolean markers', () => {
+    const response = mockResponse(request);
+    expect(validateResponse({ ...response, persisted: true }, request).persisted).toBe(true);
+    expect(() => validateResponse({ ...response, persisted: 'yes' }, request)).toThrow();
+  });
   it('rejects a mismatched request ID', () =>
     expect(() =>
       validateResponse({ ...mockResponse(request), clientRequestId: 'other' }, request),

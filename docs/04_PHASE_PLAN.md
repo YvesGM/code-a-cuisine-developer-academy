@@ -1,14 +1,21 @@
 # 04 – Phasenplan
 
-Status: [ ] nicht begonnen · [~] in Arbeit · [x] validiert · [!] blockiert. Keine neue Phase gilt vor erfolgreichen Lint-, Test- und Build-Prüfungen als abgeschlossen.
+Status: `[ ]` nicht begonnen · `[~]` in Arbeit · `[x]` validiert · `[!]` blockiert.
 
-| Phase                            | Status | Stand                                                                                                                                       |
-| -------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0 Foundation                     | [x]    | Bestehende grüne Grundlage laut Auftraggeber; kein Neuaufbau                                                                                |
-| 1 Core Angular / Academy Pre-n8n | [~]    | Schema 2 und Checklisten-Frontend implementiert; nach den aktuellen Supabase-Anpassungen lokaler Qualitätslauf erneut erforderlich             |
-| 2 n8n + echte KI                 | [ ]    | Nächster fachlicher Auftrag, auf Basis des vorhandenen Join-Issue-Collector-Projekts                                                        |
-| 3 Supabase                       | [~]    | Bestandsmigrationen gezogen; Custom-Schema-Migration, Data-API-Adapter und RLS vorbereitet; `db push`, Remote-Exposed-Schema und Runtime-Werte stehen noch aus         |
-| 4 Figma / Styling / Responsive   | [ ]    | Finales Design, Responsive-Optimierung und Loading-Animation                                                                                |
-| 5 Hardening / Abgabe             | [ ]    | Reale Impressumsdaten, Cross-Browser-/Accessibility-Abschlussprüfung und finale Checks                                                      |
+| Phase | Status | Stand |
+| --- | --- | --- |
+| 0 Foundation | [x] | Angular-/Tooling-Grundlage vorhanden und lokal grün validiert |
+| 1 Core Angular / Academy-Funktion | [~] | Funktionalität und Schema-2-Contract implementiert; nach Firebase/n8n-Integration erneut prüfen |
+| 2 n8n + echte KI | [~] | Generation, Library, Quota, Validation, Logging und Fehleralarm implementiert; E2E-Test ausstehend |
+| 3 Persistenz | [~] | Recipe-Persistenz auf Firebase umgestellt; Supabase bleibt für Quota/Audit; Cleanup-Migration anwenden |
+| 4 Figma / Styling / Responsive | [ ] | Finales Design, Responsive-/Touch-Optimierung und Loading-Animation |
+| 5 Hardening / Abgabe | [ ] | Impressum, Cross-Browser, Accessibility, Code-Review, GitHub und finale Academy-Abgabe |
 
-Zunächst die aktuellen Tests und den Browserflow in einer Umgebung mit funktionierendem Bundler ausführen. Die Agent-Umgebung wird dafür nicht durch Architekturänderungen umgangen. Danach Schema 2 mit dem echten n8n-Workflow integrieren und die Quota-Auslegung klären. Supabase ist code- und migrationsseitig vorbereitet; die Bestandsmigrationen liegen lokal. Offen sind der Push der neuen `code_a_cuisine`-Migration, das Exponieren des Schemas in der Remote Data API und die lokale/deploymentseitige Runtime-Konfiguration.
+## Übergang vor Figma
+
+1. Firebase-/Supabase-Änderungen übernehmen.
+2. Supabase-Cleanup-Migration pushen.
+3. aktualisierten Generation-Workflow und neuen Library-Workflow importieren/veröffentlichen.
+4. Quota, Generation, Firebase-Persistenz, Library und Recipe Detail real testen.
+5. `npm run check` und `npm run format:check` ausführen.
+6. Academy-Checkliste erneut abgleichen.

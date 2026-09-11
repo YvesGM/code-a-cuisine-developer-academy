@@ -51,7 +51,12 @@ test-results/
 /supabase/.temp/
 /supabase/.branches/
 
-# Runtime config generated from local/deployment environment variables
+# Runtime config is deployed manually to SFTP and must never be committed
 /public/runtime-config.js
 .env
 .env.*
+
+# Firebase Admin service-account keys must never be committed
+/firebase/*firebase-adminsdk*.json
+/firebase/*service-account*.json
+/firebase/*service_account*.json

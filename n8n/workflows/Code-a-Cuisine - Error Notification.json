@@ -1,0 +1,147 @@
+{
+  "name": "Code-a-Cuisine - Error Notification",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4ae18a5a-2b35-4bbb-a4af-c42ca2079bff",
+      "name": "Unhandled Workflow Error",
+      "notes": "Last-resort Error Trigger für nicht erwartete Fehler in Code-a-Cuisine-Workflows.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const execution = $json.execution ?? {};\nconst workflow = $json.workflow ?? {};\nconst error = execution.error ?? {};\nreturn [{\n  json: {\n    workflowId: workflow.id ?? null,\n    workflowName: workflow.name ?? 'unknown',\n    executionId: execution.id ?? null,\n    executionUrl: execution.url ?? null,\n    lastNode: execution.lastNodeExecuted ?? null,\n    message: typeof error.message === 'string' ? error.message : 'Unhandled n8n workflow error',\n    stack: typeof error.stack === 'string' ? error.stack.slice(0, 4000) : null,\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "id": "c9058b39-4ad6-4c30-88f3-6bfddc720fb7",
+      "name": "Build Error Context",
+      "notes": "Reduziert den n8n-Fehler auf wartbare Log-/Mail-Felder ohne Credentials.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {},
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Profile",
+              "value": "code_a_cuisine"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { request_id: null, client_ip: null, status: 'failed', stage: 'unhandled_workflow_error', error_code: 'unhandled_workflow_error', error_message: $('Build Error Context').item.json.message, metadata: $('Build Error Context').item.json } }}"
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        480,
+        -60
+      ],
+      "id": "66bc30bc-7f3f-494f-8137-f0e490b403bb",
+      "name": "Log Unhandled Error",
+      "credentials": {
+        "supabaseApi": {
+          "id": "q29scgLDJm1zYFcO",
+          "name": "Supabase account"
+        }
+      },
+      "notes": "Persistiert unerwartete n8n-Fehler serverseitig.",
+      "notesInFlow": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@schniefs-portfolio.de",
+        "toEmail": "info@schniefs-portfolio.de",
+        "subject": "Code-a-Cuisine: unhandled n8n error",
+        "emailFormat": "text",
+        "text": "=Workflow: {{ $('Build Error Context').item.json.workflowName }}\nExecution: {{ $('Build Error Context').item.json.executionId }}\nLast node: {{ $('Build Error Context').item.json.lastNode }}\n\n{{ $('Build Error Context').item.json.message }}\n\n{{ $('Build Error Context').item.json.executionUrl || '' }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        -60
+      ],
+      "id": "5e58b6c5-8e2a-4482-835a-47fd22ae0b86",
+      "name": "Email Unhandled Workflow Error",
+      "credentials": {
+        "smtp": {
+          "id": "Tm9Jzpc5URqWeuZm",
+          "name": "SMTP account"
+        }
+      },
+      "notes": "SMTP-Alarm für Fehler, die keine erwartete Fachfehler-Branch erreicht haben.",
+      "notesInFlow": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Unhandled Workflow Error": {
+      "main": [
+        [
+          {
+            "node": "Build Error Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Error Context": {
+      "main": [
+        [
+          {
+            "node": "Log Unhandled Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Unhandled Error": {
+      "main": [
+        [
+          {
+            "node": "Email Unhandled Workflow Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "nodeGroups": [],
+  "id": "CaCErrNotif260911",
+  "tags": []
+}

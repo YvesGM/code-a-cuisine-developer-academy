@@ -1,12 +1,12 @@
 import { inject, Injectable, InjectionToken, isDevMode } from '@angular/core';
-import { LIMITS, SCHEMA_VERSION } from './config';
 import { paginate } from './business';
+import { N8N_PATHS } from './config';
 import { Cuisine, Recipe, RecipePage, RecipeQuery } from './models';
 import { validateStoredRecipe } from './response-validation';
-import { SUPABASE_PUBLIC_CONFIG } from '../../environments/supabase';
+import { N8N_PUBLIC_CONFIG } from '../../environments/runtime-config';
 
 export interface RecipeRepository {
-  /** Speichert einen validierten Satz atomar und idempotent nach Recipe-ID; Fehler werden weitergegeben. */
+  /** Speichert Development-Rezepte; produktive Rezepte werden bereits serverseitig durch n8n persistiert. */
   saveMany(recipes: readonly Recipe[]): Promise<void>;
   /** Liefert eine gespeicherte ID oder undefined, unabhängig vom aktuellen Workflow. */
   getById(id: string): Promise<Recipe | undefined>;
@@ -37,140 +37,84 @@ export class InMemoryRecipeRepository implements RecipeRepository {
   }
 }
 
-type SupabaseRecipeRow = {
-  readonly payload: unknown;
-};
+type JsonRecord = Record<string, unknown>;
 
-/** Meldet nur dann Supabase-Betrieb, wenn URL und browsergeeigneter Publishable Key gesetzt sind. */
-function hasSupabaseConfig(): boolean {
-  return Boolean(SUPABASE_PUBLIC_CONFIG.url.trim() && SUPABASE_PUBLIC_CONFIG.publishableKey.trim());
+/** Baut eine stabile öffentliche n8n-URL aus der Runtime-Basis. */
+function libraryEndpoint(): string {
+  return `${N8N_PUBLIC_CONFIG.webhookBaseUrl}/${N8N_PATHS.library}`;
 }
 
-/** Normalisiert die Projekt-URL und hängt den Data-API-Pfad für Recipes an. */
-function recipesEndpoint(): string {
-  return SUPABASE_PUBLIC_CONFIG.url.replace(/\/+$/, '') + '/rest/v1/recipes';
+/** Erzwingt ein JSON-Objekt für externe n8n-Antworten. */
+function asRecord(value: unknown): JsonRecord {
+  if (!value || typeof value !== 'object' || Array.isArray(value))
+    throw new Error('Ungültige Library-Antwort.');
+  return value as JsonRecord;
 }
 
-/** Liefert öffentliche Data-API-Header und wählt das dedizierte Code-a-Cuisine-Schema. */
-function supabaseHeaders(mode: 'read' | 'write', prefer?: string): HeadersInit {
+/** Prüft einen einzelnen Library-Lookup und validiert den Firebase-Payload erneut im Frontend. */
+function parseRecipeLookup(value: unknown): Recipe | undefined {
+  const row = asRecord(value);
+  if (row['recipe'] === null) return undefined;
+  return validateStoredRecipe(row['recipe']);
+}
+
+/** Prüft die paginierte Library-Antwort und jeden darin enthaltenen Recipe-Payload. */
+function parseRecipePage(value: unknown): RecipePage {
+  const row = asRecord(value);
+  if (!Array.isArray(row['items'])) throw new Error('Ungültige Library-Antwort.');
+  for (const key of ['total', 'page', 'pages'] as const) {
+    if (typeof row[key] !== 'number' || !Number.isInteger(row[key]) || row[key] < 0)
+      throw new Error('Ungültige Library-Antwort.');
+  }
   return {
-    apikey: SUPABASE_PUBLIC_CONFIG.publishableKey,
-    'Content-Type': 'application/json',
-    ...(mode === 'read'
-      ? { 'Accept-Profile': SUPABASE_PUBLIC_CONFIG.schema }
-      : { 'Content-Profile': SUPABASE_PUBLIC_CONFIG.schema }),
-    ...(prefer ? { Prefer: prefer } : {}),
+    items: row['items'].map((recipe) => validateStoredRecipe(recipe)),
+    total: row['total'],
+    page: row['page'],
+    pages: row['pages'],
   };
 }
 
-/** Wandelt ein validiertes Domain-Recipe in die bewusst schmale persistierte Tabellenzeile um. */
-function recipeRow(recipe: Recipe): Record<string, unknown> {
-  return {
-    id: recipe.id,
-    schema_version: SCHEMA_VERSION,
-    title: recipe.title,
-    cuisine: recipe.cuisine,
-    difficulty: recipe.difficulty,
-    diet: recipe.diet,
-    cooking_time_minutes: recipe.cookingTimeMinutes,
-    servings: recipe.servings,
-    cook_count: recipe.cookCount,
-    rank: recipe.rank,
-    payload: recipe,
-  };
-}
-
-/** Prüft eine Supabase-Listenantwort, bevor persistierte JSON-Daten in die UI gelangen. */
-function recipesFromRows(value: unknown): Recipe[] {
-  if (!Array.isArray(value)) throw new Error('Ungültige Supabase-Antwort für die Rezeptebibliothek.');
-  return value.map((row) => {
-    if (!row || typeof row !== 'object' || Array.isArray(row) || !('payload' in row))
-      throw new Error('Ungültige Supabase-Rezeptzeile.');
-    return validateStoredRecipe((row as SupabaseRecipeRow).payload);
-  });
-}
-
-/** Liest den exakten PostgREST-Count aus Content-Range; fehlender Count ist ein API-Fehler. */
-function totalFrom(response: Response): number {
-  const range = response.headers.get('content-range');
-  const total = range?.split('/')[1];
-  if (!total || total === '*') throw new Error('Supabase hat keinen exakten Recipe-Count geliefert.');
-  const value = Number(total);
-  if (!Number.isInteger(value) || value < 0) throw new Error('Ungültiger Supabase-Recipe-Count.');
-  return value;
-}
-
-/** Wirft Data-API-Fehler mit knappem Status, ohne Schlüssel oder Response-Inhalte zu protokollieren. */
+/** Wirft kontrollierte HTTP-Fehler, ohne Backend-Inhalte oder Credentials in die UI zu übernehmen. */
 async function requireOk(response: Response): Promise<void> {
-  if (!response.ok) throw new Error(`Supabase Recipe API fehlgeschlagen (${response.status}).`);
+  if (!response.ok) throw new Error(`Recipe Library API fehlgeschlagen (${response.status}).`);
 }
 
 @Injectable({ providedIn: 'root' })
-export class SupabaseRecipeRepository implements RecipeRepository {
-  /** Speichert drei validierte Rezepte idempotent; bestehende IDs werden nicht überschrieben. */
-  async saveMany(recipes: readonly Recipe[]): Promise<void> {
-    const response = await fetch(recipesEndpoint() + '?on_conflict=id', {
-      method: 'POST',
-      headers: supabaseHeaders('write', 'resolution=ignore-duplicates,return=minimal'),
-      body: JSON.stringify(recipes.map(recipeRow)),
-    });
-    await requireOk(response);
+export class N8nRecipeRepository implements RecipeRepository {
+  /** Produktive Browser-Writes sind absichtlich deaktiviert; n8n persistiert direkt in Firebase. */
+  async saveMany(_recipes: readonly Recipe[]): Promise<void> {
+    throw new Error('Produktive Recipe-Writes erfolgen ausschließlich serverseitig über n8n.');
   }
 
-  /** Lädt eine öffentliche Recipe-ID und validiert das persistierte JSON erneut. */
+  /** Lädt eine öffentliche Recipe-ID über n8n aus Firebase und validiert den Payload erneut. */
   async getById(id: string): Promise<Recipe | undefined> {
     if (!id.trim()) return undefined;
-    const params = new URLSearchParams({ select: 'payload', id: `eq.${id}`, limit: '1' });
-    const response = await fetch(`${recipesEndpoint()}?${params}`, {
-      headers: supabaseHeaders('read'),
-    });
+    const params = new URLSearchParams({ id });
+    const response = await fetch(`${libraryEndpoint()}?${params}`);
     await requireOk(response);
-    const recipes = recipesFromRows((await response.json()) as unknown);
-    return recipes[0];
+    return parseRecipeLookup((await response.json()) as unknown);
   }
 
-  /** Liest eine öffentliche Seite; Cuisine-Filterung erfolgt serverseitig vor der Pagination. */
+  /** Lädt eine serverseitig paginierte und optional nach Cuisine gefilterte Firebase-Library-Seite. */
   async list(query: RecipeQuery = {}): Promise<RecipePage> {
-    const requested = Number.isInteger(query.page) ? Math.max(1, query.page ?? 1) : 1;
-    const first = await this.loadPage(requested, query.cuisine);
-    if (requested <= first.pages) return first;
-    return this.loadPage(first.pages, query.cuisine);
-  }
-
-  /** Führt genau eine paginierte Supabase-Abfrage mit exaktem Count aus. */
-  private async loadPage(page: number, cuisine?: Cuisine): Promise<RecipePage> {
-    const offset = (page - 1) * LIMITS.libraryPageSize;
-    const params = new URLSearchParams({
-      select: 'payload',
-      order: 'created_at.desc,id.asc',
-      limit: String(LIMITS.libraryPageSize),
-      offset: String(offset),
-    });
-    if (cuisine) params.set('cuisine', `eq.${cuisine}`);
-    const response = await fetch(`${recipesEndpoint()}?${params}`, {
-      headers: supabaseHeaders('read', 'count=exact'),
-    });
+    const page = Number.isInteger(query.page) ? Math.max(1, query.page ?? 1) : 1;
+    const params = new URLSearchParams({ page: String(page) });
+    if (query.cuisine) params.set('cuisine', query.cuisine);
+    const response = await fetch(`${libraryEndpoint()}?${params}`);
     await requireOk(response);
-    const total = totalFrom(response);
-    const pages = Math.max(1, Math.ceil(total / LIMITS.libraryPageSize));
-    return {
-      items: recipesFromRows((await response.json()) as unknown),
-      total,
-      page: Math.min(page, pages),
-      pages,
-    };
+    return parseRecipePage((await response.json()) as unknown);
   }
 }
 
 /**
- * Development ohne Credentials bleibt bewusst In-Memory; Produktion verlangt Supabase-Konfiguration.
- * Sobald URL und Publishable Key gesetzt sind, verwenden Dev und Production automatisch Supabase.
+ * Ohne n8n verwendet Development den bestehenden In-Memory-Adapter. Sobald n8n konfiguriert ist,
+ * liest die App die dauerhafte Firebase-Library ausschließlich über den öffentlichen n8n-Endpunkt.
  */
 export const RECIPE_REPOSITORY = new InjectionToken<RecipeRepository>('RECIPE_REPOSITORY', {
   providedIn: 'root',
   factory: () => {
-    if (hasSupabaseConfig()) return inject(SupabaseRecipeRepository);
+    if (N8N_PUBLIC_CONFIG.webhookBaseUrl) return inject(N8nRecipeRepository);
     if (isDevMode()) return inject(InMemoryRecipeRepository);
-    throw new Error('Supabase Project URL und Publishable Key fehlen.');
+    throw new Error('n8n Webhook-Basis-URL fehlt.');
   },
 });

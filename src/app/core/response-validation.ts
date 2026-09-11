@@ -198,7 +198,7 @@ function validateRecipe(value: unknown, request: GenerationRequest): void {
   validateRequestIngredients(value['ingredients'], request);
 }
 
-/** Validiert persistierte Supabase-Daten erneut, bevor sie in der öffentlichen Library erscheinen. */
+/** Validiert persistierte Firebase-Daten erneut, bevor sie in der öffentlichen Library erscheinen. */
 export function validateStoredRecipe(value: unknown): Recipe {
   validateRecipeStructure(value);
   return structuredClone(value) as unknown as Recipe;
@@ -212,6 +212,7 @@ export function validateResponse(value: unknown, request: GenerationRequest): Ge
     value['clientRequestId'] !== request.clientRequestId
   )
     fail();
+  if ('persisted' in value && typeof value['persisted'] !== 'boolean') fail();
   const recipes = value['recipes'];
   list(recipes);
   if (recipes.length !== LIMITS.generationRecipes) fail();

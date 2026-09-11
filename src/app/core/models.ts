@@ -63,6 +63,19 @@ export interface GenerationResponse {
   readonly schemaVersion: 2;
   readonly clientRequestId: string;
   readonly recipes: readonly Recipe[];
+  /** True when the n8n workflow already persisted the recipes server-side. */
+  readonly persisted?: boolean;
+}
+export interface QuotaStatus {
+  readonly dayKey: string;
+  readonly ipUsedRecipes: number;
+  readonly ipLimitRecipes: number;
+  readonly ipRemainingRecipes: number;
+  readonly globalUsedRecipes: number;
+  readonly globalLimitRecipes: number;
+  readonly globalRemainingRecipes: number;
+  readonly generationAllowed: boolean;
+  readonly reason: string | null;
 }
 export interface RecipePage {
   readonly items: readonly Recipe[];

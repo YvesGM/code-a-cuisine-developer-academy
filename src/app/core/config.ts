@@ -14,6 +14,11 @@ export const LIMITS = {
   additionalIngredients: 3,
 } as const;
 export const SCHEMA_VERSION = 2 as const;
+export const N8N_PATHS = {
+  generate: 'code-a-cuisine-generate',
+  quota: 'code-a-cuisine-quota',
+  library: 'code-a-cuisine-library',
+} as const;
 export const DIFFICULTIES = {
   quick: {
     key: 'quick',

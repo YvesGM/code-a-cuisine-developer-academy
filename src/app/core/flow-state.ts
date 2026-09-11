@@ -6,7 +6,7 @@ import {
   validPreferences,
   validCount,
 } from './business';
-import { GenerationService } from './generation';
+import { GenerationProviderError, GenerationService } from './generation';
 import { LIMITS } from './config';
 import { RECIPE_REPOSITORY } from './recipe-repository';
 import { Ingredient, IngredientInput, Preferences, Recipe } from './models';
@@ -119,16 +119,18 @@ export class FlowState {
     }));
     try {
       const response = await this.generator.generate(request);
-      await this.repository.saveMany(response.recipes);
+      if (!response.persisted) await this.repository.saveMany(response.recipes);
       if (this.requestId() === request.clientRequestId)
         this.data.update((s) => ({ ...s, status: 'success', recipes: response.recipes }));
-    } catch {
+    } catch (error) {
       if (this.requestId() === request.clientRequestId)
         this.data.update((s) => ({
           ...s,
           status: 'error',
           error:
-            'Generierung oder Speicherung fehlgeschlagen, oder Antwort ungültig. Bitte erneut versuchen.',
+            error instanceof GenerationProviderError
+              ? error.message
+              : 'Generierung oder Speicherung fehlgeschlagen, oder Antwort ungültig. Bitte erneut versuchen.',
         }));
     }
   }

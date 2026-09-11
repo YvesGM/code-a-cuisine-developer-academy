@@ -1,9 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { CUISINE_LABELS, DIET_LABELS, DIFFICULTIES, LIMITS, OPTIONS } from '../core/config';
 import { FlowState } from '../core/flow-state';
-import { Preferences } from '../core/models';
+import { Preferences, QuotaStatus } from '../core/models';
+import { QuotaService } from '../core/quota';
 @Component({
   selector: 'app-preferences',
   imports: [ReactiveFormsModule, RouterLink],
@@ -61,13 +62,29 @@ import { Preferences } from '../core/models';
           }
         </select>
       </fieldset>
+      @if (quotaLoading()) {
+        <p role="status">Nutzungslimit wird geprüft…</p>
+      } @else if (quota(); as quota) {
+        <p>
+          Heute verfügbar: {{ quota.ipRemainingRecipes }} von {{ quota.ipLimitRecipes }} Rezepten
+          für diese IP; systemweit {{ quota.globalRemainingRecipes }} von
+          {{ quota.globalLimitRecipes }} Rezepten.
+        </p>
+        @if (!quota.generationAllowed) {
+          <p role="alert">Das tägliche Rezeptlimit ist erreicht. Bitte morgen erneut versuchen.</p>
+        }
+      } @else if (quotaError()) {
+        <p role="status">{{ quotaError() }}</p>
+      }
       @if (form.invalid) {
         <p>
           Bitte alle Wünsche wählen; Portionen und Kochhelfer müssen ganze Zahlen im angegebenen
           Bereich sein.
         </p>
       }
-      <button type="submit" [disabled]="form.invalid">Generate Recipe</button>
+      <button type="submit" [disabled]="form.invalid || quota()?.generationAllowed === false">
+        Generate Recipe
+      </button>
     </form>
     <a routerLink="/generate">Zurück zu Zutaten</a>
   `,
@@ -80,6 +97,10 @@ export class PreferencesPage {
   readonly difficulties = DIFFICULTIES;
   private readonly state = inject(FlowState);
   private readonly router = inject(Router);
+  private readonly quotaService = inject(QuotaService);
+  readonly quota = signal<QuotaStatus | null>(null);
+  readonly quotaLoading = signal(false);
+  readonly quotaError = signal('');
   readonly form = new FormGroup({
     servings: new FormControl(this.state.servings(), {
       nonNullable: true,
@@ -112,6 +133,25 @@ export class PreferencesPage {
       Validators.required,
     ),
   });
+  /** Lädt beim Öffnen transparent die serverseitige Tagesquota; Mock-Modus bleibt ohne Anzeige. */
+  constructor() {
+    void this.refreshQuota();
+  }
+
+  /** Aktualisiert die Quota-Anzeige, ohne eine Generierung zu reservieren. */
+  private async refreshQuota(): Promise<void> {
+    this.quotaLoading.set(true);
+    this.quotaError.set('');
+    try {
+      this.quota.set(await this.quotaService.getStatus());
+    } catch {
+      this.quota.set(null);
+      this.quotaError.set('Nutzungslimit konnte nicht vorab geladen werden; der Server prüft es beim Generieren.');
+    } finally {
+      this.quotaLoading.set(false);
+    }
+  }
+
   /** Übernimmt den vollständigen gültigen Entwurf in den Owner und öffnet den Generation-Status. */
   generate(): void {
     const { difficulty, cuisine, diet, servings, cookCount } = this.form.getRawValue();

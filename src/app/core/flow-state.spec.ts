@@ -97,6 +97,17 @@ describe('FlowState', () => {
     expect(state.requestId()).not.toBe(previous);
     expect(state.error()).toBeNull();
   });
+
+  it('does not write recipes a second time when n8n reports server-side persistence', async () => {
+    prepare();
+    const repository = TestBed.inject(RECIPE_REPOSITORY);
+    const save = vi.spyOn(repository, 'saveMany');
+    generate.mockImplementationOnce(async (request) => ({ ...mockResponse(request), persisted: true }));
+    await state.generate();
+    expect(state.status()).toBe('success');
+    expect(state.recipes()).toHaveLength(3);
+    expect(save).not.toHaveBeenCalled();
+  });
   it('does not save invalid provider data or announce success on repository failure', async () => {
     prepare();
     const repository = TestBed.inject(RECIPE_REPOSITORY);

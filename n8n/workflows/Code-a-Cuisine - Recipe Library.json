@@ -1,0 +1,334 @@
+{
+  "name": "Code-a-Cuisine - Recipe Library",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "code-a-cuisine-library",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4aa66ed7-0f8f-47f2-9c8c-35360c6bfc77",
+      "name": "Recipe Library API",
+      "notes": "Öffentlicher Read-only-Endpunkt für Bibliothek und Recipe-Detail. Firebase-Zugangsdaten bleiben ausschließlich serverseitig.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const query = $json.query ?? {};\nconst cuisines = ['german', 'italian', 'indian', 'japanese', 'gourmet', 'fusion'];\nconst rawId = typeof query.id === 'string' ? query.id.trim() : '';\nconst rawCuisine = typeof query.cuisine === 'string' ? query.cuisine.trim() : '';\nconst rawPage = typeof query.page === 'string' ? query.page.trim() : '1';\nconst page = Number(rawPage);\nconst errors = [];\n\nif (rawId && (rawCuisine || rawPage !== '1')) errors.push('id darf nicht mit Filter/Pagination kombiniert werden.');\nif (rawCuisine && !cuisines.includes(rawCuisine)) errors.push('Unbekannte Cuisine.');\nif (!Number.isInteger(page) || page < 1) errors.push('page muss eine positive Ganzzahl sein.');\nif (rawId && /[.#$\\[\\]\\/]/.test(rawId)) errors.push('Ungültige Recipe-ID.');\n\nreturn [{ json: { valid: errors.length === 0, id: rawId || null, cuisine: rawCuisine || null, page, errorMessage: errors.join(' ') } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "efa79d42-1264-45aa-a300-7b5d1010f1ea",
+      "name": "Normalize Library Request",
+      "notes": "Validiert ID, Cuisine und Page, bevor Firebase gelesen wird.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f21f4b73-d195-42de-bcc0-7312f5f0df6c",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        440,
+        0
+      ],
+      "id": "b23914c7-e8d9-4759-b2fb-7070b05e6dd5",
+      "name": "Library Request Valid?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: false, error: { code: 'invalid_library_request', message: $('Normalize Library Request').item.json.errorMessage } } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        680,
+        220
+      ],
+      "id": "073ffa90-e03c-4e86-b3ab-8293e84104db",
+      "name": "Respond Invalid Library Request"
+    },
+    {
+      "parameters": {
+        "url": "https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app/code-a-cuisine/recipes.json",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        680,
+        -40
+      ],
+      "id": "ff5b511b-0ef7-4a5f-99b0-349736156bb6",
+      "name": "Read Recipes from Firebase",
+      "credentials": {
+        "googleApi": {
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
+      "notes": "Liest die serverseitig geschützte Firebase-Rezeptbibliothek mit dem bestehenden Google-Service-Account. Keine Firebase-Credentials gelangen in Angular.",
+      "notesInFlow": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const request = $('Normalize Library Request').item.json;\nconst raw = $json;\nconst records = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};\nconst allowedCuisines = ['german', 'italian', 'indian', 'japanese', 'gourmet', 'fusion'];\n\nfunction fail(message) { throw new Error(message); }\nfunction validRecord(id, record) {\n  if (!record || typeof record !== 'object' || Array.isArray(record)) fail('Ungültiger Firebase-Record.');\n  if (record.schemaVersion !== 2 || typeof record.createdAt !== 'string' || Number.isNaN(Date.parse(record.createdAt))) fail('Ungültige Firebase-Metadaten.');\n  const recipe = record.payload;\n  if (!recipe || typeof recipe !== 'object' || Array.isArray(recipe) || recipe.id !== id) fail('Ungültiger Firebase-Recipe-Payload.');\n  if (typeof recipe.title !== 'string' || !recipe.title.trim()) fail('Recipe-Titel fehlt.');\n  if (!allowedCuisines.includes(recipe.cuisine)) fail('Recipe-Cuisine ist ungültig.');\n  return { recipe, createdAt: record.createdAt };\n}\n\nif (request.id) {\n  const record = records[request.id];\n  if (!record) return [{ json: { recipe: null } }];\n  return [{ json: { recipe: validRecord(request.id, record).recipe } }];\n}\n\nlet items = Object.entries(records).map(([id, record]) => validRecord(id, record));\nif (request.cuisine) items = items.filter((item) => item.recipe.cuisine === request.cuisine);\nitems.sort((a, b) => b.createdAt.localeCompare(a.createdAt) || String(a.recipe.id).localeCompare(String(b.recipe.id)));\nconst total = items.length;\nconst pageSize = 20;\nconst pages = Math.max(1, Math.ceil(total / pageSize));\nconst page = Math.min(request.page, pages);\nconst offset = (page - 1) * pageSize;\nreturn [{ json: { items: items.slice(offset, offset + pageSize).map((item) => item.recipe), total, page, pages } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        920,
+        -80
+      ],
+      "id": "f5106178-517e-4afc-a2c2-d59785f08705",
+      "name": "Build Library Response",
+      "notes": "Validiert Firebase-Wrapper, filtert Cuisine, sortiert newest-first und paginiert serverseitig mit 20 Rezepten pro Seite.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1160,
+        -80
+      ],
+      "id": "bec3f8eb-bde7-4a61-9abd-41c5cee777aa",
+      "name": "Respond Library"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Profile",
+              "value": "code_a_cuisine"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { request_id: null, client_ip: null, status: 'failed', stage: 'firebase_library', error_code: 'firebase_read_failed', error_message: 'Firebase library read failed.', metadata: { id: $('Normalize Library Request').item.json.id, cuisine: $('Normalize Library Request').item.json.cuisine, page: $('Normalize Library Request').item.json.page } } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        920,
+        120
+      ],
+      "id": "3788311d-a808-403e-b553-88f16c8d33b3",
+      "name": "Log Firebase Library Error",
+      "credentials": {
+        "supabaseApi": {
+          "id": "q29scgLDJm1zYFcO",
+          "name": "Supabase account"
+        }
+      },
+      "notes": "Audit-Log für Firebase-Lesefehler; enthält keine Recipe-Daten oder Secrets.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@schniefs-portfolio.de",
+        "toEmail": "info@schniefs-portfolio.de",
+        "subject": "Code-a-Cuisine: Firebase library error",
+        "emailFormat": "text",
+        "text": "Die öffentliche Recipe-Library konnte Firebase nicht lesen.\n\nBitte n8n/Firebase-Ausführung kontrollieren.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1160,
+        120
+      ],
+      "id": "350dbca1-0718-4f62-bac6-94d486e13dd9",
+      "name": "Email Firebase Library Error",
+      "credentials": {
+        "smtp": {
+          "id": "Tm9Jzpc5URqWeuZm",
+          "name": "SMTP account"
+        }
+      },
+      "notes": "Technische Benachrichtigung bei Library-Persistenzfehlern.",
+      "notesInFlow": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: false, error: { code: 'firebase_read_failed', message: 'Die Rezeptebibliothek ist momentan nicht verfügbar.' } } }}",
+        "options": {
+          "responseCode": 502
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1400,
+        120
+      ],
+      "id": "d632e2be-7205-4dbe-9962-80a8336b6919",
+      "name": "Respond Library Error"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Recipe Library API": {
+      "main": [
+        [
+          {
+            "node": "Normalize Library Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Library Request": {
+      "main": [
+        [
+          {
+            "node": "Library Request Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Library Request Valid?": {
+      "main": [
+        [
+          {
+            "node": "Read Recipes from Firebase",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Invalid Library Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Recipes from Firebase": {
+      "main": [
+        [
+          {
+            "node": "Build Library Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Firebase Library Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Library Response": {
+      "main": [
+        [
+          {
+            "node": "Respond Library",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Firebase Library Error": {
+      "main": [
+        [
+          {
+            "node": "Email Firebase Library Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Firebase Library Error": {
+      "main": [
+        [
+          {
+            "node": "Respond Library Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "nodeGroups": [],
+  "id": "CaCLibraryApi260911",
+  "tags": []
+}

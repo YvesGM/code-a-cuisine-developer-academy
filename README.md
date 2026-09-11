@@ -1,55 +1,139 @@
 # Code-a-Cuisine
 
-Code-a-Cuisine unterstützt die Resteverwertung: Nutzer erfassen vorhandene Lebensmittel und erhalten exakt drei Rezeptvorschläge nach Portionen, Aufwand, Cuisine und Diet. Die öffentliche Rezeptebibliothek zeigt gespeicherte Rezepte unabhängig von der aktuellen Generierung.
+Code-a-Cuisine unterstützt die Resteverwertung: Nutzer erfassen vorhandene Lebensmittel und erhalten exakt drei Rezeptvorschläge nach Portionen, Aufwand, Cuisine, Diet und Anzahl der Kochhelfer. Alle erfolgreich generierten Rezepte werden dauerhaft in **Firebase Realtime Database** gespeichert und über eine öffentliche Bibliothek ohne Account bereitgestellt.
 
-## Status
+## Aktueller Stand
 
-Die bestehende Angular-Grundlage wurde für die Academy-Anforderungen erweitert, nicht neu aufgebaut. Der Pre-n8n-Vertrag ist **Schema 2**. Mock-Provider und Development-Repository funktionieren ohne Credentials und ohne Netzwerk. Für die dauerhafte öffentliche Bibliothek ist jetzt ein Supabase-Data-API-Adapter samt versionierter SQL-Migration vorbereitet. Ohne Supabase-Konfiguration bleibt `ng serve` bewusst im In-Memory-Development-Modus; Production verlangt eine konfigurierte Supabase-Verbindung. Der aktuelle Prüfstand steht in [05_VALIDATION_PROTOCOL.md](docs/05_VALIDATION_PROTOCOL.md).
+Die funktionale Angular-Basis sowie die n8n-Automation sind vorbereitet. Vier importierbare Code-a-Cuisine-Workflows liegen unter `n8n/workflows/` und verwenden die bestehenden n8n-Credentials für Supabase, Gemini, SMTP und den Google Service Account.
 
-Mock-Anleitungen und Nutrition sind ausdrücklich technische Demo-Daten, keine geprüften Kochanleitungen oder Ernährungsanalysen. Eine globale Bibliothek aller Nutzer ist das Produktionsziel; der aktuelle In-Memory-Adapter enthält nur die Rezepte dieser App-Sitzung.
+Produktiver Datenfluss:
 
+```text
+Angular
+→ n8n Request Validation
+→ IP-/Global-Quota in Supabase
+→ Gemini
+→ n8n AI Validation
+→ Firebase Recipe Persistenz
+→ Angular Response Validation
+→ Results
 
-> **Academy-Abweichung:** Die bereitgestellte Checkliste nennt Firebase. Dieses Projekt verwendet auf ausdrückliche Projektentscheidung stattdessen Supabase für dieselbe fachliche Anforderung „alle generierten Rezepte dauerhaft und öffentlich speichern“. Diese Technologieabweichung sollte vor der finalen Abgabe mit der Academy abgestimmt werden.
+Public Library / Recipe Detail
+→ n8n Library API
+→ Firebase Realtime Database
+```
+
+Supabase bleibt ausschließlich für Quota, Throttling und Workflow-Audit-Logs bestehen. Die Academy-Vorgabe zur Rezeptpersistenz wird wörtlich mit Firebase erfüllt.
 
 ## Features
 
-- Bestehendes Ingredient-CRUD mit stabilen IDs, positiven Mengen und zentralen Einheiten.
-- Portionen 1–12 (Default 2), Kochhelfer 1–3 (Default 1).
-- Zentrale deutsche Labels für Difficulty, Cuisine und Diet; überprüfte Zeitbereiche.
-- Exakt drei unterschiedliche deterministische Rezeptvorschläge der ausgewählten Preferences.
-- Mindestens 70 % eindeutige User-Zutaten pro Rezept; getrennt maximal drei zusätzliche Basiszutaten.
-- Skalierte Demo-Mengen ohne Überschreiten des vorhandenen Vorrats.
-- Nutrition pro Portion und Gesamt mit Gramm- und Prozentwerten.
-- Chronologische Directions mit Helferzuordnung, Parallelgruppen und optionalen Wartezeiten; daraus abgeleitete Arbeitsaufteilung.
-- Öffentliche Bibliothek mit Cuisine-Filter und Pagination ab mehr als 20 Einträgen.
-- Recipe-Detail per Repository-ID, unabhängig von der letzten Generierung.
-- Loading, Retry und kontrollierte Fehler; Impressum mit ausdrücklich gekennzeichneten Platzhaltern.
+- Ingredient-CRUD mit stabilen IDs, positiven Mengen und zentralen Einheiten.
+- Portionen 1–12, Default 2.
+- Kochhelfer 1–3, Default 1.
+- Difficulty: Schnell bis 20, Mittel 20–45, Aufwendig ab 45 Minuten.
+- Cuisine: Deutsch, Italienisch, Japanisch, Indisch, Gourmet/Fine Dining, Fusion.
+- Diet: Vegetarisch, Vegan, Keto, Keine Einschränkung.
+- Exakt drei unterschiedliche Rezeptvorschläge je Generierung.
+- Mindestens 70 % eindeutige User-Zutaten pro Rezept.
+- Maximal drei klar getrennte zusätzliche Basiszutaten.
+- Nutrition pro Portion und Gesamtrezept mit kcal sowie Makros in Gramm und Prozent.
+- Chronologische Directions mit Helferzuordnung, Parallelgruppen und optionalen Wartezeiten.
+- Öffentliche Rezeptbibliothek mit Cuisine-Filter und Pagination ab mehr als 20 Einträgen.
+- Recipe-Detail unabhängig von der letzten Generierung.
+- IP-Quota: 3 Rezepte pro IP/Tag.
+- Globales Tageslimit: 12 Rezepte/Tag.
+- Kurzes serverseitiges Throttling vor KI-Aufrufen.
+- n8n-Logging und SMTP-Fehlerbenachrichtigung.
+- Impressum mit gekennzeichneten Platzhaltern.
 
 ## Architektur
 
-UI → FlowState → GenerationService → GenerationProvider → Response Validation → FlowState → RecipeRepository.saveMany → Results.
+`FlowState` besitzt ausschließlich den aktuellen Generierungsflow. Persistente Recipes werden durch n8n nach erfolgreicher Validierung in Firebase geschrieben. Die öffentliche Library liest Firebase ebenfalls über n8n; dadurch befinden sich keinerlei Firebase-Service-Credentials oder Supabase-Keys im Angular-Bundle.
 
-FlowState bleibt der Owner des aktuellen Workflows. Das Repository besitzt die gespeicherte Historie. Bibliothek und Detail lesen ausschließlich das Repository. Die aktuellen Results halten den validierten Satz; im Development-Adapter sind es dieselben unveränderten Recipe-Referenzen. FormGroups und Ladezustände sind lokale UI-Entwürfe beziehungsweise Abfragezustände, keine zusätzliche Domain-State-Lösung.
+Im Development ohne n8n-Konfiguration liefert `MockGenerationProvider` deterministische Testdaten und `InMemoryRecipeRepository` hält diese nur für die laufende Sitzung.
 
-Generation Provider heute: lokaler Mock, später n8n. Recipe Repository: In-Memory ohne Supabase-Runtimekonfiguration im Development; automatisch Supabase, sobald Project URL und Publishable Key als Prozess-Umgebungsvariablen gesetzt sind. Credentials werden nicht im Repository gespeichert. In Production fehlende Supabase-Konfiguration ist ein harter Fehler, kein stiller Fallback.
+## n8n Workflows
 
-## Stack und Struktur
+Unter `n8n/workflows/`:
 
-Angular 22, Standalone Components, Router, Reactive Forms, Signals, TypeScript 6 strict, SCSS, Vitest/jsdom, ESLint/typescript-eslint. Keine neue Library, kein SSR, keine Authentifizierung und keine zusätzliche State-Library.
+- `Code-a-Cuisine - Recipe Generation.json`
+- `Code-a-Cuisine - Recipe Library.json`
+- `Code-a-Cuisine - Quota Status.json`
+- `Code-a-Cuisine - Error Notification.json`
+
+Der Generation-Workflow übernimmt Request-/IP-Validierung, Quota, Gemini, zweite Business-Validierung, Firebase-Persistenz, Audit-Logging und kontrollierte Fehlerantworten.
+
+Der Library-Workflow liefert Recipe-Detail und paginierte/filterbare öffentliche Bibliotheksdaten aus Firebase, ohne Firebase-Credentials an Angular auszugeben.
+
+## Firebase
+
+Code-a-Cuisine verwendet die bestehende Firebase Realtime Database und legt Daten unter folgendem Pfad ab:
 
 ```text
-src/app/core/    Zentrale Models, Config, Businessfunktionen, FlowState, Provider,
-                Response Validation, Guards und RecipeRepository
-src/app/pages/   Bestehender Flow, öffentliche Bibliothek/Details und Impressum
-src/app/shared/  Recipe Card und gemeinsame paginierte Bibliotheksliste
-src/styles.scss Minimales technisches Layout, Text mindestens 16px, small 14px
-docs/           Bestehende technische Dokumentation
-n8n/workflows/  Ablage späterer echter Workflow-Exporte
-supabase/       Gezogene Bestandsmigrationen plus eigenes Schema `code_a_cuisine`; CLI-Konfiguration vorhanden
-AGENTS.md       Verbindliche Arbeitsregeln
+/code-a-cuisine/recipes/<recipe-id>
 ```
 
-Tests liegen neben dem Code. Node 24.16.0 und npm 11.13.0 wurden verwendet; package-lock.json hält die installierten Versionen fest. Voraussetzung laut package.json: Node >=24.15.0 <25, npm >=11 <12.
+Ein Record enthält `schemaVersion`, `createdAt` und den vollständigen validierten Recipe-Payload.
+
+Unter `firebase/` liegen:
+
+- `code-a-cuisine.initial.json` – optionaler Initialimport unter dem Node `/code-a-cuisine`
+- `README.md` – genaue Firebase-Schritte
+
+Produktive Writes und Reads erfolgen serverseitig über das bestehende Google-Service-Account-Credential in n8n.
+
+## Supabase
+
+Supabase wird weiterhin für folgende serverseitige Infrastruktur genutzt:
+
+- `code_a_cuisine.generation_quota_claims`
+- `code_a_cuisine.workflow_runs`
+- Quota-RPCs
+
+Die frühere `code_a_cuisine.recipes`-Tabelle wird durch eine Folgemigration entfernt, weil Recipes nun verbindlich in Firebase liegen.
+
+## Runtime-Konfiguration für SFTP
+
+`public/runtime-config.js` ist absichtlich in `.gitignore` und wird auf dem SFTP mit ausgeliefert. Sie enthält nur die öffentliche n8n-Basis-URL:
+
+```js
+window.__CODE_A_CUISINE_CONFIG__ = {
+  n8nWebhookBaseUrl: 'https://<deine-n8n-domain>/webhook',
+};
+```
+
+Firebase-/Supabase-Service-Credentials, Datenbankpasswörter, AI-Secrets und SMTP-Secrets gehören ausschließlich in n8n-Credentials.
+
+## Stack
+
+- Angular 22
+- Standalone Components
+- Angular Router
+- Reactive Forms
+- Signals
+- TypeScript strict
+- SCSS
+- Vitest
+- ESLint
+- n8n
+- Gemini
+- Firebase Realtime Database – Recipe Persistenz
+- Supabase – Quota und Workflow-Audit
+
+## Projektstruktur
+
+```text
+src/app/core/       Domain-Models, Config, FlowState, Provider, Validation, Quota, Repository
+src/app/pages/      Userflow, öffentliche Library, Recipe Detail, Impressum
+src/app/shared/     Wiederverwendete Recipe-/Library-Darstellung
+public/assets/      Figma-Assets
+public/runtime-config.js
+firebase/           Firebase-Initialisierung/Dokumentation
+docs/               Projektdokumentation
+n8n/workflows/      Importierbare n8n-Workflows
+supabase/           CLI-Konfiguration und Quota-/Audit-Migrationen
+AGENTS.md           Verbindliche Arbeitsregeln
+```
 
 ## Commands
 
@@ -63,21 +147,12 @@ npm run check
 npm run format:check
 ```
 
-Supabase-Werte werden nicht committed. Für einen lokalen PowerShell-Lauf werden sie nur in der aktuellen Shell gesetzt:
+## Noch offen
 
-```powershell
-$env:CODE_A_CUISINE_SUPABASE_URL="https://<project-ref>.supabase.co"
-$env:CODE_A_CUISINE_SUPABASE_PUBLISHABLE_KEY="<publishable-key>"
-$env:CODE_A_CUISINE_SUPABASE_SCHEMA="code_a_cuisine"
-npm start
-```
-
-`prestart` und `prebuild` erzeugen daraus die ignorierte Datei `public/runtime-config.js`; der Schlüssel wird nicht in Source-Dateien geschrieben.
-
-Unter PowerShell mit gesperrtem npm.ps1 kann regulär npm.cmd verwendet werden. check führt Lint → Tests → Production Build aus. npm run format formatiert die Projektdateien. Development läuft standardmäßig unter http://localhost:4200. SPA-Hosting muss Routen auf index.html zurückführen. Build-Ausgabe: dist/code-a-cuisine/browser.
-
-## Dokumentation und nächste Schritte
-
-[Scope](docs/00_PROJECT_SCOPE.md) · [Architektur](docs/01_ARCHITECTURE.md) · [UI-Flow](docs/02_UI_FLOW.md) · [Contracts](docs/03_DATA_CONTRACTS.md) · [Phasen](docs/04_PHASE_PLAN.md) · [Validierung](docs/05_VALIDATION_PROTOCOL.md) · [Offene Entscheidungen](docs/06_OPEN_DECISIONS.md) · [Tests](docs/07_TEST_STRATEGY.md).
-
-Nächster fachlicher Auftrag: **ECHTEN N8N-WORKFLOW FÜR CODE-A-CUISINE BAUEN**, auf Basis des vorhandenen n8n-/Join-Issue-Collector-Projekts und Schema 2. Quota-Auslegung ist dabei zu klären. Das bestehende Supabase-Projekt ist migrationsseitig synchronisiert; für Code-a-Cuisine wird die neue `code_a_cuisine`-Migration gepusht, das Schema in der Remote Data API exponiert und URL/Publishable Key ausschließlich über Runtime-Umgebungsvariablen bereitgestellt. Finales Figma-Styling, Responsive-Optimierung, Loading-Animation und Cross-Browser-Abschlussprüfung folgen separat. Vor Veröffentlichung müssen reale Impressumsdaten eingesetzt werden.
+- realer Firebase/n8n E2E-Smoke-Test
+- finale Figma-Umsetzung
+- finale Responsive-/Touch-Optimierung
+- Loading-Animation aus Figma
+- Cross-Browser-Abschlussprüfung
+- reale Impressumsdaten
+- GitHub-Link und finale Academy-Abgabe

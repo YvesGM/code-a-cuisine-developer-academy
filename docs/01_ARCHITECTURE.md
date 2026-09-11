@@ -1,52 +1,66 @@
 # 01 – Architektur
 
-## Bestehende Owner und gezielte Erweiterungen
+## Owner
 
-| Owner                       | Verantwortung                                                                                             |
-| --------------------------- | --------------------------------------------------------------------------------------------------------- |
-| core/models.ts              | Einzige Domain-Models, Schema-2-Request/Response, RecipeQuery und RecipePage                              |
-| core/config.ts              | Optionskeys, deutsche Labels, Difficulty-Zeiträume, Mengen-/Helfergrenzen, Recipe-Count und Page Size     |
-| core/business.ts            | Eingabeprüfung, Request-Mapping, Ranking, Coverage, Arbeitsaufteilung und Pagination                      |
-| core/flow-state.ts          | Aktueller Workflow, Portionen, Helfer, Status, Request-ID, Results und Fehler                             |
-| core/generation.ts          | Bestehender Provider-Token, deterministischer Mock und validierender GenerationService                    |
-| core/response-validation.ts | Untrusted Responses vollständig gegen Schema und Request prüfen                                           |
-| core/recipe-repository.ts   | Ein Repository-Vertrag und ein Development-Adapter für gespeicherte Rezepte                               |
-| core/guards.ts              | Flow-Schutz für Preferences, Generating und Results                                                       |
-| shared/library-list.ts      | Gemeinsame öffentliche Repository-Abfrage mit Pagination, Loading und Fehlern                             |
-| pages/recipe-detail.ts      | Repository-Lookup und abgeleitete Nutrition-/Helferansicht                                                |
+| Owner | Verantwortung |
+| --- | --- |
+| `core/models.ts` | Domain-Models, Schema-2-Request/Response, Quota-Status |
+| `core/config.ts` | zentrale Optionskeys, Limits, Difficulty-Zeiten, n8n-Pfade |
+| `core/business.ts` | Eingabeprüfung, Request-Mapping, Coverage, Arbeitsaufteilung, Pagination |
+| `core/flow-state.ts` | aktueller Workflow-State, Results und kontrollierte UI-Fehler |
+| `core/generation.ts` | Mock-/n8n-Provider und validierender GenerationService |
+| `core/quota.ts` | read-only Quota-Status für transparente Frontend-Anzeige |
+| `core/response-validation.ts` | letzte Vertrauensgrenze vor Angular-State/Library |
+| `core/recipe-repository.ts` | n8n-basierte öffentliche Firebase-Library + Development-InMemory |
+| `n8n/workflows/` | Validation, Quota, KI, Firebase-Persistenz/Library, Logging, Fehleralarm |
+| `supabase/migrations/` | Quota-/Audit-Tabellen und RPCs |
 
-## Datenfluss
+## Produktiver Datenfluss
 
-UI → FlowState → GenerationService → GENERATION_PROVIDER → Response Validation → FlowState → RECIPE_REPOSITORY.saveMany → Erfolg/Results.
+```text
+Angular Form
+→ FlowState
+→ GenerationService
+→ N8nGenerationProvider
+→ POST /webhook/code-a-cuisine-generate
+→ n8n Request Validation
+→ Supabase claim_generation_quota
+→ Gemini
+→ n8n AI Output Validation
+→ Firebase /code-a-cuisine/recipes PATCH
+→ complete_generation_quota
+→ Supabase Workflow Log
+→ GenerationResponse { persisted: true }
+→ Angular Response Validation
+→ FlowState / Results
+```
 
-Ein Generation-Response muss zunächst vollständig gültig sein. Anschließend speichert der Owner alle drei Rezepte. Erst nach erfolgreicher Speicherung wird der aktuelle Workflow erfolgreich. Repository-Fehler erscheinen kontrolliert als Fehler; es gibt keinen stillen Mock-Fallback. Retry startet aktuell eine neue Generierung mit neuer Request-ID.
+Produktive Rezepte werden genau einmal geschrieben: serverseitig im n8n-Workflow.
 
-Die öffentliche Library und Details lesen ausschließlich das Repository. Der aktuelle Workflow besitzt keine Library-Gruppierung mehr. Aktuelle Recipe-Referenzen in Results sind keine zweite gespeicherte Historie. Im Development-Adapter werden dieselben readonly Recipe-Objekte aufbewahrt. Local UI Signals halten Abfrageergebnisse und Loading-/Fehlerzustände, keinen zweiten Generation-State.
+## Öffentliche Library
 
-## Nebenläufigkeit
+```text
+Cookbook / Recipe Detail
+→ RecipeRepository
+→ GET /webhook/code-a-cuisine-library
+→ n8n Google Service Account
+→ Firebase Realtime Database
+```
 
-Eingabeänderungen invalidieren aktuelle Ergebnisse und Request-ID, nicht gespeicherte Rezepte. Doppelstarts während generating werden ignoriert. Ein später eintreffender gültiger Generation-Satz wird gemäß Speicherpflicht ins Repository geschrieben, aktualisiert aber einen inzwischen geänderten Workflow nicht. Nach gestarteter Speicherung kann eine Eingabeänderung die Speicherung nicht rückgängig machen.
+Angular erhält keine Firebase-Credentials. Jeder zurückgegebene Recipe-Payload wird erneut durch `validateStoredRecipe` geprüft.
 
-Repository-Listen und Detail-Lookups verwerfen verspätete Abfrageantworten bei Filter-/ID-Wechsel oder Component-Zerstörung. Cuisine-Wechsel setzt die Listen-Seite auf 1 zurück.
+## Development
 
-## Repository-Vertrag und Supabase-Vorbereitung
+Ohne konfigurierte n8n-Basis verwendet Development `MockGenerationProvider` + `InMemoryRecipeRepository`. Eine deployte App fällt nicht still auf Demo-Daten zurück.
 
-RecipeRepository bietet genau:
+## Quota und Audit
 
-- saveMany(readonly Recipe[]): Promise<void>: geprüften Satz idempotent nach ID speichern; Fehler ablehnen.
-- getById(id): Promise<Recipe | undefined>: gespeicherte ID oder fehlender Datensatz.
-- list({ page?, cuisine? }): Promise<RecipePage>: Filter vor Pagination; items, total, page und pages.
+Supabase bleibt serverseitig für atomare Quota-Claims, Throttling und `workflow_runs` verantwortlich. Die Checklistenregel wird in Recipe-Einheiten umgesetzt: 3 Rezepte/IP/Tag und 12 Rezepte systemweit/Tag.
 
-`InMemoryRecipeRepository` bleibt der explizite Development-Adapter, solange keine Supabase-Konfiguration eingetragen ist. `SupabaseRecipeRepository` verwendet ohne zusätzliche SDK-Abhängigkeit die Supabase Data API. Project URL und browsergeeigneter Publishable Key werden ausschließlich zur Laufzeit aus Prozess-Umgebungsvariablen in eine ignorierte Runtime-Konfiguration geschrieben; sie stehen nicht in versionierten Source-Dateien. Secret-/Service-Role-Keys sind im Angular-Bundle verboten.
+## Fehlerbehandlung
 
-Die Persistenz liegt im dedizierten Custom Schema `code_a_cuisine.recipes`. Filter-/Sortierspalten sind normalisiert, während der vollständige Schema-2-Recipe-Datensatz als `jsonb`-Payload gespeichert wird. Persistierte Payloads werden beim Lesen erneut strukturell validiert, bevor sie die öffentliche UI erreichen. Pagination und Cuisine-Filter laufen serverseitig. Bestehende IDs werden beim Speichern nicht überschrieben.
+Erwartete Fehler besitzen kontrollierte Branches: Request, Quota, Quota-Backend, AI-Provider, AI-Validation, Firebase-Persistenz und Firebase-Library. Interne Fehler werden in Supabase geloggt; technische Fehler senden SMTP-Benachrichtigungen. Der Error-Trigger-Workflow bleibt Last Resort.
 
-Die versionierte Migration liegt unter `supabase/migrations/`. Sie erzeugt Tabelle, Constraints, Indizes, Grants und RLS. Öffentlich sind SELECT und INSERT mit Publishable Key erlaubt; UPDATE/DELETE werden nicht freigegeben. Das hält den aktuellen Angular-Flow funktionsfähig. Im n8n-Hardening kann der Schreibpfad später bewusst serverseitig verschoben und die öffentliche INSERT-Policy per Folgemigration geschlossen werden, ohne Library-Reads zu ändern.
+## Runtime-Konfiguration
 
-Ohne Credentials verwendet Development In-Memory. Ein Production-Runtime ohne Supabase-Konfiguration bricht bewusst ab statt still auf temporäre Speicherung zurückzufallen. Sind Project URL und Publishable Key in der Runtime-Konfiguration vorhanden, wird automatisch Supabase verwendet.
-
-Die Academy-Checkliste nennt Firebase; das Projekt verwendet auf ausdrückliche Entscheidung Supabase für dieselbe persistente öffentliche Bibliotheksfunktion. Es existiert kein Firebase-/Firestore-Codepfad.
-
-## Gestaltung und Wartung
-
-Standalone-Routes, Reactive Forms, Signals, ESLint und Vitest bleiben erhalten. JSDoc dokumentiert eigene fachliche Funktionen/Methoden; Framework-Konfiguration und einfache Callback-Ausdrücke werden nicht in zusätzliche Wrapper umgebaut. Semantische Formulare, fieldsets, sections, articles, nav und footer tragen das minimale Layout. Keine Figma-Annahmen.
+Der Browser erhält ausschließlich die öffentliche n8n Webhook Base URL aus `public/runtime-config.js`. Persistenz-Credentials bleiben in n8n.

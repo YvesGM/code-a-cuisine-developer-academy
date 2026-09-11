@@ -1,0 +1,278 @@
+{
+  "name": "Code-a-Cuisine - Quota Status",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "code-a-cuisine-quota",
+        "responseMode": "responseNode",
+        "options": {},
+        "httpMethod": "GET"
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "bd040c67-bf31-43c0-b761-471ecc1b1f81",
+      "name": "Quota Status API",
+      "webhookId": "259800e8-68f5-4fc5-bbb0-7413bfc8eee6",
+      "notes": "Öffentlicher read-only Endpunkt für die transparente Anzeige der Tageslimits.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const headers = $json.headers ?? {};\nfunction header(name) {\n  const value = headers[name] ?? headers[name.toLowerCase()] ?? headers[name.toUpperCase()];\n  return typeof value === 'string' ? value.trim() : '';\n}\nfunction isIpv4(value) {\n  const parts = value.split('.');\n  return parts.length === 4 && parts.every((part) => {\n    if (!/^\\d{1,3}$/.test(part)) return false;\n    const number = Number(part);\n    return number >= 0 && number <= 255 && String(number) === String(Number(part));\n  });\n}\nfunction isIpv6(value) {\n  let ip = value.toLowerCase();\n  if (ip.startsWith('::ffff:') && ip.includes('.')) return isIpv4(ip.slice(7));\n  if (!/^[0-9a-f:]+$/.test(ip) || ip.includes(':::')) return false;\n  const doubles = (ip.match(/::/g) ?? []).length;\n  if (doubles > 1) return false;\n  const parts = ip.split(':');\n  const groups = parts.filter(Boolean);\n  if (!groups.every((part) => part.length <= 4 && /^[0-9a-f]+$/.test(part))) return false;\n  return ip.includes('::') ? groups.length < 8 : groups.length === 8;\n}\nconst candidate =\n  header('cf-connecting-ip') ||\n  header('x-real-ip') ||\n  header('x-forwarded-for').split(',')[0]?.trim() ||\n  '';\nconst clientIp = candidate.replace(/^\\[|\\]$/g, '');\nconst valid = isIpv4(clientIp) || isIpv6(clientIp);\nreturn [{ json: { valid, clientIp: valid ? clientIp : null } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "ce2372b6-0744-4e89-b97a-7081f68a03d8",
+      "name": "Extract & Validate Client IP",
+      "notes": "Erkennt und validiert IPv4/IPv6 aus den üblichen Reverse-Proxy-Headern.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1a5e10b5-062b-4ba2-a493-3e9c025d898c",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        440,
+        0
+      ],
+      "id": "3fae01f5-095d-4c21-bf53-88fabd69bf89",
+      "name": "Client IP Valid?",
+      "notes": "Keine Quota-Abfrage ohne valide Clientadresse.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/get_generation_quota",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {},
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Profile",
+              "value": "code_a_cuisine"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { p_client_ip: $('Extract & Validate Client IP').item.json.clientIp, p_day_key: $now.setZone('Europe/Berlin').toISODate(), p_recipe_count: 3, p_ip_limit: 3, p_global_limit: 12 } }}"
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        660,
+        -60
+      ],
+      "id": "c6e53e84-efc5-4e6d-b56a-f22fd7045839",
+      "name": "Get Daily Recipe Quota",
+      "credentials": {
+        "supabaseApi": {
+          "id": "q29scgLDJm1zYFcO",
+          "name": "Supabase account"
+        }
+      },
+      "notes": "Liest ausschließlich Quota-Zähler; reserviert noch keinen KI-Slot.",
+      "notesInFlow": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        900,
+        -100
+      ],
+      "id": "e7403208-0660-442c-a0d0-8d8c7e8529ab",
+      "name": "Respond Quota Status",
+      "notes": "Frontend-Vertrag für verbleibende IP-/System-Rezeptmengen.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: { code: 'invalid_client_ip', message: 'Client-IP konnte nicht bestimmt werden.' } } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        660,
+        180
+      ],
+      "id": "8e52c4c7-58f2-47a1-85c1-f923f5a2c26b",
+      "name": "Respond Invalid IP",
+      "notes": "Kontrollierter Fehler statt falscher Quota-Anzeige.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "fromEmail": "info@schniefs-portfolio.de",
+        "toEmail": "info@schniefs-portfolio.de",
+        "subject": "Code-a-Cuisine: quota status error",
+        "emailFormat": "text",
+        "text": "Der öffentliche Quota-Status konnte Supabase nicht erreichen.\n\nBitte n8n-Ausführung kontrollieren.",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        900,
+        80
+      ],
+      "id": "fa4d9f0b-fff0-48f3-af40-b7a19490d677",
+      "name": "Email Quota Status Error",
+      "credentials": {
+        "smtp": {
+          "id": "Tm9Jzpc5URqWeuZm",
+          "name": "SMTP account"
+        }
+      },
+      "notes": "Benachrichtigt den Betreiber bei Backendfehlern des Quota-Endpunkts.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { error: { code: 'quota_backend_error', message: 'Nutzungslimit konnte nicht geladen werden.' } } }}",
+        "options": {
+          "responseCode": 503
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1140,
+        80
+      ],
+      "id": "c65b0088-b2a4-46d6-9b72-9d60a17c4c7c",
+      "name": "Respond Quota Status Error",
+      "notes": "Frontend erhält keine internen DB-Details.",
+      "notesInFlow": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Quota Status API": {
+      "main": [
+        [
+          {
+            "node": "Extract & Validate Client IP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract & Validate Client IP": {
+      "main": [
+        [
+          {
+            "node": "Client IP Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Client IP Valid?": {
+      "main": [
+        [
+          {
+            "node": "Get Daily Recipe Quota",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Invalid IP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Daily Recipe Quota": {
+      "main": [
+        [
+          {
+            "node": "Respond Quota Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Quota Status Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Quota Status Error": {
+      "main": [
+        [
+          {
+            "node": "Respond Quota Status Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "nodeGroups": [],
+  "id": "CaCQuotaApi260911",
+  "tags": []
+}

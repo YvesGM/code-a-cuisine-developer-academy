@@ -1,0 +1,15 @@
+<header>
+  <a routerLink="/">Code-a-Cuisine</a>
+  <nav aria-label="Hauptnavigation">
+    <a routerLink="/generate">Zutaten</a> <a routerLink="/results">Results</a>
+    <a routerLink="/cookbook">Rezeptebibliothek</a>
+  </nav>
+</header>
+<main>
+  <aside>
+    Development-Modus: deterministische Beispieldaten. Cuisine, Diet, Zeit und Nutrition sind
+    Demo-Angaben; keine geprüften Kochanleitungen.
+  </aside>
+  <router-outlet />
+</main>
+<footer><a routerLink="/impressum">Impressum</a></footer>

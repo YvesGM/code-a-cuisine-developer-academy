@@ -3,7 +3,6 @@
   "nodes": [
     {
       "parameters": {
-        "httpMethod": "GET",
         "path": "code-a-cuisine-library",
         "responseMode": "responseNode",
         "options": {}
@@ -11,13 +10,14 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        0,
-        0
+        -928,
+        80
       ],
-      "id": "4aa66ed7-0f8f-47f2-9c8c-35360c6bfc77",
+      "id": "aedf1fbd-39ad-4ceb-b21c-63932dd2ffe3",
       "name": "Recipe Library API",
-      "notes": "Öffentlicher Read-only-Endpunkt für Bibliothek und Recipe-Detail. Firebase-Zugangsdaten bleiben ausschließlich serverseitig.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "webhookId": "19c861a5-79b9-49a0-a71e-e6db9a2b2365",
+      "notes": "Public read-only endpoint for the recipe library and recipe details. Firebase credentials remain server-side."
     },
     {
       "parameters": {
@@ -26,13 +26,13 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        220,
-        0
+        -704,
+        80
       ],
-      "id": "efa79d42-1264-45aa-a300-7b5d1010f1ea",
+      "id": "5b47876f-16a2-4054-a926-5af0950c4b07",
       "name": "Normalize Library Request",
-      "notes": "Validiert ID, Cuisine und Page, bevor Firebase gelesen wird.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Validates ID, cuisine, and page parameters before querying Firebase."
     },
     {
       "parameters": {
@@ -62,11 +62,12 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        440,
-        0
+        -480,
+        80
       ],
-      "id": "b23914c7-e8d9-4759-b2fb-7070b05e6dd5",
-      "name": "Library Request Valid?"
+      "id": "314b868f-dabe-46ba-8050-7b155b26aa91",
+      "name": "Library Request Valid?",
+      "notes": "Checks whether ID, cuisine, and page parameters are valid before querying Firebase."
     },
     {
       "parameters": {
@@ -79,11 +80,12 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        680,
-        220
+        -240,
+        208
       ],
-      "id": "073ffa90-e03c-4e86-b3ab-8293e84104db",
-      "name": "Respond Invalid Library Request"
+      "id": "82d42541-6b8a-4f12-bbf7-e39400536ae9",
+      "name": "Respond Invalid Library Request",
+      "notes": "Returns a controlled HTTP 400 response for invalid library request parameters."
     },
     {
       "parameters": {
@@ -95,19 +97,20 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        680,
-        -40
+        -240,
+        -64
       ],
-      "id": "ff5b511b-0ef7-4a5f-99b0-349736156bb6",
+      "id": "090a913d-5d48-46b0-a143-831693556d70",
       "name": "Read Recipes from Firebase",
+      "notesInFlow": true,
       "credentials": {
         "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
           "name": "Code-a-Cuisine Firebase Service Account"
         }
       },
-      "notes": "Liest die serverseitig geschützte Firebase-Rezeptbibliothek mit dem bestehenden Google-Service-Account. Keine Firebase-Credentials gelangen in Angular.",
-      "notesInFlow": true,
-      "onError": "continueErrorOutput"
+      "onError": "continueErrorOutput",
+      "notes": "Reads the protected Firebase recipe library using the server-side Google Service Account. No Firebase credentials are exposed to Angular."
     },
     {
       "parameters": {
@@ -116,13 +119,13 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        920,
-        -80
+        16,
+        -224
       ],
-      "id": "f5106178-517e-4afc-a2c2-d59785f08705",
+      "id": "e870b5d6-c9ce-4162-bbd3-cff26abbe829",
       "name": "Build Library Response",
-      "notes": "Validiert Firebase-Wrapper, filtert Cuisine, sortiert newest-first und paginiert serverseitig mit 20 Rezepten pro Seite.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Validates Firebase records, filters by cuisine, sorts newest first, and paginates server-side with 20 recipes per page.\n"
     },
     {
       "parameters": {
@@ -135,11 +138,12 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        1160,
-        -80
+        288,
+        -224
       ],
-      "id": "bec3f8eb-bde7-4a61-9abd-41c5cee777aa",
-      "name": "Respond Library"
+      "id": "70493c42-6e62-4a4a-8ee5-7ac1259be6d0",
+      "name": "Respond Library",
+      "notes": "Returns validated recipe detail data or paginated library results to the Angular frontend.\n"
     },
     {
       "parameters": {
@@ -168,19 +172,19 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        920,
-        120
+        16,
+        64
       ],
-      "id": "3788311d-a808-403e-b553-88f16c8d33b3",
+      "id": "1461aed5-8f37-4bc6-9f71-c94246114a73",
       "name": "Log Firebase Library Error",
+      "notesInFlow": true,
       "credentials": {
         "supabaseApi": {
           "id": "q29scgLDJm1zYFcO",
           "name": "Supabase account"
         }
       },
-      "notes": "Audit-Log für Firebase-Lesefehler; enthält keine Recipe-Daten oder Secrets.",
-      "notesInFlow": true
+      "notes": "Writes an audit log for Firebase read failures without storing recipe data or secrets.\n"
     },
     {
       "parameters": {
@@ -196,20 +200,21 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        1160,
-        120
+        256,
+        64
       ],
-      "id": "350dbca1-0718-4f62-bac6-94d486e13dd9",
+      "id": "b1434fe6-9a57-43a9-bef4-09a702ebdd56",
       "name": "Email Firebase Library Error",
+      "notesInFlow": true,
+      "webhookId": "f7e74261-4fc3-4145-9af5-79829bc9f0fb",
       "credentials": {
         "smtp": {
           "id": "Tm9Jzpc5URqWeuZm",
           "name": "SMTP account"
         }
       },
-      "notes": "Technische Benachrichtigung bei Library-Persistenzfehlern.",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Sends a technical notification when reading the Firebase recipe library fails.\n"
     },
     {
       "parameters": {
@@ -222,11 +227,12 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        1400,
-        120
+        496,
+        64
       ],
-      "id": "d632e2be-7205-4dbe-9962-80a8336b6919",
-      "name": "Respond Library Error"
+      "id": "9c9d365f-97d8-4969-b6f9-99484ea6b496",
+      "name": "Respond Library Error",
+      "notes": "Returns a controlled HTTP 502 response after a Firebase read failure."
     }
   ],
   "pinData": {},
@@ -323,12 +329,20 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate"
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "nnCj7YCdOd3NX984",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "d01f23f5-e59c-4cfb-9a6e-16fa93ffecd2",
+  "meta": {
+    "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
   },
   "nodeGroups": [],
-  "id": "CaCLibraryApi260911",
+  "id": "zAjFqHfQElxWaETJ",
   "tags": []
 }

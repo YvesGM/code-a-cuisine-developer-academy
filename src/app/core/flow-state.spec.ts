@@ -102,7 +102,10 @@ describe('FlowState', () => {
     prepare();
     const repository = TestBed.inject(RECIPE_REPOSITORY);
     const save = vi.spyOn(repository, 'saveMany');
-    generate.mockImplementationOnce(async (request) => ({ ...mockResponse(request), persisted: true }));
+    generate.mockImplementationOnce(async (request) => ({
+      ...mockResponse(request),
+      persisted: true,
+    }));
     await state.generate();
     expect(state.status()).toBe('success');
     expect(state.recipes()).toHaveLength(3);

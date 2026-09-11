@@ -49,3 +49,15 @@ Danach:
 - ungültige AI-Ausgabe → 422 + Quota Release + Log/Mail
 - Firebase-Persistenzfehler → 502 + Quota Release + Supabase-Log/Mail
 - Firebase-Libraryfehler → 502 + Supabase-Log/Mail
+
+## Strukturprüfung
+
+`npm run lint` prüft zusätzlich die vereinbarten Source-Grenzen:
+
+- handgeschriebene TypeScript-Dateien: maximal 400 Zeilen,
+- eigene Produktionsfunktionen/-methoden: maximal 14 Codezeilen,
+- `any` bleibt verboten.
+
+Die Refactor-Regel lautet weiterhin: bestehende Owner zerlegen, nicht durch parallele Services oder zweite
+Datenflüsse ersetzen. Test-Callbacks sind deklarative Specs und von der Funktionslängenregel ausgenommen;
+die Testdateien selbst unterliegen weiterhin der 400-Zeilen-Grenze.

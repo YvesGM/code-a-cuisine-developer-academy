@@ -24,13 +24,13 @@ Eine Generation erzeugt exakt drei Rezepte. IP-Limit 3 entspricht einer erfolgre
 
 ## Weiterhin offen / Abschlussphase
 
-| Thema | Stand |
-| --- | --- |
-| Finale KI-Qualität | realer E2E-Test erforderlich |
-| Nutrition-Genauigkeit | Modellschätzung; keine externe Nährwertdatenbank |
-| Figma | finale visuelle Umsetzung folgt |
-| Responsive / Touch | finale Designphase |
-| Loading Animation | Figma-Asset/Animation folgt |
-| Impressum | reale Angaben vor Veröffentlichung einsetzen |
-| GitHub-Link | nach Repository-Veröffentlichung in README ergänzen |
-| Cross-Browser | Abschlussprüfung |
+| Thema                 | Stand                                               |
+| --------------------- | --------------------------------------------------- |
+| Finale KI-Qualität    | realer E2E-Test erforderlich                        |
+| Nutrition-Genauigkeit | Modellschätzung; keine externe Nährwertdatenbank    |
+| Figma                 | finale visuelle Umsetzung folgt                     |
+| Responsive / Touch    | finale Designphase                                  |
+| Loading Animation     | Figma-Asset/Animation folgt                         |
+| Impressum             | reale Angaben vor Veröffentlichung einsetzen        |
+| GitHub-Link           | nach Repository-Veröffentlichung in README ergänzen |
+| Cross-Browser         | Abschlussprüfung                                    |

@@ -146,7 +146,9 @@ export class PreferencesPage {
       this.quota.set(await this.quotaService.getStatus());
     } catch {
       this.quota.set(null);
-      this.quotaError.set('Nutzungslimit konnte nicht vorab geladen werden; der Server prüft es beim Generieren.');
+      this.quotaError.set(
+        'Nutzungslimit konnte nicht vorab geladen werden; der Server prüft es beim Generieren.',
+      );
     } finally {
       this.quotaLoading.set(false);
     }

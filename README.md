@@ -67,7 +67,7 @@ Der Library-Workflow liefert Recipe-Detail und paginierte/filterbare öffentlich
 
 ## Firebase
 
-Code-a-Cuisine verwendet die bestehende Firebase Realtime Database und legt Daten unter folgendem Pfad ab:
+Code-a-Cuisine verwendet eine eigene Firebase Realtime Database und legt Daten unter folgendem Pfad ab:
 
 ```text
 /code-a-cuisine/recipes/<recipe-id>
@@ -129,7 +129,7 @@ src/app/shared/     Wiederverwendete Recipe-/Library-Darstellung
 public/assets/      Figma-Assets
 public/runtime-config.js
 firebase/           Firebase-Initialisierung/Dokumentation
-docs/               Projektdokumentation
+docs/               Projektdokumentation inkl. Checklistenstatus und n8n-Abschlussplan
 n8n/workflows/      Importierbare n8n-Workflows
 supabase/           CLI-Konfiguration und Quota-/Audit-Migrationen
 AGENTS.md           Verbindliche Arbeitsregeln
@@ -156,3 +156,16 @@ npm run format:check
 - Cross-Browser-Abschlussprüfung
 - reale Impressumsdaten
 - GitHub-Link und finale Academy-Abgabe
+
+## Code-Qualitätsregeln
+
+Der handgeschriebene Anwendungscode folgt zusätzlich zu strict TypeScript festen Strukturgrenzen:
+
+- maximal 400 Zeilen pro handgeschriebener Source-Datei,
+- maximal 14 Codezeilen pro eigener Produktionsfunktion/Methode,
+- genau eine fachliche Verantwortung pro Funktion,
+- JSDoc für eigene fachliche Funktionen und Methoden,
+- kein `any`, keine parallelen Owner und keine Quickfix-Pfade.
+
+`npm run lint` erzwingt die Dateigrenze und die Funktionsgrenze im Anwendungscode. n8n-Exporte,
+bereits angewendete SQL-Migrationen, Binärassets und Lockfiles bleiben als toolgebundene Artefakte ungeteilt.

@@ -39,43 +39,61 @@ export class LibraryList {
   private readonly page = signal(1);
   private readonly revision = signal(0);
   private readonly repository = inject(RECIPE_REPOSITORY);
-  /** Lädt eine Repository-Seite und ignoriert Antworten nach Filterwechsel oder Zerstörung. */
-  constructor() {
+  /** Setzt die Seite bei jedem Cuisine-Wechsel deterministisch auf den Anfang zurück. */
+  private watchCuisine(): void {
     effect(() => {
       this.cuisine();
       this.page.set(1);
     });
-    effect((onCleanup) => {
-      const cuisine = this.cuisine();
-      const page = this.page();
-      this.revision();
-      let active = true;
-      onCleanup(() => {
-        active = false;
-      });
-      this.loading.set(true);
-      this.error.set('');
-      this.result.set(null);
-      void this.repository
-        .list({ cuisine, page })
-        .then((result) => {
-          if (active) {
-            this.result.set(result);
-            this.loading.set(false);
-          }
-        })
-        .catch(() => {
-          if (active) {
-            this.error.set('Bibliothek konnte nicht geladen werden.');
-            this.loading.set(false);
-          }
-        });
-    });
   }
+
+  /** Setzt sichtbare Ladeflags zurück, bevor eine Repository-Seite angefordert wird. */
+  private beginLoad(): void {
+    this.loading.set(true);
+    this.error.set('');
+    this.result.set(null);
+  }
+
+  /** Übernimmt eine geladene Seite nur solange der zugehörige Effect noch aktiv ist. */
+  private acceptResult(result: RecipePage, token: { active: boolean }): void {
+    if (!token.active) return;
+    this.result.set(result);
+    this.loading.set(false);
+  }
+
+  /** Zeigt einen Repository-Lesefehler nur für den weiterhin aktiven Request. */
+  private rejectResult(token: { active: boolean }): void {
+    if (!token.active) return;
+    this.error.set('Bibliothek konnte nicht geladen werden.');
+    this.loading.set(false);
+  }
+
+  /** Startet genau eine Library-Abfrage für den aktuell reaktiven Filter- und Seitenstand. */
+  private requestPage(registerCleanup: (cleanup: () => void) => void): void {
+    const query = { cuisine: this.cuisine(), page: this.page() };
+    this.revision();
+    const token = { active: true };
+    registerCleanup(() => {
+      token.active = false;
+    });
+    this.beginLoad();
+    void this.repository
+      .list(query)
+      .then((result) => this.acceptResult(result, token))
+      .catch(() => this.rejectResult(token));
+  }
+
+  /** Registriert Filter-Reset und Repository-Lader als getrennte reaktive Verantwortlichkeiten. */
+  constructor() {
+    this.watchCuisine();
+    effect((registerCleanup) => this.requestPage(registerCleanup));
+  }
+
   /** Fordert die gewünschte Seite an; das Repository begrenzt ungültige Seitennummern. */
   changePage(page: number): void {
     this.page.set(page);
   }
+
   /** Wiederholt dieselbe Abfrage nach einem sichtbaren Repository-Fehler. */
   reload(): void {
     this.revision.update((value) => value + 1);

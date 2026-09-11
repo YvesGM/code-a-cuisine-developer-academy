@@ -7,7 +7,6 @@ export interface RuntimeConfig {
 }
 
 declare global {
-  // eslint-disable-next-line no-var
   var __CODE_A_CUISINE_CONFIG__: RuntimeConfig | undefined;
 }
 

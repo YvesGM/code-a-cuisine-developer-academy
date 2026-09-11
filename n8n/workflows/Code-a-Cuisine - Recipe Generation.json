@@ -3,22 +3,22 @@
   "nodes": [
     {
       "parameters": {
+        "httpMethod": "POST",
         "path": "code-a-cuisine-generate",
         "responseMode": "responseNode",
-        "options": {},
-        "httpMethod": "POST"
+        "options": {}
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -1800,
-        0
+        -1440,
+        528
       ],
-      "id": "779a1545-771c-4bea-8815-9f547a775db2",
+      "id": "6d390927-6def-4aa7-9d1d-5e5337e26d00",
       "name": "Generate Recipes API",
       "webhookId": "7dbcd16e-be49-4eea-bb59-fe8228cc90bb",
-      "notes": "Öffentlicher Angular-Endpunkt. Antwort erfolgt ausschließlich über explizite Respond-Nodes.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Public Angular endpoint. Responses are returned exclusively through explicit Respond to Webhook nodes.\n"
     },
     {
       "parameters": {
@@ -27,13 +27,13 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1580,
-        0
+        -1216,
+        528
       ],
-      "id": "34a689c9-e605-41bf-9813-8d13352767fe",
+      "id": "74c304a0-3b5d-49c1-aa7f-c05e4cbce0b2",
       "name": "Normalize & Validate Request",
-      "notes": "Validiert Schema 2, Zutaten, Preferences, Portions-/Helfergrenzen und eine IPv4/IPv6-Clientadresse.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Validates schema version 2, ingredients, preferences, serving and cook limits, and the IPv4/IPv6 client address.\n"
     },
     {
       "parameters": {
@@ -63,13 +63,13 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -1360,
-        0
+        -1008,
+        528
       ],
-      "id": "3f852f28-d3c5-4f6c-8a53-36a50e2ce2a5",
+      "id": "6a7ead75-e911-4ee5-9507-435c46b7e30f",
       "name": "Request Valid?",
-      "notes": "Ungültige Frontend-Payloads werden vor Quota und KI gestoppt.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Stops invalid frontend payloads before quota checks and AI generation.\n"
     },
     {
       "parameters": {
@@ -77,7 +77,6 @@
         "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
-        "options": {},
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -93,25 +92,26 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request?.clientRequestId || null, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'rejected', stage: 'request_validation', error_code: 'invalid_request', error_message: $('Normalize & Validate Request').item.json.errorMessage, metadata: {} } }}"
+        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request?.clientRequestId || null, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'rejected', stage: 'request_validation', error_code: 'invalid_request', error_message: $('Normalize & Validate Request').item.json.errorMessage, metadata: {} } }}",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        -1140,
-        280
+        -784,
+        704
       ],
-      "id": "c6b1aed4-77e8-4982-934e-4da2e5c7a03b",
+      "id": "1f5b06fe-62f3-4e55-bfdc-3e5ec3cc79ec",
       "name": "Log Invalid Request",
+      "notesInFlow": true,
       "credentials": {
         "supabaseApi": {
           "id": "q29scgLDJm1zYFcO",
           "name": "Supabase account"
         }
       },
-      "notes": "Audit-Log für abgelehnte Requests; ein Logging-Fehler darf die 400-Antwort nicht blockieren.",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Writes an audit entry for rejected requests. Logging failures must not block the HTTP 400 response.\n"
     },
     {
       "parameters": {
@@ -124,13 +124,13 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        -900,
-        280
+        -560,
+        704
       ],
-      "id": "02cd705f-e24c-43da-87d7-83550e458496",
+      "id": "837addca-d0aa-41c5-8c74-aa305b0a0c39",
       "name": "Respond Invalid Request",
-      "notes": "Strukturierte Frontend-Fehlermeldung.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Returns a structured validation error to the Angular frontend.\n"
     },
     {
       "parameters": {
@@ -138,7 +138,6 @@
         "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/claim_generation_quota",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
-        "options": {},
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -150,25 +149,26 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, p_client_ip: $('Normalize & Validate Request').item.json.clientIp, p_day_key: $now.setZone('Europe/Berlin').toISODate(), p_recipe_count: 3, p_ip_limit: 3, p_global_limit: 12, p_min_interval_seconds: 10 } }}"
+        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, p_client_ip: $('Normalize & Validate Request').item.json.clientIp, p_day_key: $now.setZone('Europe/Berlin').toISODate(), p_recipe_count: 3, p_ip_limit: 3, p_global_limit: 12, p_min_interval_seconds: 10 } }}",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        -1140,
-        -60
+        -784,
+        384
       ],
-      "id": "1f33ead0-bea9-4257-95fe-f7aa0ed0bc71",
+      "id": "e61c36e3-e908-4eac-829a-a7924e304583",
       "name": "Claim IP + Global Quota",
+      "notesInFlow": true,
       "credentials": {
         "supabaseApi": {
           "id": "q29scgLDJm1zYFcO",
           "name": "Supabase account"
         }
       },
-      "notes": "Atomarer Supabase-RPC: 3 Rezepte/IP/Tag, 12 Rezepte systemweit/Tag plus kurzer Throttle.",
-      "notesInFlow": true,
-      "onError": "continueErrorOutput"
+      "onError": "continueErrorOutput",
+      "notes": "Atomically reserves three recipe units in Supabase while enforcing the per-IP limit, global daily limit, and short-term throttling.\n"
     },
     {
       "parameters": {
@@ -198,13 +198,13 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -900,
-        -60
+        -560,
+        224
       ],
-      "id": "42d69990-d7e1-47fa-85cc-60a58d86df00",
+      "id": "f3ed4e34-b607-4014-948a-7a12354c6a95",
       "name": "Quota Allowed?",
-      "notes": "Nur erfolgreich reservierte Quota darf einen kostenpflichtigen KI-Aufruf starten.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Allows a paid AI request only after the quota reservation succeeds.\n"
     },
     {
       "parameters": {
@@ -212,7 +212,6 @@
         "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
-        "options": {},
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -228,25 +227,26 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'quota_rejected', stage: 'quota', error_code: $('Claim IP + Global Quota').item.json.reason, error_message: 'Daily recipe quota rejected the request.', metadata: $('Claim IP + Global Quota').item.json } }}"
+        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'quota_rejected', stage: 'quota', error_code: $('Claim IP + Global Quota').item.json.reason, error_message: 'Daily recipe quota rejected the request.', metadata: $('Claim IP + Global Quota').item.json } }}",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        -660,
-        160
+        -352,
+        320
       ],
-      "id": "8bb62bcd-b5fa-45fe-aa6b-df87b9729bab",
+      "id": "ed9a9296-c4f9-4943-8692-ffc909d007b9",
       "name": "Log Quota Rejection",
+      "notesInFlow": true,
       "credentials": {
         "supabaseApi": {
           "id": "q29scgLDJm1zYFcO",
           "name": "Supabase account"
         }
       },
-      "notes": "Protokolliert Limit-/Throttle-Ablehnungen.",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Logs daily-limit and throttling rejections.\n"
     },
     {
       "parameters": {
@@ -259,13 +259,13 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        -420,
-        160
+        -144,
+        320
       ],
-      "id": "0c33f72c-d29c-4c08-9098-94cdded911c0",
+      "id": "bd28be6c-2043-40dc-8885-74ad5c70b6de",
       "name": "Respond Quota Reached",
-      "notes": "Aussagekräftige Limitmeldung für das Frontend.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Returns a clear quota-limit error to the Angular frontend.\n"
     },
     {
       "parameters": {
@@ -273,7 +273,6 @@
         "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
-        "options": {},
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -289,25 +288,26 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'failed', stage: 'quota_backend', error_code: 'quota_backend_error', error_message: 'Quota RPC failed.', metadata: {} } }}"
+        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'failed', stage: 'quota_backend', error_code: 'quota_backend_error', error_message: 'Quota RPC failed.', metadata: {} } }}",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        -880,
-        -320
+        -560,
+        528
       ],
-      "id": "d9e11bd5-51cf-48f8-90d6-7c1395a6aad1",
+      "id": "b817f61b-1752-4b43-9149-3aa6d4b3a720",
       "name": "Log Quota Backend Error",
+      "notesInFlow": true,
       "credentials": {
         "supabaseApi": {
           "id": "q29scgLDJm1zYFcO",
           "name": "Supabase account"
         }
       },
-      "notes": "Fehler beim serverseitigen Kostenairbag werden protokolliert.",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Logs failures of the server-side quota and cost-protection mechanism.\n"
     },
     {
       "parameters": {
@@ -323,19 +323,20 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        -640,
-        -320
+        -368,
+        528
       ],
-      "id": "0b5b7769-e0a6-4d94-9694-837162cf6666",
+      "id": "ab529cee-7ca5-463a-bdd0-c95eff56a760",
       "name": "Email Quota Backend Error",
+      "notesInFlow": true,
+      "webhookId": "86aef6de-b8f8-4cd6-856f-e87eab936871",
       "credentials": {
         "smtp": {
           "id": "Tm9Jzpc5URqWeuZm",
           "name": "SMTP account"
         }
       },
-      "notes": "SMTP-Alarm an den Projektbetreiber.",
-      "notesInFlow": true
+      "notes": "Sends an SMTP alert when the quota backend fails.\n"
     },
     {
       "parameters": {
@@ -348,13 +349,13 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        -400,
-        -320
+        -176,
+        528
       ],
-      "id": "cdf76f75-2324-4316-8999-3d882abcf798",
+      "id": "4d9845c2-1b7a-40f9-8de2-5211e7dcacb7",
       "name": "Respond Quota Backend Error",
-      "notes": "Verbirgt interne Supabase-Details vor dem Browser.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Returns a controlled backend error without exposing internal Supabase details.\n"
     },
     {
       "parameters": {
@@ -377,11 +378,12 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.2,
       "position": [
-        -640,
-        -80
+        -272,
+        80
       ],
-      "id": "09e6d47b-6fc7-4b24-b36d-43d39790dd89",
+      "id": "1d28d424-8241-4e76-b433-2ce27d58407a",
       "name": "Generate 3 Recipes with Gemini",
+      "notesInFlow": true,
       "credentials": {
         "googlePalmApi": {
           "id": null,
@@ -390,8 +392,7 @@
         }
       },
       "onError": "continueErrorOutput",
-      "notes": "Erzeugt nur den untrusted Rezeptentwurf. IDs, User-Zutaten-Metadaten, Totals und Persistenz werden danach serverseitig kontrolliert.",
-      "notesInFlow": true
+      "notes": "Generates only an untrusted recipe draft. IDs, ingredient metadata, totals, validation, and persistence are handled server-side.\n"
     },
     {
       "parameters": {
@@ -400,13 +401,13 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -380,
-        -80
+        48,
+        -64
       ],
-      "id": "2e25d0e9-80ea-42a1-8d59-e631f13c68e6",
+      "id": "652560c5-2cd9-41af-a81b-49e5c4f33cf2",
       "name": "Parse AI JSON",
-      "notes": "Akzeptiert nur ein JSON-Objekt und wandelt Parserfehler in einen kontrollierten Validierungsfehler.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Accepts only a JSON object and converts parsing failures into a controlled validation result.\n"
     },
     {
       "parameters": {
@@ -415,13 +416,13 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -140,
-        -80
+        256,
+        -64
       ],
-      "id": "700f3912-b2ee-495a-8eb9-92e76b8c090a",
+      "id": "0403afee-1674-4b57-9ccf-d1c2bc4180ee",
       "name": "Validate & Build Recipe Response",
-      "notes": "Zweite serverseitige Validierung: exakt 3, >=70% Zutaten, max. 3 Extras, Zeit, Nutrition, Helfer/Parallelität. Baut vertrauenswürdige Firebase-Records.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Performs server-side validation for exactly three recipes, ingredient coverage, additional ingredients, cooking time, nutrition, cook assignments, and parallel work, then builds trusted Firebase records.\n"
     },
     {
       "parameters": {
@@ -451,13 +452,13 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        100,
-        -80
+        480,
+        -64
       ],
-      "id": "d02a3163-f66d-4dc6-b84d-fd9305da5084",
+      "id": "bc1021ed-22cf-44db-b595-5fcc6d944041",
       "name": "AI Output Valid?",
-      "notes": "Nur fachlich valide KI-Ausgaben dürfen gespeichert werden.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Prevents invalid or incomplete AI output from being persisted.\n"
     },
     {
       "parameters": {
@@ -473,19 +474,20 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        340,
-        -140
+        736,
+        -192
       ],
-      "id": "8d36494f-783f-423f-8e5e-0049edf75c02",
+      "id": "ac3244c1-c3ea-47e0-aeed-646dba93d9c1",
       "name": "Persist 3 Recipes in Firebase",
+      "notesInFlow": true,
       "credentials": {
         "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
           "name": "Code-a-Cuisine Firebase Service Account"
         }
       },
-      "notes": "Persistiert die drei bereits validierten Recipes atomar per PATCH unter /code-a-cuisine/recipes in Firebase Realtime Database. Verwendet das bestehende serverseitige Google-Service-Account-Credential.",
-      "notesInFlow": true,
-      "onError": "continueErrorOutput"
+      "onError": "continueErrorOutput",
+      "notes": "Atomically persists the three validated recipes to Firebase Realtime Database using the server-side Google Service Account.\n"
     },
     {
       "parameters": {
@@ -493,7 +495,6 @@
         "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/complete_generation_quota",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
-        "options": {},
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -505,25 +506,26 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId } }}"
+        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId } }}",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        580,
-        -180
+        976,
+        -320
       ],
-      "id": "1fada2c4-0ea1-4f23-9126-ea7424a7a459",
+      "id": "58f3d26e-2c94-4802-87eb-fb55bfcdc289",
       "name": "Complete Quota Claim",
+      "notesInFlow": true,
       "credentials": {
         "supabaseApi": {
           "id": "q29scgLDJm1zYFcO",
           "name": "Supabase account"
         }
       },
-      "notes": "Markiert die reservierten drei Rezept-Einheiten nach erfolgreicher Persistenz als verbraucht.",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Marks the reserved three recipe units as consumed after successful Firebase persistence.\n"
     },
     {
       "parameters": {
@@ -531,7 +533,6 @@
         "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
-        "options": {},
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -547,25 +548,26 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'success', stage: 'complete', error_code: null, error_message: null, metadata: { recipeIds: $('Validate & Build Recipe Response').item.json.response.recipes.map(r => r.id), quota: $('Claim IP + Global Quota').item.json } } }}"
+        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'success', stage: 'complete', error_code: null, error_message: null, metadata: { recipeIds: $('Validate & Build Recipe Response').item.json.response.recipes.map(r => r.id), quota: $('Claim IP + Global Quota').item.json } } }}",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        820,
-        -180
+        1200,
+        -320
       ],
-      "id": "01a4f8d7-db37-4d8d-8fdf-f108114d96ea",
+      "id": "7139afe4-304b-4827-9fc9-c773bbdecf60",
       "name": "Log Successful Generation",
+      "notesInFlow": true,
       "credentials": {
         "supabaseApi": {
           "id": "q29scgLDJm1zYFcO",
           "name": "Supabase account"
         }
       },
-      "notes": "Nicht-blockierendes Audit-Log der erfolgreichen Generierung.",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Writes a non-blocking audit entry for a successful recipe generation."
     },
     {
       "parameters": {
@@ -578,13 +580,13 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        1060,
-        -180
+        1440,
+        -320
       ],
-      "id": "5ff39534-4e9e-4668-8081-27a10c9991a9",
+      "id": "3766ae28-c56b-45a5-a72c-c930ef932ce7",
       "name": "Respond 3 Recipes",
-      "notes": "Gibt exakt den Angular-Schema-2-Vertrag zurück und signalisiert serverseitige Persistenz.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Returns the exact Angular schema-version-2 response after successful persistence.\n"
     },
     {
       "parameters": {
@@ -592,7 +594,6 @@
         "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/release_generation_quota",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
-        "options": {},
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -604,25 +605,26 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId } }}"
+        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId } }}",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        -360,
-        -520
+        48,
+        176
       ],
-      "id": "be874f33-1847-443c-b795-c8795c39280b",
+      "id": "d24c6704-e5d3-4fb7-9313-769baebb3ee0",
       "name": "Release Quota After AI Error",
+      "notesInFlow": true,
       "credentials": {
         "supabaseApi": {
           "id": "q29scgLDJm1zYFcO",
           "name": "Supabase account"
         }
       },
-      "notes": "KI-Providerfehler sollen keine Tagesquota verbrauchen.",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Releases the reserved quota when the AI provider fails."
     },
     {
       "parameters": {
@@ -630,7 +632,6 @@
         "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
-        "options": {},
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -646,25 +647,26 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'failed', stage: 'ai_provider', error_code: 'ai_provider_error', error_message: 'Gemini request failed.', metadata: {} } }}"
+        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'failed', stage: 'ai_provider', error_code: 'ai_provider_error', error_message: 'Gemini request failed.', metadata: {} } }}",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        -120,
-        -520
+        224,
+        176
       ],
-      "id": "aa53b6ba-35a9-45b7-9686-76407e1064b4",
+      "id": "295ae73c-5c68-48ee-b590-41c1714370b5",
       "name": "Log AI Provider Error",
+      "notesInFlow": true,
       "credentials": {
         "supabaseApi": {
           "id": "q29scgLDJm1zYFcO",
           "name": "Supabase account"
         }
       },
-      "notes": "Audit-Log für Providerfehler.",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Writes an audit entry for AI provider failures."
     },
     {
       "parameters": {
@@ -680,19 +682,20 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        120,
-        -520
+        416,
+        176
       ],
-      "id": "27538647-5a63-441f-976e-2b9c80a4e702",
+      "id": "5c57d7c2-8ec9-49fa-b4fd-926281406c94",
       "name": "Email AI Provider Error",
+      "notesInFlow": true,
+      "webhookId": "4d59ca24-6842-443c-ae3d-c71342dfbf18",
       "credentials": {
         "smtp": {
           "id": "Tm9Jzpc5URqWeuZm",
           "name": "SMTP account"
         }
       },
-      "notes": "Benachrichtigt den Betreiber bei KI-Providerfehlern.",
-      "notesInFlow": true
+      "notes": "Notifies the operator when the AI provider fails."
     },
     {
       "parameters": {
@@ -705,13 +708,13 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        360,
-        -520
+        608,
+        240
       ],
-      "id": "d03fc64b-1f88-47f4-8f94-1629a539c940",
+      "id": "82c1884f-13c5-4b3a-b79a-ef770e69f702",
       "name": "Respond AI Provider Error",
-      "notes": "Kontrollierte Providerfehlermeldung.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Returns a controlled AI provider error to the Angular frontend.\n"
     },
     {
       "parameters": {
@@ -719,7 +722,6 @@
         "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/release_generation_quota",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
-        "options": {},
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -731,25 +733,26 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId } }}"
+        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId } }}",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        340,
-        100
+        736,
+        32
       ],
-      "id": "6353b8f2-24af-472d-bd3a-31b88b74bc73",
+      "id": "c02415a6-683d-4e67-8f07-f71363a68a78",
       "name": "Release Quota After Invalid AI",
+      "notesInFlow": true,
       "credentials": {
         "supabaseApi": {
           "id": "q29scgLDJm1zYFcO",
           "name": "Supabase account"
         }
       },
-      "notes": "Ungültige KI-Ausgabe verbraucht keine Tagesquota.",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Releases the reserved quota when the AI output fails server-side validation.\n\n"
     },
     {
       "parameters": {
@@ -757,7 +760,6 @@
         "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
-        "options": {},
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -773,25 +775,26 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'failed', stage: 'ai_validation', error_code: $('Validate & Build Recipe Response').item.json.errorCode, error_message: $('Validate & Build Recipe Response').item.json.errorMessage, metadata: {} } }}"
+        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'failed', stage: 'ai_validation', error_code: $('Validate & Build Recipe Response').item.json.errorCode, error_message: $('Validate & Build Recipe Response').item.json.errorMessage, metadata: {} } }}",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        580,
-        100
+        976,
+        192
       ],
-      "id": "414c53e4-73be-4018-8bee-67ca9c6f936a",
+      "id": "2ae5a8f7-2e2a-470f-bd38-0e66fa14384c",
       "name": "Log Invalid AI Response",
+      "notesInFlow": true,
       "credentials": {
         "supabaseApi": {
           "id": "q29scgLDJm1zYFcO",
           "name": "Supabase account"
         }
       },
-      "notes": "Audit-Log der zweiten n8n-Datenvalidierung.",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Writes an audit entry when the second-stage n8n validation rejects the model output.\n"
     },
     {
       "parameters": {
@@ -807,19 +810,20 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        820,
-        100
+        1200,
+        192
       ],
-      "id": "1e53bd5b-ab05-41dd-8f0e-3c55c497e0da",
+      "id": "ee35b9f9-b7d6-46e7-be3f-4ae7db96c1f5",
       "name": "Email Invalid AI Response",
+      "notesInFlow": true,
+      "webhookId": "6b2cd8cb-ef4d-40f3-955c-3000282b4016",
       "credentials": {
         "smtp": {
           "id": "Tm9Jzpc5URqWeuZm",
           "name": "SMTP account"
         }
       },
-      "notes": "Alarm bei strukturell oder fachlich ungültigem Modelloutput.",
-      "notesInFlow": true
+      "notes": "Alerts the operator when the model output violates the required structure or business rules.\n"
     },
     {
       "parameters": {
@@ -832,13 +836,13 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        1060,
-        100
+        1408,
+        192
       ],
-      "id": "2f072068-0664-41c4-878c-9194d4099b04",
+      "id": "7041c2f2-e859-4946-8ed4-1b7f103e40e7",
       "name": "Respond Invalid AI Response",
-      "notes": "Kein unvalidierter Modelloutput verlässt n8n.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Prevents unvalidated model output from reaching the Angular frontend.\n"
     },
     {
       "parameters": {
@@ -846,7 +850,6 @@
         "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/release_generation_quota",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
-        "options": {},
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -858,25 +861,26 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId } }}"
+        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId } }}",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        580,
-        -420
+        976,
+        -48
       ],
-      "id": "20657b79-fa87-4f91-9508-a596fbaf4bc9",
+      "id": "a29e365c-8959-4dbb-b5bb-23bcd6fb06b0",
       "name": "Release Quota After Storage Error",
+      "notesInFlow": true,
       "credentials": {
         "supabaseApi": {
           "id": "q29scgLDJm1zYFcO",
           "name": "Supabase account"
         }
       },
-      "notes": "Persistenzfehler sollen keine Tagesquota verbrauchen.",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Releases the reserved quota when Firebase persistence fails."
     },
     {
       "parameters": {
@@ -884,7 +888,6 @@
         "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
-        "options": {},
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -900,25 +903,26 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'failed', stage: 'persistence', error_code: 'firebase_write_failed', error_message: 'Firebase recipe write failed.', metadata: {} } }}"
+        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'failed', stage: 'persistence', error_code: 'firebase_write_failed', error_message: 'Firebase recipe write failed.', metadata: {} } }}",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        820,
-        -420
+        1200,
+        -48
       ],
-      "id": "855456d8-f900-4ddb-b652-fcfecd53896e",
+      "id": "2b9b733b-e71a-4662-b0d2-d0e204d80c58",
       "name": "Log Firebase Persistence Error",
+      "notesInFlow": true,
       "credentials": {
         "supabaseApi": {
           "id": "q29scgLDJm1zYFcO",
           "name": "Supabase account"
         }
       },
-      "notes": "Loggt ausschließlich Metadaten des Firebase-Persistenzfehlers in Supabase; keine Recipe-Payloads oder Secrets.",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Logs only Firebase persistence error metadata in Supabase without storing recipe payloads or secrets."
     },
     {
       "parameters": {
@@ -934,19 +938,20 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        1060,
-        -420
+        1392,
+        -48
       ],
-      "id": "30eb235f-7804-4377-9ce4-5e0f47c93738",
+      "id": "65713ec2-3989-4cec-adce-188a8469ac84",
       "name": "Email Firebase Persistence Error",
+      "notesInFlow": true,
+      "webhookId": "b7280882-eff7-412b-92a1-e124e85d18ad",
       "credentials": {
         "smtp": {
           "id": "Tm9Jzpc5URqWeuZm",
           "name": "SMTP account"
         }
       },
-      "notes": "Alarmiert den Betreiber bei fehlgeschlagener persistenter Speicherung.",
-      "notesInFlow": true
+      "notes": "Alerts the operator when persistent recipe storage fails."
     },
     {
       "parameters": {
@@ -959,13 +964,13 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        1300,
-        -420
+        1632,
+        -48
       ],
-      "id": "03fdbe12-5485-4ef0-bfe7-2c75e4f62554",
+      "id": "2a8cf55b-ecb8-46c6-b0ee-43e3ace545cc",
       "name": "Respond Persistence Error",
-      "notes": "Erst nach erfolgreicher Persistenz erhält Angular Rezepte.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Returns a controlled error because Angular receives recipes only after successful persistence."
     }
   ],
   "pinData": {},
@@ -1288,12 +1293,20 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate"
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "nnCj7YCdOd3NX984",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "versionId": "f14ec853-5205-4717-a2c4-b7468f703849",
+  "meta": {
+    "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
   },
   "nodeGroups": [],
-  "id": "CaCRecipeGen260911",
+  "id": "VIdL6XGsgSbRTGbi",
   "tags": []
 }

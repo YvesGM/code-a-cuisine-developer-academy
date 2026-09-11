@@ -6,13 +6,13 @@
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
       "position": [
-        0,
-        0
+        240,
+        -224
       ],
-      "id": "4ae18a5a-2b35-4bbb-a4af-c42ca2079bff",
+      "id": "efc6f79c-d8a7-4e2a-95a0-31647c1ca613",
       "name": "Unhandled Workflow Error",
-      "notes": "Last-resort Error Trigger für nicht erwartete Fehler in Code-a-Cuisine-Workflows.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Last-resort Error Trigger for unexpected failures in Code-a-Cuisine workflows."
     },
     {
       "parameters": {
@@ -21,13 +21,13 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        240,
-        0
+        480,
+        -224
       ],
-      "id": "c9058b39-4ad6-4c30-88f3-6bfddc720fb7",
+      "id": "64c14cf2-77f9-48e7-8991-f6283c2ec082",
       "name": "Build Error Context",
-      "notes": "Reduziert den n8n-Fehler auf wartbare Log-/Mail-Felder ohne Credentials.",
-      "notesInFlow": true
+      "notesInFlow": true,
+      "notes": "Reduces the n8n error to maintainable log and email fields without exposing credentials."
     },
     {
       "parameters": {
@@ -35,7 +35,6 @@
         "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "supabaseApi",
-        "options": {},
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -51,25 +50,26 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { request_id: null, client_ip: null, status: 'failed', stage: 'unhandled_workflow_error', error_code: 'unhandled_workflow_error', error_message: $('Build Error Context').item.json.message, metadata: $('Build Error Context').item.json } }}"
+        "jsonBody": "={{ { request_id: null, client_ip: null, status: 'failed', stage: 'unhandled_workflow_error', error_code: 'unhandled_workflow_error', error_message: $('Build Error Context').item.json.message, metadata: $('Build Error Context').item.json } }}",
+        "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        480,
-        -60
+        720,
+        -224
       ],
-      "id": "66bc30bc-7f3f-494f-8137-f0e490b403bb",
+      "id": "cf7776d0-081c-4502-867e-5b8b5a68d1ec",
       "name": "Log Unhandled Error",
+      "notesInFlow": true,
       "credentials": {
         "supabaseApi": {
           "id": "q29scgLDJm1zYFcO",
           "name": "Supabase account"
         }
       },
-      "notes": "Persistiert unerwartete n8n-Fehler serverseitig.",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "notes": "Persists unexpected n8n workflow failures in the server-side audit log."
     },
     {
       "parameters": {
@@ -85,19 +85,20 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        720,
-        -60
+        976,
+        -224
       ],
-      "id": "5e58b6c5-8e2a-4482-835a-47fd22ae0b86",
+      "id": "1c785647-3b6b-44b1-9ee7-0a192ba5c1e2",
       "name": "Email Unhandled Workflow Error",
+      "notesInFlow": true,
+      "webhookId": "cb0e9cf8-bb45-43e1-b43d-b0f92576dcad",
       "credentials": {
         "smtp": {
           "id": "Tm9Jzpc5URqWeuZm",
           "name": "SMTP account"
         }
       },
-      "notes": "SMTP-Alarm für Fehler, die keine erwartete Fachfehler-Branch erreicht haben.",
-      "notesInFlow": true
+      "notes": "Sends an SMTP alert for failures that did not reach an expected business-error branch."
     }
   ],
   "pinData": {},
@@ -136,12 +137,16 @@
       ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
+  "versionId": "50f77fed-697e-49e0-addb-79bd0d5977ef",
+  "meta": {
+    "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
+  },
   "nodeGroups": [],
-  "id": "CaCErrNotif260911",
+  "id": "nnCj7YCdOd3NX984",
   "tags": []
 }

@@ -139,34 +139,52 @@ export class RecipeDetailPage {
         ]
       : [];
   });
-  /** Lädt ausschließlich aus dem öffentlichen Repository; schützt vor veralteten ID-Antworten. */
-  constructor() {
-    effect((onCleanup) => {
-      const id = this.params()?.get('id');
-      this.revision();
-      let active = true;
-      onCleanup(() => {
-        active = false;
-      });
-      this.recipe.set(undefined);
-      this.loading.set(true);
-      this.error.set('');
-      void this.repository
-        .getById(id ?? '')
-        .then((recipe) => {
-          if (active) {
-            this.recipe.set(recipe);
-            this.loading.set(false);
-          }
-        })
-        .catch(() => {
-          if (active) {
-            this.error.set('Rezept konnte nicht geladen werden.');
-            this.loading.set(false);
-          }
-        });
-    });
+  /** Setzt sichtbare Ladeflags zurück, bevor ein neuer Repository-Lookup beginnt. */
+  private beginLoad(): void {
+    this.recipe.set(undefined);
+    this.loading.set(true);
+    this.error.set('');
   }
+
+  /** Übernimmt ein Repository-Ergebnis nur solange der zugehörige Effect noch aktiv ist. */
+  private acceptRecipe(recipe: Recipe | undefined, token: { active: boolean }): void {
+    if (!token.active) return;
+    this.recipe.set(recipe);
+    this.loading.set(false);
+  }
+
+  /** Zeigt einen Repository-Lesefehler nur für den weiterhin aktiven Lookup. */
+  private rejectRecipe(token: { active: boolean }): void {
+    if (!token.active) return;
+    this.error.set('Rezept konnte nicht geladen werden.');
+    this.loading.set(false);
+  }
+
+  /** Startet genau einen Repository-Lookup und bindet seine Antwort an ein Aktivitäts-Token. */
+  private loadRecipe(id: string, token: { active: boolean }): void {
+    this.beginLoad();
+    void this.repository
+      .getById(id)
+      .then((recipe) => this.acceptRecipe(recipe, token))
+      .catch(() => this.rejectRecipe(token));
+  }
+
+  /** Reagiert auf ID- oder Retry-Änderungen und macht veraltete Async-Antworten wirkungslos. */
+  private watchRecipe(registerCleanup: (cleanup: () => void) => void): void {
+    const id = this.params()?.get('id') ?? '';
+    this.revision();
+    const token = { active: true };
+    registerCleanup(() => {
+      token.active = false;
+    });
+    this.loadRecipe(id, token);
+  }
+
+  /** Registriert den einzigen reaktiven Loader für öffentliche Recipe-IDs. */
+  constructor() {
+    effect((registerCleanup) => this.watchRecipe(registerCleanup));
+  }
+
   /** Wiederholt den Lookup nach einem Repository-Lesefehler. */
   reload(): void {
     this.revision.update((value) => value + 1);

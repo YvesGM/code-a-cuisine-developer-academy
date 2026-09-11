@@ -25,15 +25,21 @@ describe('N8nRecipeRepository', () => {
   });
 
   it('validates a persisted Firebase recipe before returning it', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => apiResponse({ recipe })));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => apiResponse({ recipe })),
+    );
     await expect(new N8nRecipeRepository().getById(recipe.id)).resolves.toEqual(recipe);
 
-    vi.stubGlobal('fetch', vi.fn(async () => apiResponse({ recipe: { ...recipe, servings: 0 } })));
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => apiResponse({ recipe: { ...recipe, servings: 0 } })),
+    );
     await expect(new N8nRecipeRepository().getById(recipe.id)).rejects.toThrow();
   });
 
   it('uses the n8n library endpoint for pagination and cuisine filtering', async () => {
-    const request = vi.fn(async () =>
+    const request = vi.fn(async (_input: Parameters<typeof fetch>[0]) =>
       apiResponse({ items: [recipe], total: 21, page: 1, pages: 2 }),
     );
     vi.stubGlobal('fetch', request);

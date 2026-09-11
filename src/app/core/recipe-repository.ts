@@ -1,9 +1,9 @@
 import { inject, Injectable, InjectionToken, isDevMode } from '@angular/core';
+import { N8N_PUBLIC_CONFIG } from '../../environments/runtime-config';
 import { paginate } from './business';
 import { N8N_PATHS } from './config';
-import { Cuisine, Recipe, RecipePage, RecipeQuery } from './models';
+import { Recipe, RecipePage, RecipeQuery } from './models';
 import { validateStoredRecipe } from './response-validation';
-import { N8N_PUBLIC_CONFIG } from '../../environments/runtime-config';
 
 export interface RecipeRepository {
   /** Speichert Development-Rezepte; produktive Rezepte werden bereits serverseitig durch n8n persistiert. */
@@ -46,8 +46,9 @@ function libraryEndpoint(): string {
 
 /** Erzwingt ein JSON-Objekt für externe n8n-Antworten. */
 function asRecord(value: unknown): JsonRecord {
-  if (!value || typeof value !== 'object' || Array.isArray(value))
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
     throw new Error('Ungültige Library-Antwort.');
+  }
   return value as JsonRecord;
 }
 
@@ -58,25 +59,42 @@ function parseRecipeLookup(value: unknown): Recipe | undefined {
   return validateStoredRecipe(row['recipe']);
 }
 
+/** Prüft genau einen ganzzahligen Pagination-Wert aus der n8n-Antwort. */
+function pageNumber(row: JsonRecord, key: 'total' | 'page' | 'pages'): number {
+  const value = row[key];
+  if (typeof value !== 'number' || !Number.isInteger(value) || value < 0) {
+    throw new Error('Ungültige Library-Antwort.');
+  }
+  return value;
+}
+
 /** Prüft die paginierte Library-Antwort und jeden darin enthaltenen Recipe-Payload. */
 function parseRecipePage(value: unknown): RecipePage {
   const row = asRecord(value);
   if (!Array.isArray(row['items'])) throw new Error('Ungültige Library-Antwort.');
-  for (const key of ['total', 'page', 'pages'] as const) {
-    if (typeof row[key] !== 'number' || !Number.isInteger(row[key]) || row[key] < 0)
-      throw new Error('Ungültige Library-Antwort.');
-  }
   return {
     items: row['items'].map((recipe) => validateStoredRecipe(recipe)),
-    total: row['total'],
-    page: row['page'],
-    pages: row['pages'],
+    total: pageNumber(row, 'total'),
+    page: pageNumber(row, 'page'),
+    pages: pageNumber(row, 'pages'),
   };
 }
 
 /** Wirft kontrollierte HTTP-Fehler, ohne Backend-Inhalte oder Credentials in die UI zu übernehmen. */
 async function requireOk(response: Response): Promise<void> {
   if (!response.ok) throw new Error(`Recipe Library API fehlgeschlagen (${response.status}).`);
+}
+
+/** Normalisiert die gewünschte Library-Seite auf eine positive ganze Zahl. */
+function requestedPage(query: RecipeQuery): number {
+  return Number.isInteger(query.page) ? Math.max(1, query.page ?? 1) : 1;
+}
+
+/** Baut Queryparameter für serverseitige Pagination und optionalen Cuisine-Filter. */
+function libraryParams(query: RecipeQuery): URLSearchParams {
+  const params = new URLSearchParams({ page: String(requestedPage(query)) });
+  if (query.cuisine) params.set('cuisine', query.cuisine);
+  return params;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -89,32 +107,28 @@ export class N8nRecipeRepository implements RecipeRepository {
   /** Lädt eine öffentliche Recipe-ID über n8n aus Firebase und validiert den Payload erneut. */
   async getById(id: string): Promise<Recipe | undefined> {
     if (!id.trim()) return undefined;
-    const params = new URLSearchParams({ id });
-    const response = await fetch(`${libraryEndpoint()}?${params}`);
+    const response = await fetch(`${libraryEndpoint()}?${new URLSearchParams({ id })}`);
     await requireOk(response);
     return parseRecipeLookup((await response.json()) as unknown);
   }
 
   /** Lädt eine serverseitig paginierte und optional nach Cuisine gefilterte Firebase-Library-Seite. */
   async list(query: RecipeQuery = {}): Promise<RecipePage> {
-    const page = Number.isInteger(query.page) ? Math.max(1, query.page ?? 1) : 1;
-    const params = new URLSearchParams({ page: String(page) });
-    if (query.cuisine) params.set('cuisine', query.cuisine);
-    const response = await fetch(`${libraryEndpoint()}?${params}`);
+    const response = await fetch(`${libraryEndpoint()}?${libraryParams(query)}`);
     await requireOk(response);
     return parseRecipePage((await response.json()) as unknown);
   }
 }
 
-/**
- * Ohne n8n verwendet Development den bestehenden In-Memory-Adapter. Sobald n8n konfiguriert ist,
- * liest die App die dauerhafte Firebase-Library ausschließlich über den öffentlichen n8n-Endpunkt.
- */
+/** Wählt genau einen Library-Adapter und verhindert produktive Fallbacks auf In-Memory-Daten. */
+function recipeRepositoryFactory(): RecipeRepository {
+  if (N8N_PUBLIC_CONFIG.webhookBaseUrl) return inject(N8nRecipeRepository);
+  if (isDevMode()) return inject(InMemoryRecipeRepository);
+  throw new Error('n8n Webhook-Basis-URL fehlt.');
+}
+
+/** Öffentliche Repository-Abstraktion für Session-Mock oder dauerhafte Firebase-Library via n8n. */
 export const RECIPE_REPOSITORY = new InjectionToken<RecipeRepository>('RECIPE_REPOSITORY', {
   providedIn: 'root',
-  factory: () => {
-    if (N8N_PUBLIC_CONFIG.webhookBaseUrl) return inject(N8nRecipeRepository);
-    if (isDevMode()) return inject(InMemoryRecipeRepository);
-    throw new Error('n8n Webhook-Basis-URL fehlt.');
-  },
+  factory: recipeRepositoryFactory,
 });

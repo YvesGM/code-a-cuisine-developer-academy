@@ -4,7 +4,12 @@
 - Root Cause vor Änderung; kleinste passende Änderung, keine Quickfixes oder Parallelimplementierungen.
 - Ein State-Owner, zentrale Models und API Contracts; bestehende Lösungen erweitern.
 - Keine erfundenen Anforderungen, versteckten Fallbacks oder unbestätigten n8n-/Persistenzstrukturen.
-- Strict TypeScript, kein `any`, kleine fokussierte Funktionen, Dateien möglichst unter 400 Zeilen.
+- Strict TypeScript, kein `any`; keine neue Abstraktion ohne konkreten Owner-/Wiederverwendungsbedarf.
+- Handgeschriebene Anwendungscode-Dateien bleiben unter 400 Zeilen.
+- Eigene Produktionsfunktionen und Methoden bleiben bei maximal 14 Codezeilen und besitzen genau eine fachliche Verantwortung.
+- Aussagekräftige JSDoc dokumentiert eigene fachliche Funktionen und Methoden; keine künstlichen Kommentare auf Framework-Code.
+- Die Limits werden für `src/**/*.ts` durch ESLint abgesichert. Declarative Test-Callbacks sind von der Funktionslängenregel ausgenommen; Testdateien bleiben weiterhin unter 400 Zeilen.
+- Export-/Historienartefakte wie `package-lock.json`, n8n-Workflow-JSONs, Binärassets und bereits angewendete SQL-Migrationen werden nicht künstlich geteilt, weil ihre Dateigrenzen vom jeweiligen Tool-/History-Format bestimmt werden.
 - Keine externe Kommunikation in Components, keine Businesslogik in Templates.
 - Nach Änderungen passende Tests ausführen und Dokumentation aktualisieren.
 - Nach Architekturblöcken und vor Abschluss: Lint, Tests und Production Build.
@@ -16,5 +21,4 @@
 - Rezeptwrites und -reads laufen produktiv serverseitig über n8n und Firebase Realtime Database. Keine Firebase-Service-Credentials oder Supabase-Keys ins Angular-Bundle einführen.
 - Supabase bleibt ausschließlich Owner für Quota, Throttling und Workflow-Audit-Logs.
 - Generierung liefert exakt drei Preference-konforme Rezepte. Contract-Regeln stehen in `docs/03_DATA_CONTRACTS.md`.
-- Eigene fachliche Funktionen und Methoden mit sinnvoller JSDoc dokumentieren; keine künstlichen Framework-Wrapper.
 - Textdateien als UTF-8 erhalten und beschädigte Sonderzeichen nach Änderungen prüfen.

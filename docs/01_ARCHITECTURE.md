@@ -2,18 +2,18 @@
 
 ## Owner
 
-| Owner | Verantwortung |
-| --- | --- |
-| `core/models.ts` | Domain-Models, Schema-2-Request/Response, Quota-Status |
-| `core/config.ts` | zentrale Optionskeys, Limits, Difficulty-Zeiten, n8n-Pfade |
-| `core/business.ts` | Eingabeprüfung, Request-Mapping, Coverage, Arbeitsaufteilung, Pagination |
-| `core/flow-state.ts` | aktueller Workflow-State, Results und kontrollierte UI-Fehler |
-| `core/generation.ts` | Mock-/n8n-Provider und validierender GenerationService |
-| `core/quota.ts` | read-only Quota-Status für transparente Frontend-Anzeige |
-| `core/response-validation.ts` | letzte Vertrauensgrenze vor Angular-State/Library |
-| `core/recipe-repository.ts` | n8n-basierte öffentliche Firebase-Library + Development-InMemory |
-| `n8n/workflows/` | Validation, Quota, KI, Firebase-Persistenz/Library, Logging, Fehleralarm |
-| `supabase/migrations/` | Quota-/Audit-Tabellen und RPCs |
+| Owner                         | Verantwortung                                                            |
+| ----------------------------- | ------------------------------------------------------------------------ |
+| `core/models.ts`              | Domain-Models, Schema-2-Request/Response, Quota-Status                   |
+| `core/config.ts`              | zentrale Optionskeys, Limits, Difficulty-Zeiten, n8n-Pfade               |
+| `core/business.ts`            | Eingabeprüfung, Request-Mapping, Coverage, Arbeitsaufteilung, Pagination |
+| `core/flow-state.ts`          | aktueller Workflow-State, Results und kontrollierte UI-Fehler            |
+| `core/generation.ts`          | Mock-/n8n-Provider und validierender GenerationService                   |
+| `core/quota.ts`               | read-only Quota-Status für transparente Frontend-Anzeige                 |
+| `core/response-validation.ts` | letzte Vertrauensgrenze vor Angular-State/Library                        |
+| `core/recipe-repository.ts`   | n8n-basierte öffentliche Firebase-Library + Development-InMemory         |
+| `n8n/workflows/`              | Validation, Quota, KI, Firebase-Persistenz/Library, Logging, Fehleralarm |
+| `supabase/migrations/`        | Quota-/Audit-Tabellen und RPCs                                           |
 
 ## Produktiver Datenfluss
 

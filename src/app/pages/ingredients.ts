@@ -7,55 +7,8 @@ import { Ingredient, Unit } from '../core/models';
 @Component({
   selector: 'app-ingredients',
   imports: [ReactiveFormsModule, RouterLink],
-  template: `
-    <h1>Deine Zutaten</h1>
-    <form [formGroup]="form" (ngSubmit)="save()">
-      <label for="name">Name</label><input id="name" formControlName="name" required />
-      <label for="amount">Menge</label
-      ><input id="amount" type="number" step="any" formControlName="amount" required />
-      <label for="unit">Einheit</label
-      ><select id="unit" formControlName="unit">
-        @for (unit of units; track unit) {
-          <option [value]="unit">{{ unit }}</option>
-        }
-      </select>
-      <button type="submit">{{ editingId() ? 'Änderung speichern' : 'Zutat hinzufügen' }}</button>
-      @if (editingId()) {
-        <button type="button" (click)="cancel()">Abbrechen</button>
-      }
-      @if (error()) {
-        <p role="alert">{{ error() }}</p>
-      }
-    </form>
-    <ul>
-      @for (ingredient of state.ingredients(); track ingredient.id) {
-        <li>
-          {{ ingredient.name }}: {{ ingredient.amount }} {{ ingredient.unit }}
-          <button
-            type="button"
-            (click)="edit(ingredient)"
-            [attr.aria-label]="ingredient.name + ' bearbeiten'"
-          >
-            Bearbeiten
-          </button>
-          <button
-            type="button"
-            (click)="remove(ingredient.id)"
-            [attr.aria-label]="ingredient.name + ' löschen'"
-          >
-            Löschen
-          </button>
-        </li>
-      } @empty {
-        <li>Noch keine Zutaten erfasst.</li>
-      }
-    </ul>
-    @if (state.ingredients().length) {
-      <a routerLink="/preferences">Next Step</a>
-    } @else {
-      <p>Füge mindestens eine gültige Zutat hinzu.</p>
-    }
-  `,
+  templateUrl: './ingredients.html',
+  styleUrl: './ingredients.scss',
 })
 export class IngredientsPage {
   readonly state = inject(FlowState);

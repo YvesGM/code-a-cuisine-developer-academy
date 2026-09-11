@@ -1,0 +1,160 @@
+@use '../../styles/variables' as v;
+
+:host {
+  display: block;
+}
+.preferences-page {
+  max-width: 881px;
+  padding-top: 24px;
+}
+.back-link {
+  margin-bottom: 44px;
+}
+h1 {
+  margin-bottom: 56px;
+  font-size: 28px;
+  text-align: center;
+}
+form {
+  display: grid;
+  gap: 32px;
+}
+.counts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 24px;
+}
+.count-field {
+  display: grid;
+  gap: 16px;
+}
+.count-field > label {
+  font-size: 20px;
+}
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.counter input {
+  width: 56px;
+  padding-inline: 4px;
+  text-align: center;
+  border: 0;
+  appearance: textfield;
+}
+.counter input::-webkit-inner-spin-button,
+.counter input::-webkit-outer-spin-button {
+  appearance: none;
+}
+.counter span {
+  font-size: 16px;
+}
+.counter button {
+  padding: 10px;
+  border: 0;
+  border-radius: 50%;
+}
+.preference-options {
+  display: grid;
+  gap: 40px;
+  padding: 32px 24px;
+  border-radius: v.$radius;
+  background: v.$sage;
+}
+.preference-options legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-size: 24px;
+}
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 20px;
+}
+.choice {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  cursor: pointer;
+}
+.choice input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  opacity: 0;
+}
+.choice span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid v.$green;
+  border-radius: 20px;
+  background: #fff;
+  font-size: 16px;
+  font-weight: 500;
+}
+.choice input:checked + span {
+  background: v.$green;
+  color: v.$cream;
+}
+.choice input:focus-visible + span {
+  outline: 3px solid #a75b18;
+  outline-offset: 4px;
+}
+.choice:hover span {
+  box-shadow: inset 0 0 0 1px v.$green;
+}
+.choice small {
+  text-align: center;
+}
+.form-status {
+  display: grid;
+  justify-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+@media (max-width: v.$breakpoint-mobile) {
+  .preferences-page {
+    padding-top: 16px;
+  }
+  .back-link {
+    margin-bottom: 24px;
+  }
+  h1 {
+    margin-bottom: 24px;
+    font-size: 24px;
+    text-align: left;
+  }
+  .counts {
+    flex-direction: column;
+  }
+  .count-field > label {
+    font-size: 18px;
+  }
+  .preference-options {
+    padding-inline: 16px;
+  }
+  .preference-options legend {
+    font-size: 20px;
+  }
+  .choices {
+    gap: 12px;
+  }
+  .choices--difficulty {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .choices--difficulty .choice span {
+    padding-inline: 6px;
+  }
+}

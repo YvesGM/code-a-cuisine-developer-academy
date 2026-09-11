@@ -1,0 +1,44 @@
+﻿@if (loading()) {
+  <p class="notice" role="status">Bibliothek wird geladen…</p>
+}
+@if (error()) {
+  <div class="status-panel">
+    <p class="notice notice--error" role="alert">{{ error() }}</p>
+    <button type="button" (click)="reload()">Erneut laden</button>
+  </div>
+}
+@if (result(); as result) {
+  <div class="library-recipes">
+    @for (recipe of result.items; track recipe.id) {
+      <app-recipe-card [recipe]="recipe" />
+    } @empty {
+      <p class="notice">Noch keine gespeicherten Rezepte vorhanden.</p>
+    }
+  </div>
+  @if (result.pages > 1) {
+    <nav class="pagination" aria-label="Bibliotheksseiten">
+      <button
+        type="button"
+        class="icon-button button--outline"
+        (click)="changePage(result.page - 1)"
+        [disabled]="result.page === 1"
+        aria-label="Previous"
+      >
+        <img src="assets/icons/pagination-left.svg" alt="" width="26" height="27" />
+      </button>
+      <span
+        >Seite {{ result.page }} von {{ result.pages
+        }}<small>({{ result.total }} Rezepte)</small></span
+      >
+      <button
+        type="button"
+        class="icon-button button--outline"
+        (click)="changePage(result.page + 1)"
+        [disabled]="result.page === result.pages"
+        aria-label="Next"
+      >
+        <img src="assets/icons/pagination-right.svg" alt="" width="26" height="27" />
+      </button>
+    </nav>
+  }
+}

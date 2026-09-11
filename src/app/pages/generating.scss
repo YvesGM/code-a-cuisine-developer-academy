@@ -1,0 +1,77 @@
+@use '../../styles/variables' as v;
+
+:host {
+  display: block;
+}
+.generating-page {
+  min-height: 840px;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 48px;
+}
+.generating-content {
+  display: grid;
+  justify-items: center;
+  gap: 32px;
+}
+picture {
+  display: block;
+  width: 253px;
+  height: 309px;
+  overflow: hidden;
+  border-radius: v.$radius;
+}
+picture img {
+  width: 253px;
+  max-width: none;
+  height: 356px;
+  margin-top: -47px;
+}
+h1 {
+  font-family: 'Ubuntu', 'Trebuchet MS', sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+}
+.dots span {
+  animation: loading-dot 3s steps(1, end) infinite;
+}
+.dots span:nth-child(2) {
+  animation-delay: 0.5s;
+}
+.dots span:nth-child(3) {
+  animation-delay: 1s;
+}
+.status-panel {
+  max-width: 567px;
+}
+.status-panel h1 {
+  font-size: 28px;
+}
+@keyframes loading-dot {
+  0%,
+  50%,
+  100% {
+    opacity: 1;
+  }
+  25%,
+  75% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: v.$breakpoint-mobile) {
+  .generating-page {
+    min-height: 700px;
+    gap: 40px;
+  }
+  h1 {
+    font-size: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dots span {
+    animation: none;
+  }
+}

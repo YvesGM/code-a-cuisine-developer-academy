@@ -1,0 +1,28 @@
+﻿<section class="page cookbook-page">
+  <a class="back-link" routerLink="/">Zur Startseite</a>
+  <div class="cookbook-intro">
+    <div class="page-heading">
+      <h1>Cookbook</h1>
+      <p>Find inspiration for your next culinary adventure!</p>
+    </div>
+    <p class="public-library">
+      <img src="assets/icons/public-icon.svg" alt="" width="20" height="20" />Öffentliche
+      gespeicherte Rezepte ohne Account.
+    </p>
+  </div>
+  <nav class="cuisine-grid" aria-label="Kochstil filtern">
+    @for (cuisine of cuisines; track cuisine) {
+      <a class="cuisine-card" [routerLink]="['/cookbook', cuisine]">
+        <img [src]="images[cuisine]" alt="" width="800" height="800" loading="lazy" />
+        <h2>{{ labels[cuisine] }}</h2>
+      </a>
+    }
+  </nav>
+  <section class="all-recipes" aria-labelledby="library-title">
+    <h2 id="library-title">Rezeptebibliothek – Alle Rezepte</h2>
+    <app-library-list />
+  </section>
+  <div class="actions cookbook-actions">
+    <a class="button button--outline" routerLink="/generate">Generate new recipe</a>
+  </div>
+</section>

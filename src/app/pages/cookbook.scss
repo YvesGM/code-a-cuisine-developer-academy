@@ -1,0 +1,98 @@
+﻿@use '../../styles/variables' as v;
+
+:host {
+  display: block;
+}
+.cookbook-page {
+  padding: 24px 55px 80px;
+}
+.back-link {
+  margin-bottom: 44px;
+}
+.cookbook-intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 40px 24px;
+  margin-bottom: 80px;
+  border-radius: v.$radius;
+  background: v.$cream;
+}
+.page-heading {
+  max-width: 540px;
+  gap: 16px;
+  margin-bottom: 0;
+}
+.public-library {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 430px;
+}
+.public-library img {
+  flex-shrink: 0;
+}
+.cuisine-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 48px 64px;
+}
+.cuisine-card {
+  min-width: 0;
+  text-decoration: none;
+}
+.cuisine-card img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: v.$radius;
+  transition: filter 160ms;
+}
+.cuisine-card h2 {
+  margin-top: 8px;
+}
+.cuisine-card:hover h2 {
+  text-decoration: underline;
+}
+.cuisine-card:hover img {
+  filter: brightness(1.06);
+}
+.all-recipes {
+  margin-top: 80px;
+}
+.all-recipes > h2 {
+  margin-bottom: 32px;
+}
+.cookbook-actions {
+  justify-content: end;
+  margin-top: 64px;
+}
+
+@media (max-width: v.$breakpoint-mobile) {
+  .cookbook-page {
+    padding: 16px 16px 40px;
+  }
+  .back-link {
+    margin-bottom: 24px;
+  }
+  .cookbook-intro {
+    padding: 24px 16px;
+    margin-bottom: 40px;
+  }
+  .cuisine-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  .cuisine-card img {
+    max-height: 400px;
+  }
+  .all-recipes {
+    margin-top: 48px;
+  }
+  .cookbook-actions {
+    margin-top: 40px;
+  }
+}

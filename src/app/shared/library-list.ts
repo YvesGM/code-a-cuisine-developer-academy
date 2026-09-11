@@ -5,31 +5,8 @@ import { RecipeCard } from './recipe-card';
 @Component({
   selector: 'app-library-list',
   imports: [RecipeCard],
-  template: `@if (loading()) {
-      <p role="status">Bibliothek wird geladen…</p>
-    }
-    @if (error()) {
-      <p role="alert">{{ error() }}</p>
-      <button (click)="reload()">Erneut laden</button>
-    }
-    @if (result(); as result) {
-      @for (recipe of result.items; track recipe.id) {
-        <app-recipe-card [recipe]="recipe" />
-      } @empty {
-        <p>Noch keine gespeicherten Rezepte vorhanden.</p>
-      }
-      @if (result.pages > 1) {
-        <nav aria-label="Bibliotheksseiten">
-          <button (click)="changePage(result.page - 1)" [disabled]="result.page === 1">
-            Previous
-          </button>
-          <span>Seite {{ result.page }} von {{ result.pages }} ({{ result.total }} Rezepte)</span>
-          <button (click)="changePage(result.page + 1)" [disabled]="result.page === result.pages">
-            Next
-          </button>
-        </nav>
-      }
-    }`,
+  templateUrl: './library-list.html',
+  styleUrl: './library-list.scss',
 })
 export class LibraryList {
   readonly cuisine = input<Cuisine | undefined>();

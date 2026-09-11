@@ -1,0 +1,19 @@
+﻿<section class="page cuisine-page">
+  <a class="back-link" routerLink="/cookbook">Alle Rezepte</a>
+  @if (cuisine(); as cuisine) {
+    <header class="cuisine-heading">
+      @if (cuisine === 'italian') {
+        <img src="assets/img/cuisine.png" alt="" width="2292" height="288" />
+        <h1 class="visually-hidden">{{ labels[cuisine] }}</h1>
+      } @else {
+        <h1>{{ labels[cuisine] }}</h1>
+      }
+    </header>
+    <app-library-list [cuisine]="cuisine" />
+  } @else {
+    <div class="status-panel">
+      <h1>Cuisine nicht gefunden</h1>
+      <p>Dieser Kochstil ist nicht konfiguriert.</p>
+    </div>
+  }
+</section>

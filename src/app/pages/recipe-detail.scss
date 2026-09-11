@@ -1,0 +1,247 @@
+﻿@use '../../styles/variables' as v;
+
+:host {
+  display: block;
+}
+.detail-page {
+  padding: 24px 96px 80px;
+}
+.detail-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 56px;
+}
+article {
+  display: grid;
+  gap: 64px;
+}
+.recipe-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 48px;
+}
+.recipe-summary {
+  display: grid;
+  gap: 24px;
+}
+h1 {
+  font-size: 48px;
+  overflow-wrap: anywhere;
+}
+.recipe-facts {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+}
+.recipe-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.nutrition {
+  display: grid;
+  gap: 20px;
+  padding: 24px;
+  border: 1px solid v.$green;
+  border-radius: v.$radius;
+}
+.nutrition h2 {
+  font-size: 24px;
+}
+.nutrition h3 {
+  font-size: 18px;
+}
+.nutrition dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 16px 0 0;
+}
+.nutrition dt {
+  margin-bottom: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.nutrition dd {
+  margin: 0;
+  font-size: 18px;
+}
+.nutrition dd small {
+  display: block;
+}
+.nutrition-group + .nutrition-group {
+  border-top: 1px solid v.$sage;
+  padding-top: 16px;
+}
+.illustrated-heading {
+  display: grid;
+  place-items: center;
+  min-height: 144px;
+  margin-bottom: 32px;
+  background-size: 100% auto;
+  background-position: center;
+  background-repeat: no-repeat;
+  text-align: center;
+}
+.illustrated-heading--ingredients {
+  background-image: url('/assets/img/incredients.png');
+}
+.illustrated-heading--directions {
+  background-image: url('/assets/img/directions.png');
+}
+.ingredient-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 64px;
+  padding-inline: 64px;
+}
+.ingredient-columns h3 {
+  font-size: 24px;
+}
+.ingredient-columns ul {
+  display: grid;
+  gap: 12px;
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.ingredient-columns li {
+  display: flex;
+  gap: 24px;
+  overflow-wrap: anywhere;
+}
+.ingredient-columns li span:first-child {
+  min-width: 96px;
+}
+.directions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 40px 64px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+}
+.directions > li {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  padding: 24px;
+  border-radius: v.$radius;
+  background: v.$cream;
+  overflow-wrap: anywhere;
+}
+.step-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+}
+.step-number {
+  font-size: 24px;
+  font-weight: 600;
+}
+.step-meta {
+  display: grid;
+  gap: 8px;
+  font-size: 16px;
+}
+.cook-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.assignments {
+  padding: 32px;
+  border-radius: v.$radius;
+  background: v.$sage;
+}
+.assignment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 32px;
+  margin-top: 24px;
+}
+.assignment-grid ul {
+  padding-left: 24px;
+  margin-bottom: 0;
+}
+.assignment-grid li + li {
+  margin-top: 12px;
+}
+.cookbook-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 40px 24px;
+  border-radius: v.$radius;
+  background: v.$cream;
+}
+.cookbook-cta p {
+  font-size: 24px;
+}
+
+@media (max-width: v.$breakpoint-mobile) {
+  .detail-page {
+    padding: 16px 16px 40px;
+  }
+  .detail-navigation {
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  article {
+    gap: 40px;
+  }
+  .recipe-heading {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  h1 {
+    font-size: 32px;
+  }
+  .recipe-facts {
+    font-size: 16px;
+  }
+  .nutrition {
+    padding: 20px 16px;
+  }
+  .illustrated-heading {
+    min-height: 100px;
+    margin-bottom: 24px;
+    background-size: auto 100px;
+  }
+  .ingredient-columns {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    padding-inline: 8px;
+  }
+  .ingredient-columns h3 {
+    font-size: 20px;
+  }
+  .ingredient-columns li {
+    gap: 16px;
+  }
+  .directions {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .directions > li {
+    padding: 24px 16px;
+  }
+  .assignments {
+    padding: 24px 16px;
+  }
+  .cookbook-cta {
+    gap: 24px;
+    text-align: center;
+  }
+  .cookbook-cta p {
+    font-size: 18px;
+  }
+}

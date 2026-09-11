@@ -1,0 +1,162 @@
+﻿<section class="page detail-page">
+  <nav class="detail-navigation" aria-label="Zurück zur Rezeptauswahl">
+    <a class="back-link" routerLink="/results">Results</a
+    ><a class="back-link" routerLink="/cookbook">Rezeptebibliothek</a>
+  </nav>
+  @if (loading()) {
+    <p class="notice" role="status">Rezept wird geladen…</p>
+  } @else if (error()) {
+    <div class="status-panel">
+      <p class="notice notice--error" role="alert">{{ error() }}</p>
+      <button type="button" (click)="reload()">Erneut laden</button>
+    </div>
+  } @else if (recipe(); as recipe) {
+    <article>
+      <header class="recipe-heading">
+        <div class="recipe-summary">
+          <h1>{{ recipe.title }}</h1>
+          <p class="recipe-facts">
+            <img class="icon" src="assets/icons/clock-icon.svg" alt="" />{{
+              recipe.cookingTimeMinutes
+            }}
+            min
+          </p>
+          <p class="recipe-facts">
+            <img class="icon" src="assets/icons/cooking-hat-icon.svg" alt="" />{{
+              recipe.servings
+            }}
+            Portionen · {{ recipe.cookCount }} Kochhelfer
+          </p>
+          <div class="recipe-tags">
+            <span class="tag">{{ cuisines[recipe.cuisine] }}</span
+            ><span class="tag">{{ difficulties[recipe.difficulty].label }}</span
+            ><span class="tag">{{ diets[recipe.diet] }}</span>
+          </div>
+        </div>
+        <section class="nutrition" aria-labelledby="nutrition-title">
+          <h2 id="nutrition-title">Nutrition (Demo-Werte)</h2>
+          @for (item of nutrition(); track item.label) {
+            <section class="nutrition-group">
+              <h3>{{ item.label }}</h3>
+              <dl>
+                <div>
+                  <dt>Kalorien</dt>
+                  <dd>{{ item.values.energyKcal | number: '1.0-2' }} kcal</dd>
+                </div>
+                <div>
+                  <dt>Protein</dt>
+                  <dd>
+                    {{ item.values.protein.grams | number: '1.0-2' }} g
+                    <small>({{ item.values.protein.percent | number: '1.0-2' }} %)</small>
+                  </dd>
+                </div>
+                <div>
+                  <dt>Kohlenhydrate</dt>
+                  <dd>
+                    {{ item.values.carbs.grams | number: '1.0-2' }} g
+                    <small>({{ item.values.carbs.percent | number: '1.0-2' }} %)</small>
+                  </dd>
+                </div>
+                <div>
+                  <dt>Fett</dt>
+                  <dd>
+                    {{ item.values.fat.grams | number: '1.0-2' }} g
+                    <small>({{ item.values.fat.percent | number: '1.0-2' }} %)</small>
+                  </dd>
+                </div>
+              </dl>
+            </section>
+          }
+          <p class="fine-print">
+            Prozentangaben: Anteil an der Demo-Makroenergie, keine Ernährungsanalyse.
+          </p>
+        </section>
+      </header>
+      <section class="ingredients-section" aria-labelledby="ingredients-title">
+        <div class="illustrated-heading illustrated-heading--ingredients">
+          <h2 id="ingredients-title">Ingredients</h2>
+        </div>
+        <div class="ingredient-columns">
+          <section>
+            <h3>Vorhandene Zutaten – Gesamtmengen</h3>
+            <ul>
+              @for (ingredient of recipe.ingredients; track ingredient.sourceIngredientId) {
+                <li>
+                  <span>{{ ingredient.amount | number: '1.0-3' }} {{ ingredient.unit }}</span
+                  ><span>{{ ingredient.name }}</span>
+                </li>
+              }
+            </ul>
+          </section>
+          <section>
+            <h3>Zusätzlich benötigt – Gesamtmengen</h3>
+            <ul>
+              @for (ingredient of recipe.additionalIngredients; track $index) {
+                <li>
+                  <span>{{ ingredient.amount | number: '1.0-3' }} {{ ingredient.unit }}</span
+                  ><span>{{ ingredient.name }}</span>
+                </li>
+              } @empty {
+                <li>Keine zusätzlichen Zutaten.</li>
+              }
+            </ul>
+          </section>
+        </div>
+      </section>
+      <section class="directions-section" aria-labelledby="directions-title">
+        <div class="illustrated-heading illustrated-heading--directions">
+          <h2 id="directions-title">Directions</h2>
+        </div>
+        <ol class="directions">
+          @for (direction of recipe.directions; track direction.step) {
+            <li>
+              <div class="step-heading">
+                <span class="step-number" aria-hidden="true">{{ direction.step }}.</span>
+                <h3>{{ direction.title }}</h3>
+              </div>
+              <p>{{ direction.instruction }}</p>
+              <div class="step-meta">
+                <p class="cook-label">
+                  <img class="icon" src="assets/icons/cooking-hat-icon.svg" alt="" />Kochhelfer:
+                  {{ direction.assignedCooks.join(', ') }}
+                </p>
+                @if (direction.parallelGroup) {
+                  <p>Parallel ausführbar: {{ direction.parallelGroup }}</p>
+                }
+                @if (direction.waitingTimeMinutes !== undefined) {
+                  <p>Wartezeit: {{ direction.waitingTimeMinutes }} min</p>
+                }
+              </div>
+            </li>
+          }
+        </ol>
+      </section>
+      <section class="assignments" aria-labelledby="assignments-title">
+        <h2 id="assignments-title">Arbeitsaufteilung</h2>
+        <div class="assignment-grid">
+          @for (assignment of assignments(); track assignment.cook) {
+            <section>
+              <h3>Person {{ assignment.cook }}</h3>
+              <ul>
+                @for (step of assignment.steps; track step.step) {
+                  <li>Step {{ step.step }} – {{ step.title }}</li>
+                } @empty {
+                  <li>Keine Aufgabe zugeordnet.</li>
+                }
+              </ul>
+            </section>
+          }
+        </div>
+      </section>
+      <aside class="cookbook-cta">
+        <p>Find inspiration for your next culinary adventure!</p>
+        <a class="button button--primary" routerLink="/cookbook">Cookbook</a>
+      </aside>
+    </article>
+  } @else {
+    <div class="status-panel">
+      <h1>Rezept nicht gefunden</h1>
+      <p>Diese Recipe ID ist nicht in der Bibliothek gespeichert.</p>
+    </div>
+  }
+</section>

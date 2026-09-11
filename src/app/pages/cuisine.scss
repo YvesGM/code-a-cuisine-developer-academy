@@ -1,0 +1,50 @@
+﻿@use '../../styles/variables' as v;
+
+:host {
+  display: block;
+}
+.cuisine-page {
+  max-width: 1303px;
+  padding-top: 24px;
+}
+.back-link {
+  margin-bottom: 40px;
+}
+.cuisine-heading {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-height: 144px;
+  margin-bottom: 64px;
+  text-align: center;
+}
+.cuisine-heading > img {
+  width: 100%;
+  height: auto;
+}
+.cuisine-heading > h1:not(.visually-hidden) {
+  padding: 24px;
+  border-radius: 12px;
+  background: v.$cream;
+  font-size: 36px;
+}
+
+@media (max-width: v.$breakpoint-mobile) {
+  .cuisine-page {
+    padding-top: 16px;
+  }
+  .back-link {
+    margin-bottom: 24px;
+  }
+  .cuisine-heading {
+    min-height: 100px;
+    margin-bottom: 32px;
+  }
+  .cuisine-heading > img {
+    height: 100px;
+    object-fit: cover;
+  }
+  .cuisine-heading > h1:not(.visually-hidden) {
+    font-size: 28px;
+  }
+}

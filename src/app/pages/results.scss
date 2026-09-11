@@ -1,0 +1,47 @@
+@use '../../styles/variables' as v;
+
+:host {
+  display: block;
+}
+.results-heading {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  align-items: center;
+  gap: 64px;
+  margin-bottom: 88px;
+}
+.page-heading {
+  margin-bottom: 0;
+}
+.results-heading > img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.results-actions {
+  justify-content: end;
+  margin-top: 64px;
+}
+
+@media (max-width: v.$breakpoint-mobile) {
+  .results-heading {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+    margin-bottom: 40px;
+  }
+  .results-heading > img {
+    display: none;
+  }
+  .results-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  .results-actions {
+    margin-top: 40px;
+  }
+}

@@ -1,0 +1,78 @@
+<section class="page ingredients-page">
+  <div class="page-heading">
+    <h1>Generate recipe</h1>
+    <p>Got random stuff in your kitchen? Pop it in—we’ve got the perfect recipe waiting.</p>
+  </div>
+  <div class="ingredient-workspace">
+    <form [formGroup]="form" (ngSubmit)="save()" aria-label="Deine Zutaten">
+      <div class="ingredient-field">
+        <label for="name">Zutat</label>
+        <input id="name" formControlName="name" placeholder="z. B. Tomaten" required />
+      </div>
+      <div class="quantity-field">
+        <label for="amount">Menge</label>
+        <input id="amount" type="number" step="any" formControlName="amount" required />
+      </div>
+      <div class="unit-field">
+        <label for="unit">Einheit</label>
+        <select id="unit" formControlName="unit">
+          @for (unit of units; track unit) {
+            <option [value]="unit">{{ unit }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-actions actions">
+        <button type="submit" class="button--small">
+          <img class="icon" src="assets/icons/add-icon.svg" alt="" width="18" height="18" />
+          {{ editingId() ? 'Änderung speichern' : 'Zutat hinzufügen' }}
+        </button>
+        @if (editingId()) {
+          <button type="button" class="button--small button--outline" (click)="cancel()">
+            Abbrechen
+          </button>
+        }
+      </div>
+      @if (error()) {
+        <p class="notice notice--error form-error" role="alert">{{ error() }}</p>
+      }
+    </form>
+    <section class="ingredient-list" aria-labelledby="ingredient-list-title">
+      <h2 id="ingredient-list-title">Deine Zutaten</h2>
+      <ul>
+        @for (ingredient of state.ingredients(); track ingredient.id) {
+          <li>
+            <span class="ingredient-amount">{{ ingredient.amount }} {{ ingredient.unit }}</span>
+            <span class="ingredient-name">{{ ingredient.name }}</span>
+            <div class="ingredient-actions">
+              <button
+                type="button"
+                class="button--small button--outline"
+                (click)="edit(ingredient)"
+                [attr.aria-label]="ingredient.name + ' bearbeiten'"
+              >
+                Bearbeiten
+              </button>
+              <button
+                type="button"
+                class="button--small button--outline"
+                (click)="remove(ingredient.id)"
+                [attr.aria-label]="ingredient.name + ' löschen'"
+              >
+                Löschen
+              </button>
+            </div>
+          </li>
+        } @empty {
+          <li class="empty">Noch keine Zutaten erfasst.</li>
+        }
+      </ul>
+    </section>
+  </div>
+  <div class="next-step">
+    @if (state.ingredients().length) {
+      <a class="button button--primary" routerLink="/preferences">Next Step</a>
+    } @else {
+      <p>Füge mindestens eine gültige Zutat hinzu.</p>
+    }
+  </div>
+</section>

@@ -150,9 +150,8 @@ npm run format:check
 ## Noch offen
 
 - realer Firebase/n8n E2E-Smoke-Test
-- finale Figma-Umsetzung
-- finale Responsive-/Touch-Optimierung
-- Loading-Animation aus Figma
+- finaler visueller Figma-Abgleich im Browser
+- finale Responsive-/Touch-QA auf realen Viewports
 - Cross-Browser-Abschlussprüfung
 - reale Impressumsdaten
 - GitHub-Link und finale Academy-Abgabe

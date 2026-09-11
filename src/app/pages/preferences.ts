@@ -8,86 +8,8 @@ import { QuotaService } from '../core/quota';
 @Component({
   selector: 'app-preferences',
   imports: [ReactiveFormsModule, RouterLink],
-  template: `
-    <h1>Preferences</h1>
-    <form [formGroup]="form" (ngSubmit)="generate()">
-      <fieldset>
-        <legend>Portionen und Kochteam</legend>
-        <label for="servings">Portionen</label>
-        <input
-          id="servings"
-          type="number"
-          formControlName="servings"
-          [min]="limits.servings.min"
-          [max]="limits.servings.max"
-          step="1"
-        />
-        <p>
-          Demo: Vorräte werden proportional auf bis zu zwölf Portionen verteilt. Keine Aussage über
-          ausreichende Portionsgrößen.
-        </p>
-        <label for="cookCount">Kochhelfer</label>
-        <input
-          id="cookCount"
-          type="number"
-          formControlName="cookCount"
-          [min]="limits.cookCount.min"
-          [max]="limits.cookCount.max"
-          step="1"
-        />
-      </fieldset>
-      <fieldset>
-        <legend>Rezeptwünsche</legend>
-        <label for="difficulty">Difficulty / Aufwand</label
-        ><select id="difficulty" formControlName="difficulty">
-          <option [ngValue]="null">Bitte wählen</option>
-          @for (item of options.difficulties; track item) {
-            <option [value]="item">
-              {{ difficulties[item].label }} – {{ difficulties[item].range }}
-            </option>
-          }
-        </select>
-        <label for="cuisine">Cuisine</label
-        ><select id="cuisine" formControlName="cuisine">
-          <option [ngValue]="null">Bitte wählen</option>
-          @for (item of options.cuisines; track item) {
-            <option [value]="item">{{ cuisines[item] }}</option>
-          }
-        </select>
-        <label for="diet">Diet Preference</label
-        ><select id="diet" formControlName="diet">
-          <option [ngValue]="null">Bitte wählen</option>
-          @for (item of options.diets; track item) {
-            <option [value]="item">{{ diets[item] }}</option>
-          }
-        </select>
-      </fieldset>
-      @if (quotaLoading()) {
-        <p role="status">Nutzungslimit wird geprüft…</p>
-      } @else if (quota(); as quota) {
-        <p>
-          Heute verfügbar: {{ quota.ipRemainingRecipes }} von {{ quota.ipLimitRecipes }} Rezepten
-          für diese IP; systemweit {{ quota.globalRemainingRecipes }} von
-          {{ quota.globalLimitRecipes }} Rezepten.
-        </p>
-        @if (!quota.generationAllowed) {
-          <p role="alert">Das tägliche Rezeptlimit ist erreicht. Bitte morgen erneut versuchen.</p>
-        }
-      } @else if (quotaError()) {
-        <p role="status">{{ quotaError() }}</p>
-      }
-      @if (form.invalid) {
-        <p>
-          Bitte alle Wünsche wählen; Portionen und Kochhelfer müssen ganze Zahlen im angegebenen
-          Bereich sein.
-        </p>
-      }
-      <button type="submit" [disabled]="form.invalid || quota()?.generationAllowed === false">
-        Generate Recipe
-      </button>
-    </form>
-    <a routerLink="/generate">Zurück zu Zutaten</a>
-  `,
+  templateUrl: './preferences.html',
+  styleUrl: './preferences.scss',
 })
 export class PreferencesPage {
   readonly options = OPTIONS;
@@ -163,5 +85,15 @@ export class PreferencesPage {
     this.state.setCookCount(cookCount);
     void this.state.generate();
     void this.router.navigateByUrl('/generating');
+  }
+
+  /** Ändert den Formularentwurf über die Zählerbuttons innerhalb der bestehenden Grenzen. */
+  adjustCount(name: 'servings' | 'cookCount', delta: -1 | 1): void {
+    const control = this.form.controls[name];
+    if (!Number.isInteger(control.value)) return;
+    const value = control.value + delta;
+    if (value < this.limits[name].min || value > this.limits[name].max) return;
+    control.setValue(value);
+    control.markAsDirty();
   }
 }

@@ -4,17 +4,8 @@ import { FlowState } from '../core/flow-state';
 @Component({
   selector: 'app-generating',
   imports: [RouterLink],
-  template: `
-    <h1>Rezeptgenerierung</h1>
-    @if (state.status() === 'generating') {
-      <p role="status" aria-live="polite">Generating...</p>
-    }
-    @if (state.error()) {
-      <p role="alert">{{ state.error() }}</p>
-      <button type="button" (click)="retry()">Retry</button>
-    }
-    <a routerLink="/preferences">Zurück zu Preferences</a>
-  `,
+  templateUrl: './generating.html',
+  styleUrl: './generating.scss',
 })
 export class GeneratingPage {
   readonly state = inject(FlowState);

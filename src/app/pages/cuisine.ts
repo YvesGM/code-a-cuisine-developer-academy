@@ -6,14 +6,8 @@ import { LibraryList } from '../shared/library-list';
 @Component({
   selector: 'app-cuisine',
   imports: [RouterLink, LibraryList],
-  template: `@if (cuisine(); as cuisine) {
-      <h1>{{ labels[cuisine] }}</h1>
-      <app-library-list [cuisine]="cuisine" />
-    } @else {
-      <h1>Cuisine nicht gefunden</h1>
-      <p>Dieser Kochstil ist nicht konfiguriert.</p>
-    }
-    <a routerLink="/cookbook">Alle Rezepte</a>`,
+  templateUrl: './cuisine.html',
+  styleUrl: './cuisine.scss',
 })
 export class CuisinePage {
   private readonly params = toSignal(inject(ActivatedRoute).paramMap);

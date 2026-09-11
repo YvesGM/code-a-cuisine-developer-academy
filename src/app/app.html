@@ -1,17 +1,29 @@
-<header>
-  <a routerLink="/">Code-a-Cuisine</a>
-  <nav aria-label="Hauptnavigation">
-    <a routerLink="/generate">Zutaten</a> <a routerLink="/results">Results</a>
-    <a routerLink="/cookbook">Rezeptebibliothek</a>
-  </nav>
-</header>
-<main>
-  @if (mockMode) {
-    <aside>
-      Development-Modus: deterministische Beispieldaten. Cuisine, Diet, Zeit und Nutrition sind
-      Demo-Angaben; keine geprüften Kochanleitungen.
-    </aside>
+<div
+  class="app-shell"
+  [class.app-shell--dark]="dark()"
+  [class.app-shell--landing]="landing()"
+>
+  <a class="skip-link" href="#main-content">Zum Inhalt</a>
+  <header class="site-header">
+    <a class="brand" routerLink="/" aria-label="Code-a-Cuisine Startseite">
+      <img
+        [src]="dark() ? 'assets/hero-logo-white.svg' : 'assets/hero-logo-green.svg'"
+        alt="Code-a-Cuisine"
+        width="142"
+        height="48"
+      />
+    </a>
+  </header>
+  <main id="main-content" tabindex="-1"><router-outlet /></main>
+  @if (!landing()) {
+    <footer class="site-footer">
+      <a routerLink="/impressum">Impressum</a>
+      @if (mockMode) {
+        <p class="fine-print">
+          Development-Modus: deterministische Beispieldaten. Cuisine, Diet, Zeit und Nutrition sind
+          Demo-Angaben; keine geprüften Kochanleitungen.
+        </p>
+      }
+    </footer>
   }
-  <router-outlet />
-</main>
-<footer><a routerLink="/impressum">Impressum</a></footer>
+</div>

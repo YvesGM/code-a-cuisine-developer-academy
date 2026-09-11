@@ -1,0 +1,74 @@
+@use '../../styles/variables' as v;
+
+:host {
+  display: block;
+  min-width: 0;
+}
+.recipe-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px 32px;
+  align-items: center;
+  padding: 24px 32px;
+  border-radius: v.$radius;
+  background: v.$card;
+  color: v.$green-dark;
+}
+h2 {
+  overflow-wrap: anywhere;
+}
+.recipe-rank {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 24px;
+  font-weight: 600;
+}
+.recipe-rank img {
+  width: 40px;
+  height: 28px;
+  object-fit: contain;
+}
+.cooking-time {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  grid-column: 1;
+}
+.recipe-meta {
+  grid-column: 1;
+  font-size: 16px;
+}
+.button {
+  grid-column: 2;
+  grid-row: 1 / 4;
+  justify-self: end;
+}
+.recipe-card--ranked {
+  height: 100%;
+  min-height: 338px;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  padding: 32px 24px;
+}
+.recipe-card--ranked .button {
+  grid-column: 1;
+  grid-row: auto;
+  justify-self: start;
+  margin-top: 16px;
+}
+
+@media (max-width: v.$breakpoint-mobile) {
+  .recipe-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    padding: 24px 20px;
+  }
+  .button {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .recipe-card--ranked {
+    padding-block: 32px;
+  }
+}

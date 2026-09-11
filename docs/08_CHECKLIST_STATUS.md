@@ -1,6 +1,6 @@
 # 08 – Academy-Checkliste: aktueller Implementierungsstand
 
-Stand: 11.09.2026. Grundlage ist der aktuelle Repository-Stand vor der finalen Figma-/Responsive-Phase.
+Stand: 11.09.2026. Grundlage ist der aktuelle Repository-Stand nach der strukturellen Figma-/Responsive-Umsetzung; finale Browser-/Device-QA bleibt offen.
 
 Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfung noch offen · `[ ]` offen · `[-]` optional.
 
@@ -10,7 +10,7 @@ Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfun
 | ----------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------- |
 | GitHub Repository + README-Link                             | [ ]    | README vorhanden; finalen GitHub-Link vor Abgabe ergänzen.                                                                      |
 | Semantisches HTML                                           | [x]    | Header, Nav, Main, Footer, Form, Fieldset, Article, Section, Listen und Definition Lists werden fachlich eingesetzt.            |
-| Font-Size mindestens 16px / Kleingedrucktes mindestens 14px | [x]    | Technischer Basis-Style setzt `body: 16px`, `small: 14px`; finales Figma darf diese Untergrenzen nicht unterschreiten.          |
+| Font-Size mindestens 16px / Kleingedrucktes mindestens 14px | [x]    | Normaler und interaktiver Text bleibt mindestens 16px; `.fine-print`/`small` mindestens 14px. |
 | Angular Frontend                                            | [x]    | Angular 22, Standalone Components, Router, Reactive Forms, Signals.                                                             |
 | JSDoc für Funktionen                                        | [x]    | Eigene fachliche Produktionsfunktionen/-methoden sind dokumentiert; ESLint-Strukturregeln schützen den Refactor-Stand.          |
 | Alle generierten Rezepte in Firebase                        | [~]    | n8n Generation persistiert die drei validierten Recipes in Firebase RTDB; realen E2E-Write noch einmal vor Figma/Abgabe prüfen. |
@@ -31,10 +31,10 @@ Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfun
 
 | Anforderung                                       | Status | Nachweis / Restarbeit                                               |
 | ------------------------------------------------- | ------ | ------------------------------------------------------------------- |
-| Desktop, Tablet, Smartphone                       | [ ]    | Bestandteil der nächsten Figma-Phase.                               |
-| Touch optimiert                                   | [ ]    | Bestandteil der nächsten Figma-Phase.                               |
-| Recipe-/Nutrition-Darstellung auf kleinen Screens | [ ]    | Bestandteil der nächsten Figma-Phase.                               |
-| Generierungswartezeit ansprechend überbrückt      | [ ]    | Funktionaler Loading-State vorhanden; finale Figma-Animation fehlt. |
+| Desktop, Tablet, Smartphone                       | [~]    | Standard + Mobile bis 768px + Widescreen ab 1440px umgesetzt; finales reales Viewport-QA offen. |
+| Touch optimiert                                   | [~]    | Zentrale Controls besitzen mindestens 44px Touch-Ziele; finales Device-QA offen. |
+| Recipe-/Nutrition-Darstellung auf kleinen Screens | [~]    | Recipe Detail, Nutrition, Zutaten und Directions wechseln mobil auf lesbare einspaltige Layouts; visuelles QA offen. |
+| Generierungswartezeit ansprechend überbrückt      | [x]    | Figma-Loading-GIF integriert; statisches Asset bei `prefers-reduced-motion`. |
 
 ## Git-Workflow
 
@@ -44,7 +44,7 @@ Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfun
 | Commit nach jeder Session       | [?]    | Aus ZIP nicht prüfbar.                                                                   |
 | Aussagekräftige Commit-Messages | [?]    | Aus ZIP nicht prüfbar.                                                                   |
 | `.gitignore`                    | [x]    | Runtime Config, Supabase Temp und Firebase Admin SDK Keys sind ausgeschlossen.           |
-| Repository aktuell/gepflegt     | [~]    | Technischer Stand dokumentiert; finalen n8n-Export und Figma-Stand vor Abgabe committen. |
+| Repository aktuell/gepflegt     | [~]    | Technischer und Figma-Stand dokumentiert; finalen geprüften Abgabestand committen/pushen. |
 
 ## User Stories 1–10
 
@@ -91,6 +91,6 @@ Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfun
 | -------------------------- | ------ | --------------------------------------------------------------------------- |
 | Impressum                  | [~]    | Route und Platzhalter vorhanden; reale Pflichtangaben vor Abgabe einsetzen. |
 | Cross-Browser-Test         | [ ]    | Nach Figma in Chrome/Firefox/Edge durchführen.                              |
-| Responsive-Test            | [ ]    | Nach Figma für Desktop/Tablet/Mobile durchführen.                           |
-| Code-Review                | [~]    | Strukturrefactor durchgeführt; finaler Review nach Figma/n8n-E2E.           |
+| Responsive-Test            | [ ]    | Implementierung vorhanden; final auf Desktop/Tablet/Mobile real prüfen.      |
+| Code-Review                | [~]    | Struktur- und Figma-Nachaudit durchgeführt; finaler Review nach Browser-QA/n8n-E2E. |
 | GitHub Repository + README | [ ]    | Finalen Repo-Link ergänzen und Abgabestand pushen.                          |

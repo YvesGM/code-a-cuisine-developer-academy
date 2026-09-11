@@ -1,0 +1,37 @@
+﻿@use '../../styles/variables' as v;
+
+:host {
+  display: block;
+}
+.library-recipes {
+  display: grid;
+  gap: 24px;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 64px;
+  text-align: center;
+}
+.pagination small {
+  display: block;
+  margin-top: 4px;
+}
+.pagination button {
+  flex-shrink: 0;
+  padding: 8px;
+  border: 0;
+}
+.pagination img {
+  width: 26px;
+  height: 27px;
+}
+
+@media (max-width: v.$breakpoint-mobile) {
+  .pagination {
+    gap: 16px;
+    margin-top: 40px;
+  }
+}

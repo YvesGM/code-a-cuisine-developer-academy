@@ -1,0 +1,27 @@
+<section class="page results-page">
+  <div class="results-heading">
+    <div class="page-heading">
+      <h1>The recipe results</h1>
+      <p>
+        We took what you have and let our AI do the thinking. Here are 3 easy recipes you can make
+        right now!
+      </p>
+      <span class="visually-hidden">Beste Rezeptvorschläge</span>
+    </div>
+    <img
+      src="assets/img/gpt-image.png"
+      alt="Ein Roboter serviert eine Mahlzeit"
+      width="1148"
+      height="444"
+    />
+  </div>
+  <div class="results-grid">
+    @for (recipe of state.topResults(); track recipe.id) {
+      <app-recipe-card [recipe]="recipe" [showRank]="true" />
+    }
+  </div>
+  <div class="results-actions actions">
+    <a class="button button--outline" routerLink="/cookbook">Go to cookbook</a>
+    <a class="button button--cream" routerLink="/generate">Generate new recipe</a>
+  </div>
+</section>

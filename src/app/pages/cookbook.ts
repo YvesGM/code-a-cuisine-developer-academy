@@ -2,20 +2,15 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CUISINE_LABELS, OPTIONS } from '../core/config';
 import { LibraryList } from '../shared/library-list';
+import { CUISINE_ASSETS } from '../shared/cuisine-assets';
 @Component({
   selector: 'app-cookbook',
   imports: [RouterLink, LibraryList],
-  template: `<h1>Rezeptebibliothek</h1>
-    <p>Öffentliche gespeicherte Rezepte ohne Account.</p>
-    <nav aria-label="Kochstil filtern">
-      <a routerLink="/cookbook">Alle</a>
-      @for (cuisine of cuisines; track cuisine) {
-        <a [routerLink]="['/cookbook', cuisine]">{{ labels[cuisine] }}</a>
-      }
-    </nav>
-    <app-library-list />`,
+  templateUrl: './cookbook.html',
+  styleUrl: './cookbook.scss',
 })
 export class CookbookPage {
+  readonly images = CUISINE_ASSETS;
   readonly cuisines = OPTIONS.cuisines;
   readonly labels = CUISINE_LABELS;
 }

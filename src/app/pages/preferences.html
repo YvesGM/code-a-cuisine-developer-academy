@@ -1,0 +1,150 @@
+<section class="page preferences-page">
+  <a class="back-link" routerLink="/generate">Zurück zu Zutaten</a>
+  <h1>Choose your preferences</h1>
+  <form [formGroup]="form" (ngSubmit)="generate()">
+    <fieldset class="counts">
+      <legend class="visually-hidden">Portionen und Kochteam</legend>
+      <div class="count-field">
+        <label for="servings">Wie viele Portionen?</label>
+        <div class="counter">
+          <button
+            type="button"
+            class="icon-button button--outline"
+            aria-label="Eine Portion weniger"
+            (click)="adjustCount('servings', -1)"
+            [disabled]="form.controls.servings.value <= limits.servings.min"
+          >
+            <img class="icon" src="assets/icons/minus-icon.svg" alt="" />
+          </button>
+          <input
+            id="servings"
+            type="number"
+            formControlName="servings"
+            [min]="limits.servings.min"
+            [max]="limits.servings.max"
+            step="1"
+          />
+          <span>Portionen</span>
+          <button
+            type="button"
+            class="icon-button button--outline"
+            aria-label="Eine Portion mehr"
+            (click)="adjustCount('servings', 1)"
+            [disabled]="form.controls.servings.value >= limits.servings.max"
+          >
+            <img class="icon" src="assets/icons/plus-icon.svg" alt="" />
+          </button>
+        </div>
+      </div>
+      <div class="count-field">
+        <label for="cookCount">Wie viele kochen mit?</label>
+        <div class="counter">
+          <button
+            type="button"
+            class="icon-button button--outline"
+            aria-label="Ein Kochhelfer weniger"
+            (click)="adjustCount('cookCount', -1)"
+            [disabled]="form.controls.cookCount.value <= limits.cookCount.min"
+          >
+            <img class="icon" src="assets/icons/minus-icon.svg" alt="" />
+          </button>
+          <input
+            id="cookCount"
+            type="number"
+            formControlName="cookCount"
+            [min]="limits.cookCount.min"
+            [max]="limits.cookCount.max"
+            step="1"
+          />
+          <span>Kochhelfer</span>
+          <button
+            type="button"
+            class="icon-button button--outline"
+            aria-label="Ein Kochhelfer mehr"
+            (click)="adjustCount('cookCount', 1)"
+            [disabled]="form.controls.cookCount.value >= limits.cookCount.max"
+          >
+            <img class="icon" src="assets/icons/plus-icon.svg" alt="" />
+          </button>
+        </div>
+      </div>
+    </fieldset>
+    <div class="preference-options">
+      <fieldset>
+        <legend>
+          <img class="icon" src="assets/icons/clock-icon.svg" alt="" />Difficulty / Aufwand
+        </legend>
+        <div class="choices choices--difficulty">
+          @for (item of options.difficulties; track item) {
+            <label class="choice">
+              <input type="radio" formControlName="difficulty" [value]="item" />
+              <span>{{ difficulties[item].label }}</span>
+              <small>{{ difficulties[item].range }}</small>
+            </label>
+          }
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend><img class="icon" src="assets/icons/public-icon.svg" alt="" />Cuisine</legend>
+        <div class="choices">
+          @for (item of options.cuisines; track item) {
+            <label class="choice"
+              ><input type="radio" formControlName="cuisine" [value]="item" /><span>{{
+                cuisines[item]
+              }}</span></label
+            >
+          }
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>
+          <img class="icon" src="assets/icons/fork-spoon-icon.svg" alt="" />Diet Preference
+        </legend>
+        <div class="choices">
+          @for (item of options.diets; track item) {
+            <label class="choice"
+              ><input type="radio" formControlName="diet" [value]="item" /><span>{{
+                diets[item]
+              }}</span></label
+            >
+          }
+        </div>
+      </fieldset>
+    </div>
+    <div class="form-status">
+      @if (quotaLoading()) {
+        <p role="status">Nutzungslimit wird geprüft…</p>
+      } @else if (quota(); as quota) {
+        <p class="fine-print">
+          Heute verfügbar: {{ quota.ipRemainingRecipes }} von {{ quota.ipLimitRecipes }} Rezepten
+          für diese IP; systemweit {{ quota.globalRemainingRecipes }} von
+          {{ quota.globalLimitRecipes }} Rezepten.
+        </p>
+        @if (!quota.generationAllowed) {
+          <p class="notice notice--error" role="alert">
+            Das tägliche Rezeptlimit ist erreicht. Bitte morgen erneut versuchen.
+          </p>
+        }
+      } @else if (quotaError()) {
+        <p role="status" class="fine-print">{{ quotaError() }}</p>
+      }
+      @if (form.invalid) {
+        <p class="fine-print">
+          Bitte alle Wünsche wählen; Portionen und Kochhelfer müssen ganze Zahlen im angegebenen
+          Bereich sein.
+        </p>
+      }
+      <button
+        class="button--primary"
+        type="submit"
+        [disabled]="form.invalid || quota()?.generationAllowed === false"
+      >
+        Generate Recipe
+      </button>
+      <p class="fine-print">
+        Demo: Vorräte werden proportional auf bis zu zwölf Portionen verteilt. Keine Aussage über
+        ausreichende Portionsgrößen.
+      </p>
+    </div>
+  </form>
+</section>

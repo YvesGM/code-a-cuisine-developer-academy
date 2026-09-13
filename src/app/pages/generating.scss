@@ -3,6 +3,7 @@
 :host {
   display: block;
 }
+
 .generating-page {
   height: calc(100dvh - 88px);
   min-height: 0;
@@ -13,14 +14,17 @@
   padding-block: 0;
   overflow: hidden;
 }
+
 .generating-content,
 .error-content {
   display: grid;
   justify-items: center;
 }
+
 .generating-content {
   gap: 32px;
 }
+
 picture {
   display: block;
   width: 220px;
@@ -28,57 +32,70 @@ picture {
   overflow: hidden;
   border-radius: v.$radius;
   background: #c4d0c4;
+
+  img {
+    width: 220px;
+    max-width: none;
+    height: 309px;
+    margin-top: -41px;
+  }
 }
-picture img {
-  width: 220px;
-  max-width: none;
-  height: 309px;
-  margin-top: -41px;
-}
+
 h1 {
   font-family: 'Ubuntu', 'Trebuchet MS', sans-serif;
   font-size: 48px;
   font-weight: 700;
 }
+
 .dots span {
   animation: loading-dot 3s steps(1, end) infinite;
+
+  &:nth-child(2) {
+    animation-delay: 0.5s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 1s;
+  }
 }
-.dots span:nth-child(2) {
-  animation-delay: 0.5s;
-}
-.dots span:nth-child(3) {
-  animation-delay: 1s;
-}
+
 .error-content {
   gap: 28px;
+
+  .back-link {
+    color: v.$cream;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .direction-arrow {
+    width: 24px;
+    height: 12px;
+    background: linear-gradient(currentColor, currentColor) left center / 29px 2px no-repeat;
+
+    &::before,
+    &::after {
+      height: 2px;
+    }
+  }
 }
+
 .status-panel {
   max-width: 567px;
+
+  h1 {
+    font-size: 28px;
+  }
 }
-.status-panel h1 {
-  font-size: 28px;
-}
-.error-content .back-link {
-  color: v.$cream;
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-}
-.error-content .direction-arrow {
-  width: 24px;
-  height: 12px;
-  background: linear-gradient(currentColor, currentColor) left center / 29px 2px no-repeat;
-}
-.error-content .direction-arrow::before,
-.error-content .direction-arrow::after {
-  height: 2px;
-}
+
 @keyframes loading-dot {
   0%,
   50%,
   100% {
     opacity: 1;
   }
+
   25%,
   75% {
     opacity: 0;
@@ -91,6 +108,7 @@ h1 {
     gap: 40px;
     padding-inline: 16px;
   }
+
   h1 {
     font-size: 36px;
   }

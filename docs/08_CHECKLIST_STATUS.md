@@ -1,6 +1,6 @@
 # 08 – Academy-Checkliste: aktueller Implementierungsstand
 
-Stand: 11.09.2026. Grundlage ist der aktuelle Repository-Stand nach der strukturellen Figma-/Responsive-Umsetzung; finale Browser-/Device-QA bleibt offen.
+Stand: 13.09.2026. Grundlage ist der aktuelle Repository-Stand nach der strukturellen Figma-/Responsive-Umsetzung; finale Browser-/Device-QA bleibt offen.
 
 Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfung noch offen · `[ ]` offen · `[-]` optional.
 
@@ -10,7 +10,7 @@ Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfun
 | ----------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------- |
 | GitHub Repository + README-Link                             | [ ]    | README vorhanden; finalen GitHub-Link vor Abgabe ergänzen.                                                                      |
 | Semantisches HTML                                           | [x]    | Header, Nav, Main, Footer, Form, Fieldset, Article, Section, Listen und Definition Lists werden fachlich eingesetzt.            |
-| Font-Size mindestens 16px / Kleingedrucktes mindestens 14px | [x]    | Normaler und interaktiver Text bleibt mindestens 16px; `.fine-print`/`small` mindestens 14px. |
+| Font-Size mindestens 16px / Kleingedrucktes mindestens 14px | [~]    | Drei mobile Library-Mikrotexte stehen noch auf 13px. Wegen der Vorgabe, das aktuelle Design bei diesem Struktur-Refactor nicht zu verändern, bewusst nicht angehoben. |
 | Angular Frontend                                            | [x]    | Angular 22, Standalone Components, Router, Reactive Forms, Signals.                                                             |
 | JSDoc für Funktionen                                        | [x]    | Eigene fachliche Produktionsfunktionen/-methoden sind dokumentiert; ESLint-Strukturregeln schützen den Refactor-Stand.          |
 | Alle generierten Rezepte in Firebase                        | [~]    | n8n Generation persistiert die drei validierten Recipes in Firebase RTDB; realen E2E-Write noch einmal vor Figma/Abgabe prüfen. |
@@ -19,7 +19,7 @@ Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfun
 
 | Anforderung                           | Status | Nachweis / Restarbeit                                                                                                   |
 | ------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------- |
-| n8n-Projekt in Git                    | [x]    | Vier aktuelle Workflow-Exporte liegen unter `n8n/workflows/`; alle vier sind aktiv exportiert.                         |
+| n8n-Projekt in Git                    | [x]    | Fünf aktuelle Workflow-Exporte liegen unter `n8n/workflows/`; alle fünf sind aktiv exportiert und alle Nodes besitzen Beschreibungstexte.                         |
 | Aussagekräftige Node-Namen            | [x]    | Generation, Library, Quota und Error Notification verwenden fachliche Node-Namen.                                       |
 | Beschreibungstexte                    | [x]    | Alle exportierten Nodes besitzen aussagekräftige englische Notes.                                                       |
 | Error Handling + Logging + E-Mail     | [~]    | Kontrollierte Fehlerbranches, Supabase-Audit, SMTP und Error-Workflow-Zuordnung sind vorhanden; realen Fehler-Smoke-Test noch durchführen. |
@@ -50,7 +50,7 @@ Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfun
 
 | Story                  | Status          | Umsetzung                                                                                                         |
 | ---------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------- |
-| 1 Zutaten-Eingabe      | [x]             | Add/Edit/Delete/List, Menge, Einheit, mindestens eine Zutat; Autocomplete ist optional und nicht implementiert.   |
+| 1 Zutaten-Eingabe      | [x]             | Add/Edit/Delete/List, Menge, Einheit, mindestens eine Zutat; dynamisches Autocomplete lädt den Katalog einmalig über n8n und filtert lokal nach Nutzung.   |
 | 2 Portionen            | [x]             | 1–12, Default 2; Request/Recipe tragen `servings`, Mock skaliert deterministisch, n8n/KI erhält die Portionszahl. |
 | 3 Zeitangabe           | [x]             | Quick ≤20, Medium 20–45, Complex ≥45; Frontend und n8n validieren den Bereich.                                    |
 | 4 Kochstil             | [x]             | Deutsch, Italienisch, Japanisch, Indisch, Gourmet, Fusion; KI-Prompt bindet Cuisine ein.                          |

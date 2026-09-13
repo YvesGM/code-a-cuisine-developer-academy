@@ -6,10 +6,10 @@
 
 .cookbook-page {
   padding: 24px 55px 80px;
-}
 
-.cookbook-page .direction-arrow {
-  width: 22px;
+  .direction-arrow {
+    width: 22px;
+  }
 }
 
 .back-link {
@@ -31,53 +31,58 @@
 .page-heading {
   gap: 16px;
   margin-bottom: 0;
-}
 
-.page-heading > p {
-  max-width: 440px;
-  font-size: 22px;
-  font-weight: 400;
+  > p {
+    max-width: 440px;
+    font-size: 22px;
+    font-weight: 400;
+  }
 }
 
 .most-liked {
   min-width: 0;
-}
 
-.most-liked > h2 {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  font-size: 24px;
-  font-weight: 500;
-}
+  > h2 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 24px;
+    font-weight: 500;
 
-.most-liked > h2 img {
-  width: 34px;
-  height: 32px;
-  object-fit: contain;
-}
+    img {
+      width: 34px;
+      height: 32px;
+      object-fit: contain;
+    }
+  }
 
-.most-liked__track {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 320px;
-  gap: 16px;
-  overflow-x: auto;
-  overscroll-behavior-inline: contain;
-  padding-bottom: 2px;
-  cursor: grab;
-  scrollbar-width: none;
-  touch-action: pan-x;
-  user-select: none;
-}
+  &__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 320px;
+    gap: 16px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding-bottom: 2px;
+    cursor: grab;
+    scrollbar-width: none;
+    touch-action: pan-x;
+    user-select: none;
 
-.most-liked__track::-webkit-scrollbar {
-  display: none;
-}
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
-.most-liked__track:active {
-  cursor: grabbing;
+    &:active {
+      cursor: grabbing;
+    }
+  }
+
+  &__status {
+    min-height: 44px;
+    color: v.$green-middle;
+  }
 }
 
 .liked-card {
@@ -89,41 +94,36 @@
   background: v.$card;
   color: v.$green-olive;
   text-decoration: none;
-}
 
-.liked-card:hover {
-  background: v.$sage;
-}
+  &:hover {
+    background: v.$sage;
+  }
 
-.liked-card__meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 15px;
-}
+  &__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 15px;
 
-.liked-card__meta > span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
+    > span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+  }
 
-.liked-card__count {
-  padding: 4px 8px;
-  border-radius: 16px;
-  background: v.$green-recipe-badge;
-}
+  &__count {
+    padding: 4px 8px;
+    border-radius: 16px;
+    background: v.$green-recipe-badge;
+  }
 
-.liked-card h3 {
-  align-self: end;
-  font-size: 22px;
-  font-weight: 500;
-}
-
-.most-liked__status {
-  min-height: 44px;
-  color: v.$green-middle;
+  h3 {
+    align-self: end;
+    font-size: 22px;
+    font-weight: 500;
+  }
 }
 
 .cuisine-grid {
@@ -138,37 +138,39 @@
   gap: 8px;
   color: v.$green-middle;
   text-decoration: none;
-}
 
-.cuisine-card h2 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 28px;
-  font-weight: 500;
-}
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 28px;
+    font-weight: 500;
+  }
 
-.cuisine-card__icon {
-  width: 28px;
-  height: 28px;
-  flex: 0 0 28px;
-  object-fit: contain;
-}
+  &__icon {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    object-fit: contain;
+  }
 
-.cuisine-card__image {
-  width: 100%;
-  height: auto;
-  aspect-ratio: 1;
-  object-fit: cover;
-  transition: filter 160ms ease;
-}
+  &__image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    transition: filter 160ms ease;
+  }
 
-.cuisine-card:hover h2 {
-  text-decoration: underline;
-}
+  &:hover {
+    h2 {
+      text-decoration: underline;
+    }
 
-.cuisine-card:hover .cuisine-card__image {
-  filter: brightness(1.04);
+    .cuisine-card__image {
+      filter: brightness(1.04);
+    }
+  }
 }
 
 .cookbook-actions {
@@ -195,10 +197,10 @@
 
   .back-link {
     margin-bottom: 24px;
-  }
 
-  .back-link__label {
-    display: none;
+    &__label {
+      display: none;
+    }
   }
 
   .cookbook-intro {
@@ -219,20 +221,22 @@
     gap: 32px;
   }
 
-  .cuisine-card h2 {
-    font-size: 24px;
-  }
+  .cuisine-card {
+    h2 {
+      font-size: 24px;
+    }
 
-  .cuisine-card__image {
-    max-height: 520px;
+    &__image {
+      max-height: 520px;
+    }
   }
 
   .cookbook-actions {
     justify-content: center;
     margin-top: 48px;
-  }
 
-  .cookbook-actions .hero-link {
-    font-weight: 600;
+    .hero-link {
+      font-weight: 600;
+    }
   }
 }

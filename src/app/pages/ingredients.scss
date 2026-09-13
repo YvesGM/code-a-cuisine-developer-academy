@@ -1,27 +1,33 @@
 @use '../../styles/variables' as v;
 @use './ingredients-list';
 @use './ingredients-mobile' as mobile;
+
 :host {
   display: block;
 }
+
 .ingredients-page {
   max-width: 1247px;
   padding-top: 32px;
 }
+
 .page-heading {
   gap: 16px;
   margin-bottom: 48px;
   text-align: center;
 }
+
 .ingredient-workspace,
 .next-step {
   display: grid;
   grid-template-columns: minmax(0, 1.207fr) minmax(0, 1fr);
   gap: 32px;
 }
+
 .ingredient-workspace {
   align-items: start;
 }
+
 form {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 188px;
@@ -32,53 +38,62 @@ form {
   border-radius: v.$radius;
   background: rgba(57, 96, 57, 0.3);
 }
+
 .ingredient-field,
 .serving-fields {
   align-self: start;
 }
+
 .ingredient-field {
   display: grid;
   gap: 8px;
 }
+
 .ingredient-examples {
   display: grid;
   gap: 0;
   padding-inline: 8px;
+
+  button {
+    display: flex;
+    justify-content: flex-start;
+    min-height: 20px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: v.$green-dark;
+    font-size: 16px;
+    line-height: 26px;
+    text-align: left;
+    transition: background-color 160ms ease;
+
+    &:hover,
+    &:focus-visible,
+    &.ingredient-example--active {
+      background: v.$cream;
+    }
+  }
 }
-.ingredient-examples button {
-  display: flex;
-  justify-content: flex-start;
-  min-height: 20px;
-  padding: 0 12px;
-  border: 0;
-  border-radius: 4px;
-  background: transparent;
-  color: v.$green-dark;
-  font-size: 16px;
-  line-height: 26px;
-  text-align: left;
-  transition: background-color 160ms ease;
-}
-.ingredient-examples button:hover,
-.ingredient-examples button:focus-visible,
-.ingredient-examples button.ingredient-example--active {
-  background: v.$cream;
-}
+
 .serving-fields {
   display: grid;
   grid-template-columns: 54px 84px 36px;
   align-items: start;
   gap: 8px;
+
+  legend {
+    grid-column: 1 / -1;
+    margin-bottom: 8px;
+    font-size: 20px;
+  }
 }
-.serving-fields legend {
-  grid-column: 1 / -1;
-  margin-bottom: 8px;
-  font-size: 20px;
-}
+
 .quantity-field,
 .unit-field {
   min-width: 0;
 }
+
 .unit-trigger {
   display: flex;
   align-items: center;
@@ -94,20 +109,20 @@ form {
   font-size: 16px;
   font-weight: 600;
   transition: background-color 160ms ease;
-}
 
-.unit-trigger:hover {
-  background: v.$cream;
+  &:hover {
+    background: v.$cream;
+  }
 }
 
 .unit-arrow {
   width: 12px;
   height: 12px;
   transition: transform 160ms ease;
-}
 
-.unit-arrow--open {
-  transform: rotate(180deg);
+  &--open {
+    transform: rotate(180deg);
+  }
 }
 
 .unit-menu {
@@ -117,26 +132,26 @@ form {
   width: 100%;
   padding-top: 4px;
   animation: unit-menu-in 160ms ease-out;
-}
 
-.unit-menu button {
-  justify-content: start;
-  margin-top: -6px;
-  min-height: 24px;
-  padding: 0px 2px;
-  border: 0;
-  min-width: 48px;
-  border-radius: 12px;
-  background: transparent;
-  color: v.$green-dark;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: center;
-  transition: background-color 160ms ease;
-}
+  button {
+    justify-content: start;
+    margin-top: -6px;
+    min-width: 48px;
+    min-height: 24px;
+    padding: 0 2px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    color: v.$green-dark;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color 160ms ease;
 
-.unit-menu button:hover {
-  background: v.$cream;
+    &:hover {
+      background: v.$cream;
+    }
+  }
 }
 
 @keyframes unit-menu-in {
@@ -163,6 +178,20 @@ input {
   font-size: 16px;
   font-weight: 600;
   line-height: 20px;
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    outline-offset: 0;
+    box-shadow: none;
+  }
+
+  &::placeholder {
+    color: v.$green-dark;
+    font-weight: 600;
+    opacity: 0.2;
+    text-align: center;
+  }
 }
 
 .ingredient-input-shell,
@@ -177,8 +206,8 @@ input {
 }
 
 #name {
-  cursor: text;
   min-width: 100px;
+  cursor: text;
 }
 
 .ingredient-caret,
@@ -219,13 +248,13 @@ input {
   opacity: 1;
 }
 
-input:focus,
-input:focus-visible,
-.unit-trigger:focus,
-.unit-trigger:focus-visible {
-  outline: none;
-  outline-offset: 0;
-  box-shadow: none;
+.unit-trigger {
+  &:focus,
+  &:focus-visible {
+    outline: none;
+    outline-offset: 0;
+    box-shadow: none;
+  }
 }
 
 @keyframes input-caret-blink {
@@ -240,25 +269,18 @@ input:focus-visible,
   }
 }
 
-input::placeholder {
-  color: v.$green-dark;
-  font-weight: 600;
-  opacity: 0.20;
-  text-align: center;
-}
-
 .quantity-field input {
   appearance: textfield;
   -moz-appearance: textfield;
   font-size: 16px;
   font-weight: 600;
-}
 
-.quantity-field input::-webkit-inner-spin-button,
-.quantity-field input::-webkit-outer-spin-button {
-  margin: 0;
-  appearance: none;
-  -webkit-appearance: none;
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    margin: 0;
+    appearance: none;
+    -webkit-appearance: none;
+  }
 }
 
 .add-ingredient {
@@ -270,15 +292,15 @@ input::placeholder {
   background: transparent;
   color: v.$green-dark;
   transition: background-color 160ms ease;
-}
 
-.add-ingredient:hover:not(:disabled) {
-  background: v.$cream;
-}
+  &:hover:not(:disabled) {
+    background: v.$cream;
+  }
 
-.add-ingredient img {
-  width: 18px;
-  height: 18px;
+  img {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 .form-error {
@@ -287,20 +309,20 @@ input::placeholder {
 
 .next-step {
   margin-top: 32px;
-}
 
-.next-step .button {
-  grid-column: 2;
-  justify-self: end;
-  min-height: 48px;
-  padding: 12px 24px;
-  border-radius: 0;
-  background: #315a31;
-  font-size: 16px;
-}
+  .button {
+    grid-column: 2;
+    justify-self: end;
+    min-height: 48px;
+    padding: 12px 24px;
+    border-radius: 0;
+    background: #315a31;
+    font-size: 16px;
 
-.next-step .button:hover {
-  background: v.$green-hover;
+    &:hover {
+      background: v.$green-hover;
+    }
+  }
 }
 
 @include mobile.responsive;

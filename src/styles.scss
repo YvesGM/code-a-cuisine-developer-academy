@@ -1,35 +1,27 @@
 @use 'styles/variables' as v;
 @use 'styles/fonts';
-
 * {
   box-sizing: border-box;
   scrollbar-width: thin;
   scrollbar-color: rgba(16, 49, 11, 0.5) transparent;
-}
-
-*::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-*::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-*::-webkit-scrollbar-thumb {
-  border: 2px solid transparent;
-  border-radius: 999px;
-  background: rgba(16, 49, 11, 0.5);
-  background-clip: padding-box;
-}
-
-*::-webkit-scrollbar-thumb:hover {
-  background: v.$green-dark;
-  background-clip: padding-box;
-}
-
-*::-webkit-scrollbar-corner {
-  background: transparent;
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track,
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background: rgba(16, 49, 11, 0.5);
+    background-clip: padding-box;
+    &:hover {
+      background: v.$green-dark;
+      background-clip: padding-box;
+    }
+  }
 }
 body {
   margin: 0;
@@ -86,10 +78,10 @@ select {
 }
 button {
   cursor: pointer;
-}
-button:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 }
 button,
 .button {
@@ -114,37 +106,38 @@ button:hover:not(:disabled),
 .button:hover {
   background: v.$green-hover;
 }
-.button--primary {
-  min-height: 60px;
-  font-size: 24px;
-}
-.button--cream {
-  background: v.$cream;
-  color: v.$green-dark;
-  transition:
-    background-color 220ms ease,
-    color 220ms ease,
-    font-weight 220ms ease;
-}
-
-.button--cream:hover:not(:disabled) {
-  background: v.$orange-hover;
-  color: v.$green-dark;
-  font-weight: 700;
-}
-.button--outline {
-  border-color: currentColor;
-  background: transparent;
-  color: inherit;
-}
-.button--outline:hover:not(:disabled) {
-  background: v.$sage;
-  color: v.$green-dark;
-}
-.button--small {
-  min-height: 44px;
-  padding: 8px 12px;
-  font-size: 16px;
+.button {
+  &--primary {
+    min-height: 60px;
+    font-size: 24px;
+  }
+  &--cream {
+    background: v.$cream;
+    color: v.$green-dark;
+    transition:
+      background-color 220ms ease,
+      color 220ms ease,
+      font-weight 220ms ease;
+    &:hover:not(:disabled) {
+      background: v.$orange-hover;
+      color: v.$green-dark;
+      font-weight: 700;
+    }
+  }
+  &--outline {
+    border-color: currentColor;
+    background: transparent;
+    color: inherit;
+    &:hover:not(:disabled) {
+      background: v.$sage;
+      color: v.$green-dark;
+    }
+  }
+  &--small {
+    min-height: 44px;
+    padding: 8px 12px;
+    font-size: 16px;
+  }
 }
 .icon {
   width: 24px;
@@ -200,10 +193,10 @@ label {
   display: grid;
   gap: 24px;
   margin-bottom: 56px;
-}
-.page-heading > p {
-  font-size: 24px;
-  font-weight: 500;
+  > p {
+    font-size: 24px;
+    font-weight: 500;
+  }
 }
 .actions {
   display: flex;
@@ -218,27 +211,21 @@ label {
   height: 16px;
   flex-shrink: 0;
   background: linear-gradient(currentColor, currentColor) left center / 29px 3px no-repeat;
-}
-.direction-arrow::before,
-.direction-arrow::after {
-  position: absolute;
-  top: 50%;
-  right: 0;
-  width: 12px;
-  height: 3px;
-  margin-top: -1.5px;
-  background: currentColor;
-  content: '';
-  transform-origin: right center;
-}
-.direction-arrow::before {
-  transform: rotate(45deg);
-}
-.direction-arrow::after {
-  transform: rotate(-45deg);
-}
-.direction-arrow--left {
-  transform: rotate(180deg);
+  &::before,
+  &::after {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 12px;
+    height: 3px;
+    margin-top: -1.5px;
+    background: currentColor;
+    content: '';
+    transform-origin: right center;
+  }
+  &::before { transform: rotate(45deg); }
+  &::after { transform: rotate(-45deg); }
+  &--left { transform: rotate(180deg); }
 }
 .hero-link {
   --hero-link-hover-background: rgba(57, 96, 57, 0.1);
@@ -251,31 +238,25 @@ label {
   font-size: 20px;
   text-decoration: none;
   transition: background-color 160ms ease;
+  &--cream {
+    --hero-link-hover-background: rgba(250, 240, 230, 0.1);
+  }
+  &:hover {
+    background: var(--hero-link-hover-background);
+    text-decoration: none;
+    .direction-arrow {
+      animation: hero-link-arrow-fade 440ms ease-in-out;
+    }
+  }
 }
-
-.hero-link--cream {
-  --hero-link-hover-background: rgba(250, 240, 230, 0.1);
-}
-
-.hero-link:hover {
-  background: var(--hero-link-hover-background);
-  text-decoration: none;
-}
-
-.hero-link:hover .direction-arrow {
-  animation: hero-link-arrow-fade 440ms ease-in-out;
-}
-
 @keyframes hero-link-arrow-fade {
   0% {
     opacity: 1;
   }
-
   40%,
   60% {
     opacity: 0;
   }
-
   100% {
     opacity: 1;
   }
@@ -293,10 +274,10 @@ label {
   border: 1px solid currentColor;
   border-radius: 12px;
   overflow-wrap: anywhere;
-}
-.notice--error {
-  color: #7a2525;
-  background: #fff1ee;
+  &--error {
+    color: #7a2525;
+    background: #fff1ee;
+  }
 }
 .status-panel {
   display: grid;
@@ -326,27 +307,22 @@ label {
   clip-path: inset(50%);
   white-space: nowrap;
 }
-
 @media (max-width: 1080px) {
   h1 {
     font-size: 36px;
   }
-
   .page-heading > p {
     font-size: 20px;
   }
 }
-
 @media (max-width: 900px) {
   h1 {
     font-size: 32px;
   }
-
   .page-heading > p {
     font-size: 18px;
   }
 }
-
 @media (max-width: v.$breakpoint-mobile) {
   body {
     font-size: 16px;
@@ -372,40 +348,32 @@ label {
     gap: 16px;
     margin-bottom: 32px;
   }
-
   .status-panel {
     padding: 24px;
   }
 }
-
 ::view-transition-old(root) {
   animation: page-fade-out 260ms ease forwards;
 }
-
 ::view-transition-new(root) {
   animation: page-fade-in 280ms ease forwards;
 }
-
 @keyframes page-fade-out {
   from {
     opacity: 1;
   }
-
   to {
     opacity: 0;
   }
 }
-
 @keyframes page-fade-in {
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }
 }
-
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
   ::view-transition-new(root) {

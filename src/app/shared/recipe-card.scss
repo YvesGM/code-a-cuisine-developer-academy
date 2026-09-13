@@ -14,13 +14,19 @@
   background: v.$card;
   color: v.$green-dark;
 }
-h2 {
+
+.recipe-card h2 {
+  color: v.$green-dark;
+  font-weight: 600;
+  font-size: 42px;
   overflow-wrap: anywhere;
 }
+
 .recipe-rank {
   display: flex;
   align-items: center;
   gap: 16px;
+  color: v.$green;
   font-size: 24px;
   font-weight: 600;
 }
@@ -33,7 +39,14 @@ h2 {
   display: flex;
   align-items: center;
   gap: 8px;
+  font-size: 24px;
+  font-weight: 500;
   grid-column: 1;
+  color: v.$green;
+  padding-bottom: 32px;
+}
+.recipe-card--ranked .cooking-time .icon {
+  opacity: 0.72;
 }
 .recipe-meta {
   grid-column: 1;
@@ -45,17 +58,22 @@ h2 {
   justify-self: end;
 }
 .recipe-card--ranked {
+  display: flex;
+  flex-direction: column;
   height: 100%;
   min-height: 338px;
-  grid-template-columns: minmax(0, 1fr);
-  align-content: start;
-  padding: 32px 24px;
+  align-items: stretch;
+  transition: background-color 160ms ease;
+}
+
+.recipe-card--ranked:hover {
+  background: v.$sage;
 }
 .recipe-card--ranked .button {
-  grid-column: 1;
-  grid-row: auto;
-  justify-self: start;
-  margin-top: 16px;
+  align-self: flex-start;
+  margin-top: auto;
+  color: #008000;
+  font-size: 28px;
 }
 
 @media (max-width: v.$breakpoint-mobile) {

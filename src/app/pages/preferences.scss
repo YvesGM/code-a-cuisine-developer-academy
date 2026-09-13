@@ -10,7 +10,7 @@
 .preferences-page > h1,
 .preferences-page > form {
   width: 100%;
-  max-width: 881px;
+  max-width: 750px;
   margin-inline: auto;
 }
 .back-link {
@@ -46,12 +46,14 @@ form {
   display: grid;
   gap: 32px;
 }
+
 .counts {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 24px;
+  justify-content: center;
+  gap: 140px;
 }
+
 .count-field {
   display: grid;
   gap: 16px;

@@ -4,29 +4,36 @@
   display: block;
 }
 .generating-page {
-  min-height: 840px;
+  height: calc(100dvh - 88px);
+  min-height: 0;
   display: grid;
   justify-items: center;
   align-content: center;
   gap: 48px;
+  padding-block: 0;
+  overflow: hidden;
 }
-.generating-content {
+.generating-content,
+.error-content {
   display: grid;
   justify-items: center;
+}
+.generating-content {
   gap: 32px;
 }
 picture {
   display: block;
-  width: 253px;
-  height: 309px;
+  width: 220px;
+  height: 268px;
   overflow: hidden;
   border-radius: v.$radius;
+  background: #c4d0c4;
 }
 picture img {
-  width: 253px;
+  width: 220px;
   max-width: none;
-  height: 356px;
-  margin-top: -47px;
+  height: 309px;
+  margin-top: -41px;
 }
 h1 {
   font-family: 'Ubuntu', 'Trebuchet MS', sans-serif;
@@ -42,11 +49,29 @@ h1 {
 .dots span:nth-child(3) {
   animation-delay: 1s;
 }
+.error-content {
+  gap: 28px;
+}
 .status-panel {
   max-width: 567px;
 }
 .status-panel h1 {
   font-size: 28px;
+}
+.error-content .back-link {
+  color: v.$cream;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.error-content .direction-arrow {
+  width: 24px;
+  height: 12px;
+  background: linear-gradient(currentColor, currentColor) left center / 29px 2px no-repeat;
+}
+.error-content .direction-arrow::before,
+.error-content .direction-arrow::after {
+  height: 2px;
 }
 @keyframes loading-dot {
   0%,
@@ -62,8 +87,9 @@ h1 {
 
 @media (max-width: v.$breakpoint-mobile) {
   .generating-page {
-    min-height: 700px;
+    height: calc(100dvh - 44px);
     gap: 40px;
+    padding-inline: 16px;
   }
   h1 {
     font-size: 36px;

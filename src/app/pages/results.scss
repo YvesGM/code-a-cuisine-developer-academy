@@ -10,9 +10,24 @@
   gap: 64px;
   margin-bottom: 88px;
 }
+
 .page-heading {
   margin-bottom: 0;
 }
+
+.results-tags {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.results-tags .tag {
+  font-size: 20px;
+  font-weight: 500;
+  color: v.$green;
+  border-radius: 32px;
+}
+
 .results-heading > img {
   width: 100%;
   height: auto;
@@ -24,7 +39,8 @@
   gap: 24px;
 }
 .results-actions {
-  justify-content: end;
+  display: flex;
+  justify-content: flex-end;
   margin-top: 64px;
 }
 

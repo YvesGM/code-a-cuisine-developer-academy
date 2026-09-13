@@ -15,15 +15,15 @@ import { CUISINE_LABELS, DIET_LABELS, DIFFICULTIES } from '../core/config';
     }
     <h2>{{ recipe().title }}</h2>
     <p class="cooking-time">
-      <img class="icon" src="assets/icons/clock-icon.svg" alt="" width="20" height="20" />{{
-        recipe().cookingTimeMinutes
-      }}
-      min
+    <img class="icon" src="assets/icons/clock-icon.svg" alt="" width="20" height="20" />
+      Cooking time: {{ recipe().cookingTimeMinutes }}min
     </p>
-    <p class="recipe-meta">
-      {{ cuisines[recipe().cuisine] }} · {{ difficulties[recipe().difficulty].label }} ·
-      {{ diets[recipe().diet] }}
-    </p>
+    @if (!showRank()) {
+      <p class="recipe-meta">
+        {{ cuisines[recipe().cuisine] }} · {{ difficulties[recipe().difficulty].label }} ·
+        {{ diets[recipe().diet] }}
+      </p>
+    }
     <a class="button button--cream" [routerLink]="['/recipe', recipe().id]"
       >View<span class="visually-hidden"> {{ recipe().title }}</span></a
     >

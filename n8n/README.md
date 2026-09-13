@@ -28,3 +28,5 @@ Das Credential wird aus dem Firebase-Admin-Service-Account-JSON angelegt. Das pr
 - `Code-a-Cuisine - Error Notification.json`
 
 Quota, Audit und der dynamische Ingredient-Catalog liegen in Supabase. Recipes werden ausschließlich in Firebase gespeichert.
+
+Der öffentliche Generation-Webhook setzt `Allowed Origins (CORS)` explizit auf `*`, damit sowohl die lokale Angular-Entwicklung als auch das spätere Web-Deployment die kontrollierten JSON-Erfolgs- und Fehlerantworten lesen können.

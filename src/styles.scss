@@ -121,9 +121,16 @@ button:hover:not(:disabled),
 .button--cream {
   background: v.$cream;
   color: v.$green-dark;
+  transition:
+    background-color 220ms ease,
+    color 220ms ease,
+    font-weight 220ms ease;
 }
+
 .button--cream:hover:not(:disabled) {
-  background: v.$sage;
+  background: v.$orange-hover;
+  color: v.$green-dark;
+  font-weight: 700;
 }
 .button--outline {
   border-color: currentColor;
@@ -232,6 +239,41 @@ label {
 }
 .direction-arrow--left {
   transform: rotate(180deg);
+}
+.hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 4px 8px;
+  color: inherit;
+  font-size: 18px;
+  text-decoration: none;
+  transition: background-color 160ms ease;
+}
+
+.hero-link:hover {
+  background: rgba(250, 240, 230, 0.14);
+  text-decoration: none;
+}
+
+.hero-link:hover .direction-arrow {
+  animation: hero-link-arrow-fade 440ms ease-in-out;
+}
+
+@keyframes hero-link-arrow-fade {
+  0% {
+    opacity: 1;
+  }
+
+  40%,
+  60% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 .back-link {
   display: inline-flex;

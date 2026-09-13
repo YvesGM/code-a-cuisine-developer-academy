@@ -59,57 +59,6 @@ h1 {
   font-weight: 500;
 }
 
-.hero__content > .button.button--cream {
-  transition:
-    background-color 220ms ease,
-    color 220ms ease,
-    font-weight 220ms ease;
-}
-
-.hero .hero__content > .button.button--cream:hover {
-  background: v.$orange-hover;
-  color: v.$green-dark;
-  font-weight: 700;
-}
-
-.hero__cookbook-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  min-height: 44px;
-  padding: 4px 8px;
-  font-size: 18px;
-  text-decoration: none;
-  transition: background-color 160ms ease;
-}
-
-.hero__cookbook-link:hover {
-  background: rgba(250, 240, 230, 0.14);
-  text-decoration: none;
-}
-
-.hero__cookbook-link:hover .hero__cookbook-link-arrow {
-  animation: cookbook-arrow-fade 440ms ease-in-out;
-}
-
-@keyframes cookbook-arrow-fade {
-  0% {
-    opacity: 1;
-  }
-
-  40% {
-    opacity: 0;
-  }
-
-  60% {
-    opacity: 0;
-  }
-
-  100% {
-    opacity: 1;
-  }
-}
-
 .hero__visuals {
   position: absolute;
   top: 0;

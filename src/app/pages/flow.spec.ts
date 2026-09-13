@@ -114,10 +114,12 @@ describe('Functional navigation flow', () => {
     const pending = state.generate();
     const harness = await RouterTestingHarness.create('/generating');
     expect(harness.routeNativeElement?.textContent).toContain('Generating...');
+    expect(harness.routeNativeElement?.querySelector('.back-link')).toBeNull();
     reject?.(new Error('network'));
     await pending;
     harness.detectChanges();
     expect(harness.routeNativeElement?.querySelector('[role="alert"]')).toBeTruthy();
+    expect(harness.routeNativeElement?.querySelector('.back-link .direction-arrow')).toBeTruthy();
     const page = harness.routeDebugElement?.componentInstance as GeneratingPage;
     page.retry();
     await harness.fixture.whenStable();

@@ -13,11 +13,15 @@
     </div>
   }
   @if (state.error()) {
-    <div class="status-panel">
-      <h1 id="generating-title">Rezeptgenerierung</h1>
-      <p class="notice notice--error" role="alert">{{ state.error() }}</p>
-      <button type="button" (click)="retry()">Retry</button>
+    <div class="error-content">
+      <div class="status-panel">
+        <h1 id="generating-title">Rezeptgenerierung</h1>
+        <p class="notice notice--error" role="alert">{{ state.error() }}</p>
+        <button type="button" (click)="retry()">Retry</button>
+      </div>
+      <a class="back-link" routerLink="/preferences">
+        <span class="direction-arrow direction-arrow--left" aria-hidden="true"></span>Preferences
+      </a>
     </div>
   }
-  <a class="back-link" routerLink="/preferences">Zurück zu Preferences</a>
 </section>

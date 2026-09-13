@@ -67,4 +67,4 @@ Record:
 
 ## Quota-/Audit-Vertrag
 
-Supabase bleibt für `generation_quota_claims`, `workflow_runs` und die Quota-RPCs zuständig. Diese Daten sind keine Recipe-Persistenz.
+Supabase bleibt für `generation_quota_claims`, `workflow_runs`, `ingredient_catalog` sowie die Quota-/Catalog-RPCs zuständig. Diese Daten sind keine Recipe-Persistenz. Catalog-List liefert `{ items: [{ name, usageCount }] }`; Register liefert `{ item: { name, usageCount } }`.

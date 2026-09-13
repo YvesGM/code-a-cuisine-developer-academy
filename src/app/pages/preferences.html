@@ -1,16 +1,18 @@
 <section class="page preferences-page">
-  <a class="back-link" routerLink="/generate">Zurück zu Zutaten</a>
+  <a class="back-link" routerLink="/generate">
+    <span class="direction-arrow direction-arrow--left" aria-hidden="true"></span>Ingredients
+  </a>
   <h1>Choose your preferences</h1>
   <form [formGroup]="form" (ngSubmit)="generate()">
     <fieldset class="counts">
-      <legend class="visually-hidden">Portionen und Kochteam</legend>
+      <legend class="visually-hidden">Portions and cooking team</legend>
       <div class="count-field">
-        <label for="servings">Wie viele Portionen?</label>
+        <label for="servings">How many portions you need?</label>
         <div class="counter">
           <button
             type="button"
             class="icon-button button--outline"
-            aria-label="Eine Portion weniger"
+            aria-label="One portion less"
             (click)="adjustCount('servings', -1)"
             [disabled]="form.controls.servings.value <= limits.servings.min"
           >
@@ -24,11 +26,11 @@
             [max]="limits.servings.max"
             step="1"
           />
-          <span>Portionen</span>
+          <span>Portions</span>
           <button
             type="button"
             class="icon-button button--outline"
-            aria-label="Eine Portion mehr"
+            aria-label="One portion more"
             (click)="adjustCount('servings', 1)"
             [disabled]="form.controls.servings.value >= limits.servings.max"
           >
@@ -37,12 +39,12 @@
         </div>
       </div>
       <div class="count-field">
-        <label for="cookCount">Wie viele kochen mit?</label>
+        <label for="cookCount">How many are cooking?</label>
         <div class="counter">
           <button
             type="button"
             class="icon-button button--outline"
-            aria-label="Ein Kochhelfer weniger"
+            aria-label="One cook less"
             (click)="adjustCount('cookCount', -1)"
             [disabled]="form.controls.cookCount.value <= limits.cookCount.min"
           >
@@ -56,11 +58,11 @@
             [max]="limits.cookCount.max"
             step="1"
           />
-          <span>Kochhelfer</span>
+          <span>Person</span>
           <button
             type="button"
             class="icon-button button--outline"
-            aria-label="Ein Kochhelfer mehr"
+            aria-label="One cook more"
             (click)="adjustCount('cookCount', 1)"
             [disabled]="form.controls.cookCount.value >= limits.cookCount.max"
           >
@@ -72,7 +74,7 @@
     <div class="preference-options">
       <fieldset>
         <legend>
-          <img class="icon" src="assets/icons/clock-icon.svg" alt="" />Difficulty / Aufwand
+          <img class="icon" src="assets/icons/clock-icon.svg" alt="" />Cooking time:
         </legend>
         <div class="choices choices--difficulty">
           @for (item of options.difficulties; track item) {
@@ -98,7 +100,7 @@
       </fieldset>
       <fieldset>
         <legend>
-          <img class="icon" src="assets/icons/fork-spoon-icon.svg" alt="" />Diet Preference
+          <img class="icon" src="assets/icons/fork-spoon-icon.svg" alt="" />Diet preferences
         </legend>
         <div class="choices">
           @for (item of options.diets; track item) {
@@ -112,39 +114,20 @@
       </fieldset>
     </div>
     <div class="form-status">
-      @if (quotaLoading()) {
-        <p role="status">Nutzungslimit wird geprüft…</p>
-      } @else if (quota(); as quota) {
-        <p class="fine-print">
-          Heute verfügbar: {{ quota.ipRemainingRecipes }} von {{ quota.ipLimitRecipes }} Rezepten
-          für diese IP; systemweit {{ quota.globalRemainingRecipes }} von
-          {{ quota.globalLimitRecipes }} Rezepten.
+      @if (quota()?.generationAllowed === false) {
+        <p class="notice notice--error" role="alert">
+          The daily recipe limit has been reached. Please try again tomorrow.
         </p>
-        @if (!quota.generationAllowed) {
-          <p class="notice notice--error" role="alert">
-            Das tägliche Rezeptlimit ist erreicht. Bitte morgen erneut versuchen.
-          </p>
-        }
       } @else if (quotaError()) {
-        <p role="status" class="fine-print">{{ quotaError() }}</p>
-      }
-      @if (form.invalid) {
-        <p class="fine-print">
-          Bitte alle Wünsche wählen; Portionen und Kochhelfer müssen ganze Zahlen im angegebenen
-          Bereich sein.
-        </p>
+        <p class="notice notice--error" role="status">{{ quotaError() }}</p>
       }
       <button
         class="button--primary"
         type="submit"
         [disabled]="form.invalid || quota()?.generationAllowed === false"
       >
-        Generate Recipe
+        Generate a Recipe
       </button>
-      <p class="fine-print">
-        Demo: Vorräte werden proportional auf bis zu zwölf Portionen verteilt. Keine Aussage über
-        ausreichende Portionsgrößen.
-      </p>
     </div>
   </form>
 </section>

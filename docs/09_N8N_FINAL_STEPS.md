@@ -7,7 +7,7 @@ Die Workflow-Logik wird ab jetzt ausschließlich in n8n fertiggestellt. Danach w
 In n8n müssen folgende Credentials fehlerfrei verbunden sein:
 
 - `Code-a-Cuisine Firebase Service Account` für Firebase RTDB Read/Write,
-- `Supabase account` für Quota-RPCs und `workflow_runs`,
+- `Supabase account` für Quota-/Catalog-RPCs und `workflow_runs`,
 - Gemini / Google AI Credential am Node `Generate 3 Recipes with Gemini`,
 - `SMTP account` für technische Fehlerbenachrichtigungen.
 
@@ -22,6 +22,7 @@ Danach bei diesen Workflows jeweils unter **Workflow Settings → Error workflow
 - `Code-a-Cuisine - Recipe Generation`
 - `Code-a-Cuisine - Recipe Library`
 - `Code-a-Cuisine - Quota Status`
+- `Code-a-Cuisine - Ingredient Catalog`
 
 Als Error Workflow jeweils `Code-a-Cuisine - Error Notification` setzen.
 
@@ -60,6 +61,7 @@ Es darf jeweils nur eine veröffentlichte Workflow-Version pro Methode/Pfad exis
 - `POST /webhook/code-a-cuisine-generate`
 - `GET /webhook/code-a-cuisine-library`
 - `GET /webhook/code-a-cuisine-quota`
+- `POST /webhook/code-a-cuisine-ingredients`
 
 Alte importierte Versionen mit denselben Webhook-Pfaden deaktivieren oder löschen.
 
@@ -67,8 +69,9 @@ Alte importierte Versionen mit denselben Webhook-Pfaden deaktivieren oder lösch
 
 1. Error Notification
 2. Quota Status
-3. Recipe Library
-4. Recipe Generation
+3. Ingredient Catalog
+4. Recipe Library
+5. Recipe Generation
 
 Anschließend in allen veröffentlichten Workflows kontrollieren, dass kein Node ein rotes Credential-/Konfigurationssymbol zeigt.
 
@@ -78,7 +81,9 @@ Im Schema `code_a_cuisine` müssen die Quota-/Audit-Objekte der Migration vorhan
 
 - `generation_quota_claims`
 - `workflow_runs`
+- `ingredient_catalog`
 - Claim-/Complete-/Release-/Status-RPCs
+- `list_ingredient_catalog` / `register_ingredient`
 
 Die frühere Supabase-Recipe-Tabelle ist nicht mehr der Persistenzowner; Recipes liegen in Firebase.
 

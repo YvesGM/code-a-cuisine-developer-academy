@@ -3,76 +3,187 @@
     <h1>Generate recipe</h1>
     <p>Got random stuff in your kitchen? Pop it in—we’ve got the perfect recipe waiting.</p>
   </div>
+
   <div class="ingredient-workspace">
-    <form [formGroup]="form" (ngSubmit)="save()" aria-label="Deine Zutaten">
+    <form [formGroup]="form" (ngSubmit)="save()" aria-label="Ingredients">
       <div class="ingredient-field">
-        <label for="name">Zutat</label>
-        <input id="name" formControlName="name" placeholder="z. B. Tomaten" required />
-      </div>
-      <div class="quantity-field">
-        <label for="amount">Menge</label>
-        <input id="amount" type="number" step="any" formControlName="amount" required />
-      </div>
-      <div class="unit-field">
-        <label for="unit">Einheit</label>
-        <select id="unit" formControlName="unit">
-          @for (unit of units; track unit) {
-            <option [value]="unit">{{ unit }}</option>
+        <label for="name">Ingredient</label>
+        <div class="ingredient-input-shell">
+          <input
+            #ingredientInput
+            id="name"
+            formControlName="name"
+            autocomplete="off"
+            required
+            (focus)="syncIngredientCaret()"
+            (input)="handleIngredientInput()"
+            (click)="syncIngredientCaret()"
+            (keyup)="syncIngredientCaret()"
+            (select)="syncIngredientCaret()"
+            (pointerup)="syncIngredientCaret()"
+            (keydown)="handleIngredientKeydown($event)"
+          />
+          <span
+            class="ingredient-caret"
+            [style.left.px]="ingredientCaretLeft()"
+            aria-hidden="true"
+          ></span>
+          @if (suggestionSuffix()) {
+          <span
+            class="ingredient-ghost"
+            [style.left.px]="ingredientCaretLeft()"
+            aria-hidden="true"
+          >{{ suggestionSuffix() }}</span>
           }
-        </select>
-      </div>
-      <div class="form-actions actions">
-        <button type="submit" class="button--small">
-          <img class="icon" src="assets/icons/add-icon.svg" alt="" width="18" height="18" />
-          {{ editingId() ? 'Änderung speichern' : 'Zutat hinzufügen' }}
-        </button>
-        @if (editingId()) {
-          <button type="button" class="button--small button--outline" (click)="cancel()">
-            Abbrechen
+        </div>
+        @if (suggestions().length) {
+        <div class="ingredient-examples" aria-label="Ingredient suggestions">
+          @for (suggestion of suggestions(); track suggestion.name; let index = $index) {
+          <button
+            type="button"
+            [class.ingredient-example--active]="index === activeSuggestionIndex()"
+            (click)="selectSuggestion(suggestion.name)"
+          >
+            {{ suggestion.name }}
           </button>
+          }
+        </div>
         }
       </div>
+
+      <fieldset class="serving-fields">
+        <legend>Serving size</legend>
+        <div class="quantity-field">
+          <label class="visually-hidden" for="amount">Amount</label>
+          <div class="quantity-input-shell">
+            <input
+              #amountInput
+              id="amount"
+              type="text"
+              inputmode="decimal"
+              formControlName="amount"
+              placeholder="100"
+              required
+              (focus)="syncAmountCaret()"
+              (input)="syncAmountCaret()"
+              (click)="syncAmountCaret()"
+              (keyup)="syncAmountCaret()"
+              (pointerup)="syncAmountCaret()"
+            />
+            <span class="amount-caret" [style.left.px]="amountCaretLeft()" aria-hidden="true"></span>
+          </div>
+        </div>
+        <div class="unit-field">
+          <span class="visually-hidden" id="unit-label">Unit</span>
+
+          <button class="unit-trigger" type="button" aria-labelledby="unit-label" aria-haspopup="listbox"
+            [attr.aria-expanded]="unitMenuOpen()" (click)="toggleUnitMenu()" (keydown.escape)="unitMenuOpen.set(false)">
+            <span>{{ unitLabels[form.controls.unit.value] }}</span>
+
+            <img class="unit-arrow" [class.unit-arrow--open]="unitMenuOpen()" src="assets/icons/arrow-icon.svg"
+              alt="" />
+          </button>
+
+          @if (unitMenuOpen()) {
+          <div class="unit-menu" role="listbox" aria-label="Unit">
+            @for (unit of units; track unit) {
+            <button type="button" role="option" [attr.aria-selected]="form.controls.unit.value === unit"
+              (click)="selectUnit(unit)">
+              {{ unitLabels[unit] }}
+            </button>
+            }
+          </div>
+          }
+        </div>
+        <button class="add-ingredient" type="submit" aria-label="Add ingredient">
+          <img src="assets/icons/add-icon.svg" alt="" width="18" height="18" />
+        </button>
+      </fieldset>
+
       @if (error()) {
-        <p class="notice notice--error form-error" role="alert">{{ error() }}</p>
+      <p class="notice notice--error form-error" role="alert">{{ error() }}</p>
       }
     </form>
+
     <section class="ingredient-list" aria-labelledby="ingredient-list-title">
-      <h2 id="ingredient-list-title">Deine Zutaten</h2>
+      <h2 id="ingredient-list-title">List of your Ingredients</h2>
       <ul>
         @for (ingredient of state.ingredients(); track ingredient.id) {
-          <li>
-            <span class="ingredient-amount">{{ ingredient.amount }} {{ ingredient.unit }}</span>
-            <span class="ingredient-name">{{ ingredient.name }}</span>
-            <div class="ingredient-actions">
+        <li [class.ingredient-row--editing]="editDraft(ingredient.id) !== undefined">
+          @if (editDraft(ingredient.id); as draft) {
+          <div class="ingredient-edit-fields">
+            <span class="ingredient-edit-bullet" aria-hidden="true"></span>
+            <input
+              #editAmountInput
+              class="ingredient-edit-amount"
+              type="text"
+              inputmode="decimal"
+              [value]="draft.amount"
+              [attr.aria-label]="'Amount for ' + ingredient.name"
+              (input)="updateEditAmount(ingredient.id, editAmountInput.value)"
+            />
+            <div class="unit-field ingredient-edit-unit">
               <button
+                class="unit-trigger"
                 type="button"
-                class="button--small button--outline"
-                (click)="edit(ingredient)"
-                [attr.aria-label]="ingredient.name + ' bearbeiten'"
+                aria-haspopup="listbox"
+                [attr.aria-label]="'Unit for ' + ingredient.name"
+                [attr.aria-expanded]="draft.unitMenuOpen"
+                (click)="toggleEditUnitMenu(ingredient.id)"
+                (keydown.escape)="closeEditUnitMenu(ingredient.id)"
               >
-                Bearbeiten
+                <span>{{ unitLabels[draft.unit] }}</span>
+                <img
+                  class="unit-arrow"
+                  [class.unit-arrow--open]="draft.unitMenuOpen"
+                  src="assets/icons/arrow-icon.svg"
+                  alt=""
+                />
               </button>
-              <button
-                type="button"
-                class="button--small button--outline"
-                (click)="remove(ingredient.id)"
-                [attr.aria-label]="ingredient.name + ' löschen'"
-              >
-                Löschen
-              </button>
+              @if (draft.unitMenuOpen) {
+              <div class="unit-menu" role="listbox" [attr.aria-label]="'Unit for ' + ingredient.name">
+                @for (unit of units; track unit) {
+                <button
+                  type="button"
+                  role="option"
+                  [attr.aria-selected]="draft.unit === unit"
+                  (click)="selectEditUnit(ingredient.id, unit)"
+                >
+                  {{ unitLabels[unit] }}
+                </button>
+                }
+              </div>
+              }
             </div>
-          </li>
-        } @empty {
-          <li class="empty">Noch keine Zutaten erfasst.</li>
+          </div>
+          <span class="ingredient-name ingredient-name--editing">{{ ingredient.name }}</span>
+          } @else {
+          <span class="ingredient-amount">{{ ingredient.amount }}{{ listUnitLabels[ingredient.unit] }}</span>
+          <span class="ingredient-name">{{ ingredient.name }}</span>
+          }
+          <div class="ingredient-actions">
+            @if (editDraft(ingredient.id)) {
+            <button type="button" (click)="saveEdit(ingredient)" [attr.aria-label]="'Save ' + ingredient.name">
+              <img src="assets/icons/check-icon.svg" alt="" width="14" height="11" />
+            </button>
+            } @else {
+            <button type="button" (click)="edit(ingredient)" [attr.aria-label]="'Edit ' + ingredient.name">
+              <img src="assets/icons/edit-icon.svg" alt="" width="13" height="14" />
+            </button>
+            }
+            <button type="button" (click)="remove(ingredient.id)" [attr.aria-label]="'Delete ' + ingredient.name">
+              <img src="assets/icons/delete-icon.svg" alt="" width="13" height="15" />
+            </button>
+          </div>
+        </li>
         }
       </ul>
     </section>
   </div>
+
+  @if (state.ingredients().length) {
   <div class="next-step">
-    @if (state.ingredients().length) {
-      <a class="button button--primary" routerLink="/preferences">Next Step</a>
-    } @else {
-      <p>Füge mindestens eine gültige Zutat hinzu.</p>
-    }
+    <a class="button" routerLink="/preferences">Next step</a>
   </div>
+  }
 </section>

@@ -10,10 +10,11 @@
 | `core/flow-state.ts`          | aktueller Workflow-State, Results und kontrollierte UI-Fehler            |
 | `core/generation.ts`          | Mock-/n8n-Provider und validierender GenerationService                   |
 | `core/quota.ts`               | read-only Quota-Status für transparente Frontend-Anzeige                 |
+| `core/ingredient-catalog.ts`  | einmalig geladener n8n/Supabase-Catalog + Usage-Registrierung            |
 | `core/response-validation.ts` | letzte Vertrauensgrenze vor Angular-State/Library                        |
 | `core/recipe-repository.ts`   | n8n-basierte öffentliche Firebase-Library + Development-InMemory         |
 | `n8n/workflows/`              | Validation, Quota, KI, Firebase-Persistenz/Library, Logging, Fehleralarm |
-| `supabase/migrations/`        | Quota-/Audit-Tabellen und RPCs                                           |
+| `supabase/migrations/`        | Quota-/Audit-/Ingredient-Catalog-Tabellen und RPCs                       |
 
 ## Produktiver Datenfluss
 
@@ -55,7 +56,7 @@ Ohne konfigurierte n8n-Basis verwendet Development `MockGenerationProvider` + `I
 
 ## Quota und Audit
 
-Supabase bleibt serverseitig für atomare Quota-Claims, Throttling und `workflow_runs` verantwortlich. Die Checklistenregel wird in Recipe-Einheiten umgesetzt: 3 Rezepte/IP/Tag und 12 Rezepte systemweit/Tag.
+Supabase bleibt serverseitig für atomare Quota-Claims, Throttling, `workflow_runs` und den dynamischen Ingredient-Catalog verantwortlich. Angular lädt den Catalog über n8n einmal pro App-Sitzung und filtert Prefix-Treffer anschließend lokal; neue Ingredient-Verwendungen werden über eine atomare RPC hochgezählt.
 
 ## Fehlerbehandlung
 
@@ -64,3 +65,16 @@ Erwartete Fehler besitzen kontrollierte Branches: Request, Quota, Quota-Backend,
 ## Runtime-Konfiguration
 
 Der Browser erhält ausschließlich die öffentliche n8n Webhook Base URL aus `public/runtime-config.js`. Persistenz-Credentials bleiben in n8n.
+
+
+## Ingredient-Catalog
+
+```text
+Ingredients Page
+→ IngredientCatalogService
+→ POST /webhook/code-a-cuisine-ingredients { action: list | register }
+→ n8n
+→ Supabase list_ingredient_catalog / register_ingredient
+```
+
+Der Browser besitzt keinen Supabase-Key. Der vollständige Catalog wird einmalig geladen; Tastatureingaben erzeugen keine weiteren Backend-Requests.

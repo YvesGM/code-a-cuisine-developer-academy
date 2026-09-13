@@ -15,7 +15,7 @@
     </a>
   </header>
   <main id="main-content" tabindex="-1"><router-outlet /></main>
-  @if (!landing()) {
+  @if (footerVisible()) {
     <footer class="site-footer">
       <a routerLink="/impressum">Impressum</a>
       @if (mockMode) {

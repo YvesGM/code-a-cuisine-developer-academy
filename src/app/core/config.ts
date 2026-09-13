@@ -1,5 +1,5 @@
 export const OPTIONS = {
-  units: ['g', 'kg', 'ml', 'l', 'piece'],
+  units: ['piece', 'ml', 'g'],
   difficulties: ['quick', 'medium', 'complex'],
   cuisines: ['german', 'italian', 'indian', 'japanese', 'gourmet', 'fusion'],
   diets: ['vegetarian', 'vegan', 'keto', 'none'],
@@ -18,46 +18,47 @@ export const N8N_PATHS = {
   generate: 'code-a-cuisine-generate',
   quota: 'code-a-cuisine-quota',
   library: 'code-a-cuisine-library',
+  ingredients: 'code-a-cuisine-ingredients',
 } as const;
 export const DIFFICULTIES = {
   quick: {
     key: 'quick',
-    label: 'Schnell',
-    range: 'bis 20 Minuten',
+    label: 'Quick',
+    range: 'up to 20min',
     min: 0,
     max: 20,
     mockMinutes: 15,
   },
   medium: {
     key: 'medium',
-    label: 'Mittel',
-    range: '20–45 Minuten',
+    label: 'Medium',
+    range: '20–45min',
     min: 20,
     max: 45,
     mockMinutes: 30,
   },
   complex: {
     key: 'complex',
-    label: 'Aufwendig',
-    range: 'ab 45 Minuten',
+    label: 'Complex',
+    range: 'over 45min',
     min: 45,
     max: Infinity,
     mockMinutes: 50,
   },
 } as const;
 export const CUISINE_LABELS = {
-  german: 'Deutsche Küche',
-  italian: 'Italienische Küche',
-  japanese: 'Japanische Küche',
-  indian: 'Indische Küche',
-  gourmet: 'Gourmet / Fine Dining',
+  german: 'German',
+  italian: 'Italian',
+  japanese: 'Japanese',
+  indian: 'Indian',
+  gourmet: 'Gourmet',
   fusion: 'Fusion',
 } as const;
 export const DIET_LABELS = {
-  vegetarian: 'Vegetarisch',
+  vegetarian: 'Vegetarian',
   vegan: 'Vegan',
   keto: 'Keto',
-  none: 'Keine Einschränkung',
+  none: 'No preferences',
 } as const;
 /** Kontrollierte Demo-Präsentation; keine Behauptung kulinarischer Authentizität. */
 export const CUISINE_DEMO = {

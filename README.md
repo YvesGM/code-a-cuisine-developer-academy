@@ -4,7 +4,7 @@ Code-a-Cuisine unterstützt die Resteverwertung: Nutzer erfassen vorhandene Lebe
 
 ## Aktueller Stand
 
-Die funktionale Angular-Basis sowie die n8n-Automation sind vorbereitet. Vier importierbare Code-a-Cuisine-Workflows liegen unter `n8n/workflows/` und verwenden die bestehenden n8n-Credentials für Supabase, Gemini, SMTP und den Google Service Account.
+Die funktionale Angular-Basis sowie die n8n-Automation sind vorbereitet. Fünf importierbare Code-a-Cuisine-Workflows liegen unter `n8n/workflows/` und verwenden die bestehenden n8n-Credentials für Supabase, Gemini, SMTP und den Google Service Account.
 
 Produktiver Datenfluss:
 
@@ -23,11 +23,12 @@ Public Library / Recipe Detail
 → Firebase Realtime Database
 ```
 
-Supabase bleibt ausschließlich für Quota, Throttling und Workflow-Audit-Logs bestehen. Die Academy-Vorgabe zur Rezeptpersistenz wird wörtlich mit Firebase erfüllt.
+Supabase bleibt serverseitig für Quota, Throttling, Workflow-Audit-Logs und den dynamischen Ingredient-Catalog bestehen. Die Academy-Vorgabe zur Rezeptpersistenz wird weiterhin wörtlich mit Firebase erfüllt.
 
 ## Features
 
 - Ingredient-CRUD mit stabilen IDs, positiven Mengen und zentralen Einheiten.
+- Dynamisches Ingredient-Autocomplete: Catalog einmalig über n8n laden, lokal filtern und nach Nutzung gewichten.
 - Portionen 1–12, Default 2.
 - Kochhelfer 1–3, Default 1.
 - Difficulty: Schnell bis 20, Mittel 20–45, Aufwendig ab 45 Minuten.
@@ -58,12 +59,15 @@ Unter `n8n/workflows/`:
 
 - `Code-a-Cuisine - Recipe Generation.json`
 - `Code-a-Cuisine - Recipe Library.json`
+- `Code-a-Cuisine - Ingredient Catalog.json`
 - `Code-a-Cuisine - Quota Status.json`
 - `Code-a-Cuisine - Error Notification.json`
 
 Der Generation-Workflow übernimmt Request-/IP-Validierung, Quota, Gemini, zweite Business-Validierung, Firebase-Persistenz, Audit-Logging und kontrollierte Fehlerantworten.
 
 Der Library-Workflow liefert Recipe-Detail und paginierte/filterbare öffentliche Bibliotheksdaten aus Firebase, ohne Firebase-Credentials an Angular auszugeben.
+
+Der Ingredient-Catalog-Workflow lädt den vollständigen Supabase-Catalog einmalig für das Frontend und registriert neue Ingredient-Verwendungen atomar. Beim Tippen entstehen dadurch keine Datenbankrequests.
 
 ## Firebase
 
@@ -88,7 +92,8 @@ Supabase wird weiterhin für folgende serverseitige Infrastruktur genutzt:
 
 - `code_a_cuisine.generation_quota_claims`
 - `code_a_cuisine.workflow_runs`
-- Quota-RPCs
+- `code_a_cuisine.ingredient_catalog`
+- Quota-RPCs sowie Catalog-RPCs für List/Usage-Increment
 
 Die frühere `code_a_cuisine.recipes`-Tabelle wird durch eine Folgemigration entfernt, weil Recipes nun verbindlich in Firebase liegen.
 
@@ -118,7 +123,7 @@ Firebase-/Supabase-Service-Credentials, Datenbankpasswörter, AI-Secrets und SMT
 - n8n
 - Gemini
 - Firebase Realtime Database – Recipe Persistenz
-- Supabase – Quota und Workflow-Audit
+- Supabase – Quota, Workflow-Audit und Ingredient-Catalog
 
 ## Projektstruktur
 
@@ -131,7 +136,7 @@ public/runtime-config.js
 firebase/           Firebase-Initialisierung/Dokumentation
 docs/               Projektdokumentation inkl. Checklistenstatus und n8n-Abschlussplan
 n8n/workflows/      Importierbare n8n-Workflows
-supabase/           CLI-Konfiguration und Quota-/Audit-Migrationen
+supabase/           CLI-Konfiguration und Quota-/Audit-/Ingredient-Catalog-Migrationen
 AGENTS.md           Verbindliche Arbeitsregeln
 ```
 

@@ -9,7 +9,7 @@ Status: `[ ]` nicht begonnen · `[~]` in Arbeit · `[x]` validiert · `[!]` bloc
 | 0 Foundation                      | [x]    | Angular-/Tooling-Grundlage vorhanden und lokal grün validiert                                          |
 | 1 Core Angular / Academy-Funktion | [~]    | Funktionalität und Schema-2-Contract implementiert; nach Firebase/n8n-Integration erneut prüfen        |
 | 2 n8n + echte KI                  | [~]    | Generation, Library, Quota, Validation, Logging und Fehleralarm implementiert; E2E-Test ausstehend     |
-| 3 Persistenz                      | [~]    | Recipe-Persistenz auf Firebase umgestellt; Supabase bleibt für Quota/Audit; Cleanup-Migration anwenden |
+| 3 Persistenz                      | [~]    | Recipe-Persistenz auf Firebase; Supabase für Quota/Audit/Ingredient-Catalog; Migrationen anwenden |
 | 4 Figma / Styling / Responsive    | [~]    | Figma-Styles, Assets, Mobile/Standard/Widescreen und Loading-Animation umgesetzt; visueller Browser-Abgleich offen |
 | 5 Hardening / Abgabe              | [ ]    | Impressum, Cross-Browser, Accessibility, Code-Review, GitHub und finale Academy-Abgabe                 |
 

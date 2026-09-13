@@ -21,7 +21,6 @@ export class PreferencesPage {
   private readonly router = inject(Router);
   private readonly quotaService = inject(QuotaService);
   readonly quota = signal<QuotaStatus | null>(null);
-  readonly quotaLoading = signal(false);
   readonly quotaError = signal('');
   readonly form = new FormGroup({
     servings: new FormControl(this.state.servings(), {
@@ -62,17 +61,14 @@ export class PreferencesPage {
 
   /** Aktualisiert die Quota-Anzeige, ohne eine Generierung zu reservieren. */
   private async refreshQuota(): Promise<void> {
-    this.quotaLoading.set(true);
     this.quotaError.set('');
     try {
       this.quota.set(await this.quotaService.getStatus());
     } catch {
       this.quota.set(null);
       this.quotaError.set(
-        'Nutzungslimit konnte nicht vorab geladen werden; der Server prüft es beim Generieren.',
+        'The usage limit could not be loaded in advance; the server will validate it when generating.',
       );
-    } finally {
-      this.quotaLoading.set(false);
     }
   }
 

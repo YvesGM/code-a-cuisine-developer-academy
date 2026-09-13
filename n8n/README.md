@@ -23,7 +23,8 @@ Das Credential wird aus dem Firebase-Admin-Service-Account-JSON angelegt. Das pr
 
 - `Code-a-Cuisine - Recipe Generation.json`
 - `Code-a-Cuisine - Recipe Library.json`
+- `Code-a-Cuisine - Ingredient Catalog.json`
 - `Code-a-Cuisine - Quota Status.json`
 - `Code-a-Cuisine - Error Notification.json`
 
-Quota und Audit bleiben in Supabase. Recipes werden ausschließlich in Firebase gespeichert.
+Quota, Audit und der dynamische Ingredient-Catalog liegen in Supabase. Recipes werden ausschließlich in Firebase gespeichert.

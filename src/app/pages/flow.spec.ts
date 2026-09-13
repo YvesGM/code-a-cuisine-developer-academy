@@ -27,19 +27,19 @@ describe('Functional navigation flow', () => {
     const harness = await RouterTestingHarness.create('/');
     expect(harness.routeNativeElement?.querySelector('a')?.getAttribute('href')).toBe('/generate');
     const ingredients = await harness.navigateByUrl('/generate', IngredientsPage);
-    ingredients.form.setValue({ name: 'Pasta', amount: 100, unit: 'g' });
+    ingredients.form.setValue({ name: 'Pasta', amount: '100', unit: 'g' });
     ingredients.save();
     const state = TestBed.inject(FlowState);
     const original = state.ingredients()[0];
     ingredients.edit(original);
-    ingredients.form.controls.amount.setValue(80);
+    ingredients.form.controls.amount.setValue('80');
     ingredients.save();
     expect(state.ingredients()[0].id).toBe(original.id);
     ingredients.remove(original.id);
     expect(state.ingredients()).toHaveLength(0);
-    ingredients.form.setValue({ name: 'Tomato', amount: 150, unit: 'g' });
+    ingredients.form.setValue({ name: 'Tomato', amount: '150', unit: 'g' });
     ingredients.save();
-    ingredients.form.setValue({ name: 'Spinach', amount: 100, unit: 'g' });
+    ingredients.form.setValue({ name: 'Spinach', amount: '100', unit: 'g' });
     ingredients.save();
     const preferences = await harness.navigateByUrl('/preferences', PreferencesPage);
     preferences.form.setValue({

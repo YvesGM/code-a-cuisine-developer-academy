@@ -26,7 +26,7 @@ describe('FlowState', () => {
     state.saveIngredient({ name: 'Pasta', amount: 80, unit: 'g' }, id);
     expect(state.ingredients()[0]).toEqual({ id, name: 'Pasta', amount: 80, unit: 'g' });
     state.saveIngredient({ name: 'Egg', amount: 2, unit: 'piece' });
-    expect(state.ingredients()[1].id).not.toBe(id);
+    expect(state.ingredients()[0].id).not.toBe(id);
     state.deleteIngredient(id);
     expect(state.ingredients()).toHaveLength(1);
   });

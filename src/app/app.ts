@@ -20,5 +20,8 @@ export class App {
   );
   readonly dark = computed(() => ['/', '/generating', '/results'].includes(this.url() ?? '/'));
   readonly landing = computed(() => (this.url() ?? '/') === '/');
+  readonly footerVisible = computed(
+    () => !['/', '/generate', '/preferences', '/generating', '/results'].includes(this.url() ?? '/'),
+  );
   readonly mockMode = !N8N_PUBLIC_CONFIG.webhookBaseUrl;
 }

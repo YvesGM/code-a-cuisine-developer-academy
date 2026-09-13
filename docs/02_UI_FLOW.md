@@ -16,13 +16,13 @@ Unbekannte Routes führen zur Landing Page. Zutaten fehlen: geschützter Flow ge
 
 ## Formular
 
-Ingredient-CRUD und stabile IDs bleiben unverändert. Preferences enthalten explizite Auswahlfelder; vorhandene Auswahl wird beim erneuten Öffnen übernommen. Portionen müssen ganzzahlig 1–12 sein, Default 2. Kochhelfer müssen ganzzahlig 1–3 sein, Default 1. Ungültige Formulare können keine Generierung starten.
+Ingredient-CRUD und stabile IDs bleiben unverändert. Mengen- und Einheitenänderungen erfolgen inline in der bestehenden Zutatenzeile; das Add-Formular bleibt dabei unberührt. Preferences enthalten explizite Auswahlfelder; vorhandene Auswahl wird beim erneuten Öffnen übernommen. Portionen müssen ganzzahlig 1–12 sein, Default 2. Kochhelfer müssen ganzzahlig 1–3 sein, Default 1. Ungültige Formulare können keine Generierung starten.
 
-Difficulty zeigt Schnell (bis 20 Minuten), Mittel (20–45 Minuten) und Aufwendig (ab 45 Minuten). Cuisine und Diet verwenden zentrale deutsche Labels. Die Demo-Mengenskalierung wird im Formular transparent erklärt.
+Die Preference-Oberfläche verwendet die zentralen englischen Labels Quick, Medium, Complex sowie German, Italian, Japanese, Indian, Gourmet, Fusion und die englischen Diet-Labels. Die Zeitbereiche bleiben fachlich unverändert und werden in der UI englisch dargestellt.
 
 ## Ergebnisse und Details
 
-Generate Recipe übernimmt die gültigen Entwürfe in FlowState, erstellt Schema 2 und startet den bestehenden Provider-Flow. Der Mock erzeugt genau drei Verfahren der gewählten Preferences. Nach Validierung und Speicherung öffnet die Generating-Seite Results.
+Generate a Recipe übernimmt die gültigen Entwürfe in FlowState, erstellt Schema 2 und startet den bestehenden Provider-Flow. Der Mock erzeugt genau drei Verfahren der gewählten Preferences. Nach Validierung und Speicherung öffnet die Generating-Seite Results.
 
 Details zeigen Portionen, Kochhelfer, vorhandene Gesamtmengen und getrennte zusätzliche Gesamtmengen. Nutrition hat Abschnitte Pro Portion und Gesamtrezept. Directions bleiben chronologisch; Parallelgruppen und Wartezeiten sind sichtbar. Die Liste Person → Steps wird ausschließlich aus assignedCooks derselben Directions abgeleitet.
 

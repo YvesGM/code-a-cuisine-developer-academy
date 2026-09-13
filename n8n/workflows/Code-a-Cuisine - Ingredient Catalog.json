@@ -1,0 +1,346 @@
+{
+  "name": "Code-a-Cuisine - Ingredient Catalog",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "code-a-cuisine-ingredients",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -912,
+        224
+      ],
+      "id": "b7d44d10-6373-4455-879c-4a36d43dfd4d",
+      "name": "Ingredient Catalog API",
+      "webhookId": "5690de95-027b-46a4-858e-f1d248f35cc5",
+      "notesInFlow": true,
+      "notes": "Public Ingredient autocomplete gateway. Angular never receives Supabase credentials."
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body ?? {};\nconst action = typeof body.action === 'string' ? body.action.trim() : '';\nconst name = typeof body.name === 'string' ? body.name.replace(/\\s+/g, ' ').trim() : '';\nconst validAction = action === 'list' || action === 'register';\nconst validName = action !== 'register' || (name.length >= 1 && name.length <= 80);\nconst valid = validAction && validName;\nconst errorMessage = !validAction ? 'Unbekannte Catalog-Aktion.' : 'Ingredient-Name muss 1 bis 80 Zeichen enthalten.';\nreturn [{ json: { action, name, valid, errorMessage } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -688,
+        224
+      ],
+      "id": "2f3b61f9-375f-453a-911d-dc037a785e42",
+      "name": "Normalize Catalog Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "676c42e8-62fb-492c-9330-d0c62da15060",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -464,
+        224
+      ],
+      "id": "03b0a79b-f0b6-4578-b6fd-870a2ea3b1cb",
+      "name": "Catalog Request Valid?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2c10ee76-93c8-474e-b487-d0d7b3da841b",
+              "leftValue": "={{ $json.action === 'register' }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -240,
+        96
+      ],
+      "id": "2de8b9cd-271e-45bc-a44b-885f69ed7494",
+      "name": "Register Ingredient?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: false, error: { code: 'invalid_ingredient_catalog_request', message: $('Normalize Catalog Request').item.json.errorMessage } } }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -224,
+        368
+      ],
+      "id": "13643020-e7c2-492f-8d38-c429920aa491",
+      "name": "Respond Invalid Catalog Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/register_ingredient",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Profile",
+              "value": "code_a_cuisine"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { p_name: $('Normalize Catalog Request').item.json.name } }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c74312ed-fc0b-443f-9139-ea1a1c116a7e",
+      "name": "Register Ingredient Usage",
+      "notesInFlow": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "q29scgLDJm1zYFcO",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Atomically inserts a new Ingredient name or increments its usage counter in Supabase."
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/list_ingredient_catalog",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Profile",
+              "value": "code_a_cuisine"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {} }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        0,
+        192
+      ],
+      "id": "1d3a39f8-99c9-4036-8489-9d182faf5822",
+      "name": "Load Ingredient Catalog",
+      "notesInFlow": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "q29scgLDJm1zYFcO",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Loads the complete autocomplete catalog once; Angular filters locally while typing."
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        272,
+        96
+      ],
+      "id": "a663f975-5b9f-4fe0-9832-c005769847ae",
+      "name": "Respond Ingredient Catalog"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { ok: false, error: { code: 'ingredient_catalog_backend_error', message: 'Zutatenvorschläge sind momentan nicht verfügbar.' } } }}",
+        "options": {
+          "responseCode": 503
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        272,
+        288
+      ],
+      "id": "3474f277-e9ea-454f-ae01-837db3a2b812",
+      "name": "Respond Catalog Backend Error"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Ingredient Catalog API": {
+      "main": [
+        [
+          {
+            "node": "Normalize Catalog Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Catalog Request": {
+      "main": [
+        [
+          {
+            "node": "Catalog Request Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Catalog Request Valid?": {
+      "main": [
+        [
+          {
+            "node": "Register Ingredient?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Invalid Catalog Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Register Ingredient?": {
+      "main": [
+        [
+          {
+            "node": "Register Ingredient Usage",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Load Ingredient Catalog",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Register Ingredient Usage": {
+      "main": [
+        [
+          {
+            "node": "Respond Ingredient Catalog",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Catalog Backend Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Ingredient Catalog": {
+      "main": [
+        [
+          {
+            "node": "Respond Ingredient Catalog",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Catalog Backend Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "nnCj7YCdOd3NX984",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "availableInMCP": false
+  },
+  "versionId": "39c2c762-8061-4fde-9107-902b0d0d401c",
+  "meta": {
+    "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
+  },
+  "nodeGroups": [],
+  "id": "xqs8yDZFiXHCXIhy",
+  "tags": []
+}

@@ -68,9 +68,9 @@ export class FlowState {
     return { ...input, name: input.name.trim(), id: id ?? crypto.randomUUID() };
   }
 
-  /** Ersetzt eine bestehende Zutat oder hängt eine neue an die aktuelle Vorratsliste. */
+  /** Ersetzt eine bestehende Zutat oder stellt eine neue an den Anfang der Vorratsliste. */
   private ingredientList(ingredient: Ingredient, editingId?: string): readonly Ingredient[] {
-    if (!editingId) return [...this.ingredients(), ingredient];
+    if (!editingId) return [ingredient, ...this.ingredients()];
     return this.ingredients().map((current) => (current.id === editingId ? ingredient : current));
   }
 

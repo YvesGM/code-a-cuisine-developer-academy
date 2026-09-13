@@ -8,6 +8,10 @@ export interface Ingredient {
   readonly unit: Unit;
 }
 export type IngredientInput = Omit<Ingredient, 'id'>;
+export interface IngredientCatalogItem {
+  readonly name: string;
+  readonly usageCount: number;
+}
 export interface Preferences {
   readonly difficulty: (typeof OPTIONS.difficulties)[number];
   readonly cuisine: Cuisine;

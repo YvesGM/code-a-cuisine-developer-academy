@@ -4,12 +4,39 @@
   display: block;
 }
 .preferences-page {
+  max-width: v.$content-width;
+  padding: 24px 68px 80px;
+}
+.preferences-page > h1,
+.preferences-page > form {
+  width: 100%;
   max-width: 881px;
-  padding-top: 24px;
+  margin-inline: auto;
 }
 .back-link {
   margin-bottom: 44px;
+  text-decoration: none;
 }
+
+.preferences-page .back-link {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.preferences-page .direction-arrow {
+  width: 24px;
+  height: 12px !important;
+  background: linear-gradient(currentColor, currentColor) left center / 29px 2px no-repeat;
+}
+
+.preferences-page .direction-arrow::before {
+  height: 2px;
+}
+
+.preferences-page .direction-arrow::after {
+  height: 2px;
+}
+
 h1 {
   margin-bottom: 56px;
   font-size: 28px;
@@ -37,25 +64,37 @@ form {
   align-items: center;
   gap: 8px;
 }
+
 .counter input {
-  width: 56px;
-  padding-inline: 4px;
-  text-align: center;
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+  padding: 0;
   border: 0;
+  margin: 0;
+  border-radius: 0;
+  background: v.$sage;
+  color: v.$green-dark;
+  text-align: center;
   appearance: textfield;
+  font-size: 20px;
+  font-weight: 500;
 }
+
 .counter input::-webkit-inner-spin-button,
 .counter input::-webkit-outer-spin-button {
   appearance: none;
 }
 .counter span {
-  font-size: 16px;
+  font-size: 20px;
+  font-weight: 500;
 }
 .counter button {
   padding: 10px;
   border: 0;
   border-radius: 50%;
 }
+
 .preference-options {
   display: grid;
   gap: 40px;
@@ -80,7 +119,11 @@ form {
   display: grid;
   align-content: start;
   gap: 8px;
+  color: v.$green-dark;
   cursor: pointer;
+}
+.choice:has(input:checked) {
+  cursor: default;
 }
 .choice input {
   position: absolute;
@@ -91,40 +134,49 @@ form {
 }
 .choice span {
   display: flex;
-  align-items: center;
   justify-content: center;
-  min-height: 44px;
-  padding: 8px 12px;
-  border: 1px solid v.$green;
-  border-radius: 20px;
-  background: #fff;
-  font-size: 16px;
+  padding: 4px 14px;
+  border: 0;
+  border-radius: 18px;
+  background: v.$cream;
+  color: v.$green-dark;
+  font-size: 20px;
   font-weight: 500;
+  line-height: 20px;
+  transition: background-color 220ms ease;
+}
+.choice:hover input:not(:checked) + span {
+  background: v.$orange-hover;
 }
 .choice input:checked + span {
-  background: v.$green;
-  color: v.$cream;
+  background: v.$green-selected;
+  color: v.$green-dark;
 }
 .choice input:focus-visible + span {
   outline: 3px solid #a75b18;
   outline-offset: 4px;
 }
-.choice:hover span {
-  box-shadow: inset 0 0 0 1px v.$green;
-}
 .choice small {
+  color: v.$green;
   text-align: center;
 }
 .form-status {
   display: grid;
   justify-items: center;
   gap: 20px;
+  margin-top: 16px;
   text-align: center;
+}
+.form-status .button--primary {
+  min-height: 54px;
+  padding: 12px 24px;
+  border-radius: 0;
+  font-size: 20px;
 }
 
 @media (max-width: v.$breakpoint-mobile) {
   .preferences-page {
-    padding-top: 16px;
+    padding: 16px 16px 40px;
   }
   .back-link {
     margin-bottom: 24px;
@@ -156,5 +208,50 @@ form {
   }
   .choices--difficulty .choice span {
     padding-inline: 6px;
+  }
+}
+
+@media (max-width: 420px) {
+  h1 {
+    margin-bottom: 24px;
+    font-size: 22px;
+    text-align: left;
+  }
+
+  .counter {
+    gap: 4px;
+  }
+  .counter span {
+    font-size: 18px;
+  }
+
+  .counter input {
+    width: 20px;
+    height: 20px;
+    min-height: 20px;
+    font-size: 18px;
+  }
+
+  .counter .icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .count-field {
+    gap: 4px;
+  }
+
+  .count-field > label {
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .preferences-page form {
+    gap: 20px;
+  }
+
+  .choice span {
+    font-size: 18px;
+    padding: 4px 10px;
   }
 }

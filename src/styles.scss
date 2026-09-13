@@ -241,19 +241,24 @@ label {
   transform: rotate(180deg);
 }
 .hero-link {
+  --hero-link-hover-background: rgba(57, 96, 57, 0.1);
   display: inline-flex;
   align-items: center;
   gap: 12px;
-  min-height: 44px;
-  padding: 4px 8px;
+  min-height: 52px;
+  padding: 14px 26px;
   color: inherit;
-  font-size: 18px;
+  font-size: 20px;
   text-decoration: none;
   transition: background-color 160ms ease;
 }
 
+.hero-link--cream {
+  --hero-link-hover-background: rgba(250, 240, 230, 0.1);
+}
+
 .hero-link:hover {
-  background: rgba(250, 240, 230, 0.14);
+  background: var(--hero-link-hover-background);
   text-decoration: none;
 }
 
@@ -281,6 +286,7 @@ label {
   gap: 10px;
   min-height: 44px;
   font-size: 16px;
+  color: v.$green-middle;
 }
 .notice {
   padding: 16px 20px;

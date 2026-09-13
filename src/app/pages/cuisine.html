@@ -1,15 +1,33 @@
-﻿<section class="page cuisine-page">
-  <a class="back-link" routerLink="/cookbook">Alle Rezepte</a>
+<section class="page cuisine-page">
+  <div class="cuisine-toolbar">
+    <a class="back-link" routerLink="/cookbook">
+      <span class="direction-arrow direction-arrow--left" aria-hidden="true"></span>
+      <span class="back-link__label">Cookbook</span>
+    </a>
+    <a class="button button--small cuisine-toolbar__generate" routerLink="/generate">
+      Generate a recipe
+    </a>
+  </div>
+
   @if (cuisine(); as cuisine) {
     <header class="cuisine-heading">
       @if (cuisine === 'italian') {
-        <img src="assets/img/cuisine.png" alt="" width="2292" height="288" />
-        <h1 class="visually-hidden">{{ labels[cuisine] }}</h1>
+        <img src="assets/img/cuisine.png" alt="Italian cuisine" width="2292" height="288" />
+        <h1 class="visually-hidden">Italian cuisine</h1>
       } @else {
-        <h1>{{ labels[cuisine] }}</h1>
+        <div class="cuisine-heading__fallback">
+          <img [src]="icons[cuisine]" alt="" width="56" height="56" />
+          <h1>{{ labels[cuisine] }} cuisine</h1>
+          <img [src]="icons[cuisine]" alt="" width="56" height="56" />
+        </div>
       }
     </header>
+
     <app-library-list [cuisine]="cuisine" />
+
+    <div class="cuisine-mobile-action">
+      <a class="button button--small" routerLink="/generate">Generate a recipe</a>
+    </div>
   } @else {
     <div class="status-panel">
       <h1>Cuisine nicht gefunden</h1>

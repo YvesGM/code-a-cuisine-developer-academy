@@ -46,6 +46,12 @@ Cookbook / Recipe Detail
 → GET /webhook/code-a-cuisine-library
 → n8n Google Service Account
 → Firebase Realtime Database
+
+Recipe Favorite
+→ RecipeRepository
+→ POST /webhook/code-a-cuisine-favorite
+→ n8n Google Service Account
+→ Firebase Favorite Counter
 ```
 
 Angular erhält keine Firebase-Credentials. Jeder zurückgegebene Recipe-Payload wird erneut durch `validateStoredRecipe` geprüft.

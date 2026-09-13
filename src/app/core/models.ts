@@ -62,6 +62,7 @@ export interface Recipe extends Preferences {
   readonly additionalIngredients: readonly AdditionalIngredient[];
   readonly directions: readonly Direction[];
   readonly rank: number;
+  readonly favoriteCount?: number;
 }
 export interface GenerationResponse {
   readonly schemaVersion: 2;
@@ -83,6 +84,7 @@ export interface QuotaStatus {
 }
 export interface RecipePage {
   readonly items: readonly Recipe[];
+  readonly topLiked?: readonly Recipe[];
   readonly total: number;
   readonly page: number;
   readonly pages: number;

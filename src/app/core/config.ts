@@ -18,6 +18,7 @@ export const N8N_PATHS = {
   generate: 'code-a-cuisine-generate',
   quota: 'code-a-cuisine-quota',
   library: 'code-a-cuisine-library',
+  favorite: 'code-a-cuisine-favorite',
   ingredients: 'code-a-cuisine-ingredients',
 } as const;
 export const DIFFICULTIES = {

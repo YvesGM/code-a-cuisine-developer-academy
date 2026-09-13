@@ -42,7 +42,7 @@
   font-size: 24px;
   font-weight: 500;
   grid-column: 1;
-  color: v.$green;
+  color: v.$green-olive;
   padding-bottom: 32px;
 }
 .recipe-card--ranked .cooking-time .icon {
@@ -72,8 +72,57 @@
 .recipe-card--ranked .button {
   align-self: flex-start;
   margin-top: auto;
-  color: #008000;
+  color: v.$green-light;
   font-size: 28px;
+}
+
+@media (max-width: 1200px) {
+  .recipe-card h2 {
+    color: v.$green-dark;
+    font-weight: 600;
+    font-size: 28px;
+    overflow-wrap: anywhere;
+  }
+
+  .cooking-time {
+    font-size: 20px;
+    font-weight: 500;
+    padding-bottom: 20px;
+  }
+
+  .recipe-card--ranked .button {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 960px) {
+  .recipe-card h2 {
+    font-size: 24px;
+    overflow-wrap: anywhere;
+  }
+
+  .cooking-time {
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .recipe-card--ranked .button {
+    font-size: 20px;
+  }
+
+  .recipe-rank {
+    font-size: 20px;
+  }
+
+  .recipe-rank img {
+    width: 32px;
+    height: 20px;
+    object-fit: contain;
+  }
+
+  .recipe-card--ranked .cooking-time .icon {
+    width: 20px;
+  }
 }
 
 @media (max-width: v.$breakpoint-mobile) {
@@ -88,5 +137,38 @@
   }
   .recipe-card--ranked {
     padding-block: 32px;
+    min-height: 320px;
+  }
+
+  .recipe-rank {
+    font-size: 28px;
+  }
+
+  .recipe-rank img {
+    width: 54px;
+    height: 32px;
+    object-fit: contain;
+  }
+
+  .cooking-time {
+    font-size: 24px;
+    font-weight: 500;
+    padding-bottom: 0px;
+  }
+
+  .recipe-card--ranked .cooking-time .icon {
+    width: 32px;
+  }
+
+  .recipe-card .button--cream {
+    background: v.$cream;
+    color: v.$green-dark;
+    transition: none
+  }
+
+  .recipe-card .button--cream:hover:not(:disabled) {
+    background: v.$cream;
+    color: v.$green-dark;
+    font-weight: 600;
   }
 }

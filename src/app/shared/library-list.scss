@@ -1,37 +1,181 @@
-﻿@use '../../styles/variables' as v;
+@use '../../styles/variables' as v;
 
 :host {
   display: block;
 }
+
 .library-recipes {
   display: grid;
-  gap: 24px;
+  gap: 6px;
+  max-width: 980px;
+  margin-inline: auto;
 }
+
+.library-recipe {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  min-height: 76px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: v.$green-middle;
+  text-decoration: none;
+  transition: background-color 160ms ease;
+}
+
+.library-recipe:nth-child(even),
+.library-recipe:hover {
+  background: v.$cream;
+}
+
+.library-recipe__number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: v.$cream;
+  font-size: 16px;
+}
+
+.library-recipe__copy {
+  display: grid;
+  gap: 4px;
+}
+
+.library-recipe__time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: v.$green-olive;
+  font-size: 15px;
+}
+
+.library-recipe__time img {
+  width: 18px;
+  height: 18px;
+}
+
+.library-recipe h2 {
+  font-size: 19px;
+  font-weight: 500;
+}
+
+.library-recipe__badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.library-recipe__badges .tag {
+  padding: 4px 10px;
+  background: v.$green-recipe-badge;
+  font-size: 14px;
+}
+
+.library-recipe__likes img {
+  width: 18px;
+  height: 18px;
+}
+
 .pagination {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  margin-top: 64px;
-  text-align: center;
+  gap: 14px;
+  margin-top: 56px;
 }
-.pagination small {
-  display: block;
-  margin-top: 4px;
-}
+
 .pagination button {
-  flex-shrink: 0;
-  padding: 8px;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 4px;
   border: 0;
+  background: transparent;
+  color: v.$green-dark;
+  font-size: 15px;
+  font-weight: 500;
 }
-.pagination img {
-  width: 26px;
-  height: 27px;
+
+.pagination button:hover:not(:disabled) {
+  background: v.$sage;
+}
+
+.pagination__arrow img {
+  width: 20px;
+  height: 20px;
+}
+
+.pagination__page--active {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.pagination__ellipsis {
+  min-width: 20px;
+  text-align: center;
 }
 
 @media (max-width: v.$breakpoint-mobile) {
+  .library-recipes {
+    gap: 8px;
+  }
+
+  .library-recipe {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 6px 8px;
+    min-height: 0;
+    padding: 10px 8px;
+  }
+
+  .library-recipe__number {
+    grid-column: 1;
+    grid-row: 1;
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .library-recipe__copy {
+    display: contents;
+  }
+
+  .library-recipe__time {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 13px;
+  }
+
+  .library-recipe h2 {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    padding-inline: 4px;
+    font-size: 16px;
+  }
+
+  .library-recipe__badges {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-content: flex-start;
+    padding-inline: 4px;
+  }
+
+  .library-recipe__badges .tag {
+    padding: 3px 8px;
+    font-size: 13px;
+  }
+
   .pagination {
-    gap: 16px;
+    gap: 8px;
     margin-top: 40px;
+  }
+
+  .pagination button {
+    min-width: 28px;
+    min-height: 28px;
+    font-size: 13px;
   }
 }

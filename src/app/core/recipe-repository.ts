@@ -12,6 +12,8 @@ export interface RecipeRepository {
   getById(id: string): Promise<Recipe | undefined>;
   /** Liefert eine öffentliche, nach optionaler Cuisine gefilterte Seite samt Gesamtzahl. */
   list(query?: RecipeQuery): Promise<RecipePage>;
+  /** Registriert genau einen öffentlichen Favorite für eine bekannte Recipe-ID. */
+  favorite(id: string): Promise<void>;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -28,12 +30,27 @@ export class InMemoryRecipeRepository implements RecipeRepository {
     return this.recipes.get(id);
   }
 
+  /** Registriert im Development-Adapter einen Favorite direkt am bestehenden Datensatz. */
+  async favorite(id: string): Promise<void> {
+    const recipe = this.recipes.get(id);
+    if (!recipe) throw new Error('Recipe nicht gefunden.');
+    this.recipes.set(id, { ...recipe, favoriteCount: (recipe.favoriteCount ?? 0) + 1 });
+  }
+
+  /** Liefert für Development dieselben globalen Top-Favorites wie der serverseitige Library-Owner. */
+  private topLiked(): readonly Recipe[] {
+    return [...this.recipes.values()]
+      .filter((recipe) => (recipe.favoriteCount ?? 0) > 0)
+      .sort((a, b) => (b.favoriteCount ?? 0) - (a.favoriteCount ?? 0))
+      .slice(0, 6);
+  }
+
   /** Behält Einfügereihenfolge bei; Filterung erfolgt vor Pagination. */
   async list(query: RecipeQuery = {}): Promise<RecipePage> {
     const recipes = [...this.recipes.values()].filter(
       (recipe) => !query.cuisine || recipe.cuisine === query.cuisine,
     );
-    return paginate(recipes, query.page);
+    return { ...paginate(recipes, query.page), topLiked: this.topLiked() };
   }
 }
 
@@ -42,6 +59,11 @@ type JsonRecord = Record<string, unknown>;
 /** Baut eine stabile öffentliche n8n-URL aus der Runtime-Basis. */
 function libraryEndpoint(): string {
   return `${N8N_PUBLIC_CONFIG.webhookBaseUrl}/${N8N_PATHS.library}`;
+}
+
+/** Baut den Favorite-Endpunkt innerhalb desselben n8n-Library-Owners. */
+function favoriteEndpoint(): string {
+  return `${N8N_PUBLIC_CONFIG.webhookBaseUrl}/${N8N_PATHS.favorite}`;
 }
 
 /** Erzwingt ein JSON-Objekt für externe n8n-Antworten. */
@@ -72,8 +94,10 @@ function pageNumber(row: JsonRecord, key: 'total' | 'page' | 'pages'): number {
 function parseRecipePage(value: unknown): RecipePage {
   const row = asRecord(value);
   if (!Array.isArray(row['items'])) throw new Error('Ungültige Library-Antwort.');
+  const topLiked = Array.isArray(row['topLiked']) ? row['topLiked'] : [];
   return {
     items: row['items'].map((recipe) => validateStoredRecipe(recipe)),
+    topLiked: topLiked.map((recipe) => validateStoredRecipe(recipe)),
     total: pageNumber(row, 'total'),
     page: pageNumber(row, 'page'),
     pages: pageNumber(row, 'pages'),
@@ -110,6 +134,17 @@ export class N8nRecipeRepository implements RecipeRepository {
     const response = await fetch(`${libraryEndpoint()}?${new URLSearchParams({ id })}`);
     await requireOk(response);
     return parseRecipeLookup((await response.json()) as unknown);
+  }
+
+  /** Registriert einen Favorite serverseitig über n8n, ohne Firebase-Zugang im Browser. */
+  async favorite(id: string): Promise<void> {
+    if (!id.trim()) throw new Error('Recipe-ID fehlt.');
+    const response = await fetch(favoriteEndpoint(), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+    await requireOk(response);
   }
 
   /** Lädt eine serverseitig paginierte und optional nach Cuisine gefilterte Firebase-Library-Seite. */

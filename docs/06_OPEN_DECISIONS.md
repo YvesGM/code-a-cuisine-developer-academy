@@ -11,9 +11,9 @@ historisch dokumentiert, verhindern die lokale Designanalyse aber nicht mehr.
 - Mobile: Referenz 375px; Umschaltung bei 768px aus 721px breitem Preferences-Inhalt
   plus 48px Außenabstand abgeleitet, kein explizit beschrifteter Figma-Breakpoint.
 - Fonts Ubuntu, Quicksand und Kreon liegen lokal unter `public/assets/fonts/` und werden über `src/styles/_fonts.scss` eingebunden.
-- Figma discrepancy / requires functional decision: Likes, Most liked, Login/Logout,
-  Prüfung ausreichender Portionsmengen und neuer Ingredient-Sortiermodus werden
-  nicht ergänzt. Bestehende Validierung und Reihenfolge bleiben Owner.
+- Recipe-Favorites sind entschieden und laufen über RecipeRepository → n8n → Firebase.
+- Weiter offen bleiben Most liked, Login/Logout, Prüfung ausreichender Portionsmengen und
+  ein neuer Ingredient-Sortiermodus. Bestehende Validierung und Reihenfolge bleiben Owner.
 - Die originale Loading-GIF sowie ein statischer Reduced-Motion-Fallback sind im Projekt eingebunden.
 - Lokaler Headless-Browserstart durch Ausführungsrichtlinie abgewiesen;
   Browser-/Screenshot-Validierung bleibt dadurch offen.

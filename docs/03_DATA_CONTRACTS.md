@@ -63,7 +63,15 @@ Record:
 }
 ```
 
-`payload.id` entspricht dem Firebase-Key. Angular liest Firebase nicht direkt, sondern über `code-a-cuisine-library`; n8n sortiert nach `createdAt`, filtert Cuisine und paginiert mit Page Size 20. Angular validiert den zurückgegebenen Payload erneut.
+`payload.id` entspricht dem Firebase-Key. Angular liest Firebase nicht direkt, sondern über `code-a-cuisine-library`; n8n sortiert nach `createdAt`, filtert Cuisine und paginiert mit Page Size 20. Angular validiert den zurückgegebenen Payload erneut. Der Library-Owner ergänzt optional `favoriteCount` als nichtnegativen Integer; dieses Engagement-Feld gehört nicht zum Generation-Request. Listen-Antworten enthalten zusätzlich `topLiked` mit maximal sechs Rezepten aus der gesamten Firebase-Library, ausschließlich mit `favoriteCount > 0` und absteigend nach Favorite-Zahl sortiert.
+
+Öffentliche Favorites werden getrennt vom Recipe-Payload gespeichert:
+
+```text
+/code-a-cuisine/favorites/<recipe-id>/count
+```
+
+`POST /webhook/code-a-cuisine-favorite` akzeptiert ausschließlich eine stabile Recipe-ID und inkrementiert den Zähler serverseitig.
 
 ## Quota-/Audit-Vertrag
 

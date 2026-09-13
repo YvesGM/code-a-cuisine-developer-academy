@@ -38,12 +38,12 @@ describe('Public library UI', () => {
     await fixture.whenStable();
     expect(fixture.componentInstance.result()?.items).toHaveLength(20);
     const element = fixture.nativeElement as HTMLElement;
-    const next = element.querySelectorAll('button')[1];
-    next.click();
+    const next = element.querySelector<HTMLButtonElement>('button[aria-label="Next page"]');
+    next?.click();
     await fixture.whenStable();
     expect(fixture.componentInstance.result()?.page).toBe(2);
     expect(fixture.componentInstance.result()?.items).toHaveLength(5);
-    element.querySelector('button')?.click();
+    element.querySelector<HTMLButtonElement>('button[aria-label="Previous page"]')?.click();
     await fixture.whenStable();
     expect(fixture.componentInstance.result()?.page).toBe(1);
     fixture.componentRef.setInput('cuisine', 'german');
@@ -51,6 +51,28 @@ describe('Public library UI', () => {
     expect(fixture.componentInstance.result()?.total).toBe(3);
     expect(element.querySelector('nav')).toBeNull();
   });
+
+  it('returns at most six favorited recipes ordered by favorite count in development', async () => {
+    const repository = TestBed.inject(RECIPE_REPOSITORY);
+    const recipe = mockResponse(
+      createRequest([{ id: 'rice', name: 'Rice', amount: 100, unit: 'g' }], {
+        difficulty: 'quick',
+        cuisine: 'fusion',
+        diet: 'none',
+      }),
+    ).recipes[0];
+    await repository.saveMany(
+      Array.from({ length: 8 }, (_, index) => ({
+        ...recipe,
+        id: `liked-${index}`,
+        favoriteCount: index,
+      })),
+    );
+    const result = await repository.list();
+    expect(result.topLiked).toHaveLength(6);
+    expect(result.topLiked?.map((item) => item.favoriteCount)).toEqual([7, 6, 5, 4, 3, 2]);
+  });
+
   it('shows repository read errors and allows retry', async () => {
     const repository = TestBed.inject(RECIPE_REPOSITORY);
     vi.spyOn(repository, 'list').mockRejectedValueOnce(new Error('read failed'));

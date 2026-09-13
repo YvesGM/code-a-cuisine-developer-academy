@@ -45,7 +45,7 @@ Der strukturelle Figma-Stand ist umgesetzt. Offen bleibt der finale visuelle Bro
 
 ## Not started
 
-Keine zusätzliche Designfunktionalität. Likes, Most-liked, Login/Logout und andere im Figma angedeutete, aber nicht durch die Academy-User-Stories gedeckte Features werden bewusst nicht ergänzt.
+Keine zusätzliche unbestätigte Designfunktionalität. Der Recipe-Favorite wurde nach ausdrücklicher Produktentscheidung ergänzt; Most-liked, Login/Logout und weitere nicht bestätigte Funktionen bleiben außerhalb des Scopes.
 
 ## Responsive status
 
@@ -70,7 +70,7 @@ Verwendet werden ausschließlich lokale Projektassets unter `public/assets/`, da
 
 ## Figma discrepancies
 
-Figma-Inhalte ohne bestehenden fachlichen Owner werden nicht als neue Funktionalität erfunden. Insbesondere Likes, Most-liked, Login/Logout, eine zusätzliche Ingredient-Sortierung und eine neue Portionsmengen-Prüfung bleiben außerhalb dieses Designblocks.
+Figma-Inhalte ohne bestätigte Produktentscheidung werden nicht als neue Funktionalität erfunden. Recipe-Favorites besitzen jetzt einen bestätigten Library/Firebase-Owner; Most-liked, Login/Logout, eine zusätzliche Ingredient-Sortierung und eine neue Portionsmengen-Prüfung bleiben außerhalb dieses Designblocks.
 
 ## Validation
 

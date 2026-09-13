@@ -56,10 +56,13 @@ describe('Functional navigation flow', () => {
     expect(TestBed.inject(Router).url).toBe('/results');
     expect(state.topResults()).toHaveLength(3);
     const recipe = state.recipes()[0];
+    const repository = TestBed.inject(RECIPE_REPOSITORY);
+    const lookup = vi.spyOn(repository, 'getById');
     const detail = await harness.navigateByUrl('/recipe/' + recipe.id, RecipeDetailPage);
-    await harness.fixture.whenStable();
     harness.detectChanges();
     expect(detail.recipe()).toBe(recipe);
+    expect(lookup).not.toHaveBeenCalled();
+    expect(harness.routeNativeElement?.textContent).not.toContain('Rezept wird geladen');
     expect(harness.routeNativeElement?.textContent).toContain('4 Portionen');
     expect(harness.routeNativeElement?.textContent).toContain('Pro Portion');
     expect(harness.routeNativeElement?.textContent).toContain('Gesamtrezept');

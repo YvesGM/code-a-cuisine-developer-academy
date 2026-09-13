@@ -20,8 +20,10 @@ export class App {
   );
   readonly dark = computed(() => ['/', '/generating', '/results'].includes(this.url() ?? '/'));
   readonly landing = computed(() => (this.url() ?? '/') === '/');
-  readonly footerVisible = computed(
-    () => !['/', '/generate', '/preferences', '/generating', '/results'].includes(this.url() ?? '/'),
-  );
+  readonly footerVisible = computed(() => {
+    const url = this.url() ?? '/';
+    const hidden = ['/', '/generate', '/preferences', '/generating', '/results'].includes(url);
+    return !hidden && !url.startsWith('/recipe/') && !url.startsWith('/cookbook');
+  });
   readonly mockMode = !N8N_PUBLIC_CONFIG.webhookBaseUrl;
 }

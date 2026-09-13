@@ -7,7 +7,7 @@
 | /preferences       | Portionen, Kochhelfer und alle drei Preferences; benötigt Zutaten                                    |
 | /generating        | Loading bis Generierung und Speicherung beendet sind; Error/Retry                                    |
 | /results           | Exakt drei gerankte aktuelle Ergebnisse; benötigt erfolgreichen aktuellen Satz                       |
-| /recipe/:id        | Öffentlicher Repository-Lookup; Loading, Lesefehler mit Retry oder Nicht-gefunden                    |
+| /recipe/:id        | Aktuelle Results sofort aus FlowState; sonst öffentlicher Repository-Lookup mit Retry/Nicht-gefunden |
 | /cookbook          | Öffentliche Rezeptebibliothek mit allen gespeicherten Datensätzen, Cuisine-Navigation und Pagination |
 | /cookbook/:cuisine | Dieselbe Repository-Liste gefiltert nach zentralem Cuisine-Key                                       |
 | /impressum         | Semantische Platzhalterseite, jederzeit über Footer erreichbar                                       |
@@ -24,7 +24,7 @@ Die Preference-Oberfläche verwendet die zentralen englischen Labels Quick, Medi
 
 Generate a Recipe übernimmt die gültigen Entwürfe in FlowState, erstellt Schema 2 und startet den bestehenden Provider-Flow. Der Mock erzeugt genau drei Verfahren der gewählten Preferences. Nach Validierung und Speicherung öffnet die Generating-Seite Results.
 
-Details zeigen Portionen, Kochhelfer, vorhandene Gesamtmengen und getrennte zusätzliche Gesamtmengen. Nutrition hat Abschnitte Pro Portion und Gesamtrezept. Directions bleiben chronologisch; Parallelgruppen und Wartezeiten sind sichtbar. Die Liste Person → Steps wird ausschließlich aus assignedCooks derselben Directions abgeleitet.
+Results öffnen ihre bereits validierten vollständigen Recipe-Payloads synchron aus `FlowState`; dadurch entsteht beim Wechsel zur Detailansicht kein zusätzlicher Ladezustand. Direkte Library-/Detail-URLs bleiben unabhängig davon über `RecipeRepository` und Firebase verfügbar. Das Detail zeigt die kompakte Per-Serving-Nutrition, Your/Extra ingredients und Directions direkt im Figma-Layout. Chef-Badges werden ausschließlich aus `cookCount` und `assignedCooks` derselben Directions abgeleitet; die frühere doppelte Arbeitsaufteilung entfällt. Ein Favorite wird einmal pro Browser ausgelöst und serverseitig als öffentlicher Firebase-Zähler gespeichert.
 
 ## Bibliothek
 

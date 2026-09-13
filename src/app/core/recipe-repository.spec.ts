@@ -38,14 +38,28 @@ describe('N8nRecipeRepository', () => {
     await expect(new N8nRecipeRepository().getById(recipe.id)).rejects.toThrow();
   });
 
+  it('sends favorites through the dedicated n8n library owner', async () => {
+    const request = vi.fn(
+      async (_input: Parameters<typeof fetch>[0], _init?: Parameters<typeof fetch>[1]) =>
+        apiResponse({ ok: true }),
+    );
+    vi.stubGlobal('fetch', request);
+    await expect(new N8nRecipeRepository().favorite(recipe.id)).resolves.toBeUndefined();
+    const [url, init] = request.mock.calls[0];
+    expect(String(url)).toContain('code-a-cuisine-favorite');
+    expect(init).toMatchObject({ method: 'POST' });
+    expect(String((init as RequestInit).body)).toContain(recipe.id);
+  });
+
   it('uses the n8n library endpoint for pagination and cuisine filtering', async () => {
     const request = vi.fn(async (_input: Parameters<typeof fetch>[0]) =>
-      apiResponse({ items: [recipe], total: 21, page: 1, pages: 2 }),
+      apiResponse({ items: [recipe], topLiked: [{ ...recipe, favoriteCount: 7 }], total: 21, page: 1, pages: 2 }),
     );
     vi.stubGlobal('fetch', request);
     const result = await new N8nRecipeRepository().list({ page: 1, cuisine: 'italian' });
     expect(result).toMatchObject({ total: 21, page: 1, pages: 2 });
     expect(result.items).toEqual([recipe]);
+    expect(result.topLiked).toEqual([{ ...recipe, favoriteCount: 7 }]);
     const url = String(request.mock.calls[0][0]);
     expect(url).toContain('code-a-cuisine-library');
     expect(url).toContain('cuisine=italian');

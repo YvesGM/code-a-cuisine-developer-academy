@@ -204,6 +204,8 @@ describe('Academy contract', () => {
   it('validates stored recipe payloads independently of the original request', () => {
     const recipe = mockResponse(request(2, 2)).recipes[0];
     expect(validateStoredRecipe(recipe)).toEqual(recipe);
+    expect(validateStoredRecipe({ ...recipe, favoriteCount: 4 })).toMatchObject({ favoriteCount: 4 });
+    expect(() => validateStoredRecipe({ ...recipe, favoriteCount: -1 })).toThrow();
     expect(() => validateStoredRecipe({ ...recipe, servings: 0 })).toThrow();
     expect(() =>
       validateStoredRecipe({

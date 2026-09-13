@@ -1,50 +1,106 @@
-﻿@use '../../styles/variables' as v;
+@use '../../styles/variables' as v;
 
 :host {
   display: block;
 }
+
 .cuisine-page {
   max-width: 1303px;
   padding-top: 24px;
 }
-.back-link {
-  margin-bottom: 40px;
+
+.cuisine-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 52px;
 }
+
+.back-link {
+  text-decoration: none;
+}
+
 .cuisine-heading {
-  position: relative;
   display: grid;
   align-items: center;
   min-height: 144px;
-  margin-bottom: 64px;
-  text-align: center;
+  margin-bottom: 56px;
 }
+
 .cuisine-heading > img {
   width: 100%;
   height: auto;
 }
-.cuisine-heading > h1:not(.visually-hidden) {
-  padding: 24px;
+
+.cuisine-heading__fallback {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  min-height: 112px;
+  padding: 16px 28px;
   border-radius: 12px;
   background: v.$cream;
-  font-size: 36px;
+  text-align: center;
+}
+
+.cuisine-heading__fallback img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.cuisine-heading__fallback h1 {
+  font-size: 34px;
+  font-weight: 600;
+}
+
+.cuisine-mobile-action {
+  display: none;
 }
 
 @media (max-width: v.$breakpoint-mobile) {
   .cuisine-page {
     padding-top: 16px;
   }
-  .back-link {
-    margin-bottom: 24px;
+
+  .cuisine-toolbar {
+    margin-bottom: 28px;
   }
+
+  .back-link__label,
+  .cuisine-toolbar__generate {
+    display: none;
+  }
+
   .cuisine-heading {
-    min-height: 100px;
+    min-height: 0;
     margin-bottom: 32px;
   }
+
   .cuisine-heading > img {
-    height: 100px;
-    object-fit: cover;
+    height: auto;
   }
-  .cuisine-heading > h1:not(.visually-hidden) {
-    font-size: 28px;
+
+  .cuisine-heading__fallback {
+    min-height: 72px;
+    gap: 12px;
+    padding: 10px 14px;
+  }
+
+  .cuisine-heading__fallback img {
+    width: 38px;
+    height: 38px;
+  }
+
+  .cuisine-heading__fallback h1 {
+    font-size: 22px;
+  }
+
+  .cuisine-mobile-action {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
   }
 }

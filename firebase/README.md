@@ -12,9 +12,10 @@ https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app
 
 ```text
 /code-a-cuisine/recipes/<recipe-id>
+/code-a-cuisine/favorites/<recipe-id>/count
 ```
 
-Der Pfad wird beim ersten erfolgreichen n8n-Write automatisch erzeugt.
+Die Pfade werden beim ersten erfolgreichen n8n-Write automatisch erzeugt.
 
 ## Service Account
 
@@ -33,7 +34,7 @@ https://www.googleapis.com/auth/userinfo.email
 https://www.googleapis.com/auth/firebase.database
 ```
 
-Die beiden Workflow-Nodes `Persist 3 Recipes in Firebase` und `Read Recipes from Firebase` müssen dieses Credential verwenden.
+Die Workflow-Nodes `Persist 3 Recipes in Firebase`, `Read Recipes from Firebase`, `Read Favorite Counts` und `Increment Favorite in Firebase` müssen dieses Credential verwenden.
 
 ## Initialimport
 

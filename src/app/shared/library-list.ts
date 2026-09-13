@@ -1,10 +1,11 @@
-import { Component, effect, inject, input, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { DIET_LABELS, DIFFICULTIES, LIMITS } from '../core/config';
 import { Cuisine, RecipePage } from '../core/models';
 import { RECIPE_REPOSITORY } from '../core/recipe-repository';
-import { RecipeCard } from './recipe-card';
 @Component({
   selector: 'app-library-list',
-  imports: [RecipeCard],
+  imports: [RouterLink],
   templateUrl: './library-list.html',
   styleUrl: './library-list.scss',
 })
@@ -13,15 +14,27 @@ export class LibraryList {
   readonly result = signal<RecipePage | null>(null);
   readonly loading = signal(false);
   readonly error = signal('');
+  readonly diets = DIET_LABELS;
+  readonly difficulties = DIFFICULTIES;
+  readonly pageSize = LIMITS.libraryPageSize;
+  readonly visiblePages = computed(() => this.paginationWindow(this.result()));
   private readonly page = signal(1);
   private readonly revision = signal(0);
   private readonly repository = inject(RECIPE_REPOSITORY);
+
   /** Setzt die Seite bei jedem Cuisine-Wechsel deterministisch auf den Anfang zurück. */
   private watchCuisine(): void {
     effect(() => {
       this.cuisine();
       this.page.set(1);
     });
+  }
+
+  /** Liefert die aktuelle sowie maximal zwei nachfolgende sichtbare Seitenzahlen. */
+  private paginationWindow(result: RecipePage | null): readonly number[] {
+    if (!result) return [];
+    const end = Math.min(result.pages, result.page + 2);
+    return Array.from({ length: end - result.page + 1 }, (_, index) => result.page + index);
   }
 
   /** Setzt sichtbare Ladeflags zurück, bevor eine Repository-Seite angefordert wird. */

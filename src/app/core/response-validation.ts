@@ -242,6 +242,13 @@ function validateRecipeNumbers(value: RecordValue): RecipeNumbers {
   return { servings, cookCount, cookingTime };
 }
 
+/** Prüft optionales öffentliches Engagement ohne den Generation-Vertrag zu erzwingen. */
+function validateFavoriteCount(value: RecordValue): void {
+  if (!('favoriteCount' in value)) return;
+  const count = value['favoriteCount'];
+  if (typeof count !== 'number' || !Number.isInteger(count) || count < 0) fail();
+}
+
 /** Prüft ein gespeichertes Recipe unabhängig von seinem ursprünglichen GenerationRequest. */
 function validateRecipeStructure(value: unknown): void {
   record(value);
@@ -251,6 +258,7 @@ function validateRecipeStructure(value: unknown): void {
   validateStoredIngredients(value['ingredients']);
   validateAdditional(value['additionalIngredients']);
   validateDirections(value['directions'], numbers.cookCount, numbers.cookingTime);
+  validateFavoriteCount(value);
 }
 
 /** Prüft ein Recipe vollständig gegen den zugehörigen Request vor State- oder Repository-Übernahme. */

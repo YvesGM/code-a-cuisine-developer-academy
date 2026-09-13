@@ -39,8 +39,8 @@ Supabase bleibt serverseitig für Quota, Throttling, Workflow-Audit-Logs und den
 - Maximal drei klar getrennte zusätzliche Basiszutaten.
 - Nutrition pro Portion und Gesamtrezept mit kcal sowie Makros in Gramm und Prozent.
 - Chronologische Directions mit Helferzuordnung, Parallelgruppen und optionalen Wartezeiten.
-- Öffentliche Rezeptbibliothek mit Cuisine-Filter und Pagination ab mehr als 20 Einträgen.
-- Recipe-Detail unabhängig von der letzten Generierung.
+- Öffentliche Rezeptbibliothek mit Figma-Cuisine-Übersicht, sechs globalen Most-Liked-Rezepten sowie Cuisine-Filter und Pagination auf den Kategorie-Seiten.
+- Recipe-Detail unabhängig von der letzten Generierung, mit Chef-Zuordnung und öffentlichen Favorites.
 - IP-Quota: 3 Rezepte pro IP/Tag.
 - Globales Tageslimit: 12 Rezepte/Tag.
 - Kurzes serverseitiges Throttling vor KI-Aufrufen.
@@ -65,7 +65,7 @@ Unter `n8n/workflows/`:
 
 Der Generation-Workflow übernimmt Request-/IP-Validierung, Quota, Gemini, zweite Business-Validierung, Firebase-Persistenz, Audit-Logging und kontrollierte Fehlerantworten.
 
-Der Library-Workflow liefert Recipe-Detail und paginierte/filterbare öffentliche Bibliotheksdaten aus Firebase, ohne Firebase-Credentials an Angular auszugeben.
+Der Library-Workflow liefert Recipe-Detail, Favorite-Zähler und paginierte/filterbare öffentliche Bibliotheksdaten aus Firebase. Favorites werden über denselben Workflow-Owner serverseitig inkrementiert; Firebase-Credentials bleiben außerhalb von Angular.
 
 Der Ingredient-Catalog-Workflow lädt den vollständigen Supabase-Catalog einmalig für das Frontend und registriert neue Ingredient-Verwendungen atomar. Beim Tippen entstehen dadurch keine Datenbankrequests.
 
@@ -75,9 +75,10 @@ Code-a-Cuisine verwendet eine eigene Firebase Realtime Database und legt Daten u
 
 ```text
 /code-a-cuisine/recipes/<recipe-id>
+/code-a-cuisine/favorites/<recipe-id>/count
 ```
 
-Ein Record enthält `schemaVersion`, `createdAt` und den vollständigen validierten Recipe-Payload.
+Ein Recipe-Record enthält `schemaVersion`, `createdAt` und den vollständigen validierten Recipe-Payload.
 
 Unter `firebase/` liegen:
 

@@ -1,4 +1,4 @@
-﻿@if (loading()) {
+@if (loading()) {
   <p class="notice" role="status">Bibliothek wird geladen…</p>
 }
 @if (error()) {
@@ -9,8 +9,29 @@
 }
 @if (result(); as result) {
   <div class="library-recipes">
-    @for (recipe of result.items; track recipe.id) {
-      <app-recipe-card [recipe]="recipe" />
+    @for (recipe of result.items; track recipe.id; let index = $index) {
+      <a class="library-recipe" [routerLink]="['/recipe', recipe.id]">
+        <span class="library-recipe__number">
+          {{ (result.page - 1) * pageSize + index + 1 }}.
+        </span>
+        <div class="library-recipe__copy">
+          <p class="library-recipe__time">
+            <img src="assets/icons/clock-icon.svg" alt="" width="18" height="18" />
+            Cooking time: {{ recipe.cookingTimeMinutes }}min
+          </p>
+          <h2>{{ recipe.title }}</h2>
+        </div>
+        <div class="library-recipe__badges">
+          @if (recipe.diet !== 'none') {
+            <span class="tag">{{ diets[recipe.diet] }}</span>
+          }
+          <span class="tag">{{ difficulties[recipe.difficulty].label }}</span>
+          <span class="tag library-recipe__likes">
+            <img src="assets/icons/favourite-small.svg" alt="" width="18" height="18" />
+            {{ recipe.favoriteCount ?? 0 }}
+          </span>
+        </div>
+      </a>
     } @empty {
       <p class="notice">Noch keine gespeicherten Rezepte vorhanden.</p>
     }
@@ -19,23 +40,38 @@
     <nav class="pagination" aria-label="Bibliotheksseiten">
       <button
         type="button"
-        class="icon-button button--outline"
+        class="pagination__arrow"
         (click)="changePage(result.page - 1)"
         [disabled]="result.page === 1"
-        aria-label="Previous"
+        aria-label="Previous page"
       >
         <img src="assets/icons/pagination-left.svg" alt="" width="26" height="27" />
       </button>
-      <span
-        >Seite {{ result.page }} von {{ result.pages
-        }}<small>({{ result.total }} Rezepte)</small></span
-      >
+      @for (pageNumber of visiblePages(); track pageNumber) {
+        <button
+          type="button"
+          class="pagination__page"
+          [class.pagination__page--active]="pageNumber === result.page"
+          (click)="changePage(pageNumber)"
+          [attr.aria-current]="pageNumber === result.page ? 'page' : null"
+        >
+          {{ pageNumber }}
+        </button>
+      }
+      @if (visiblePages()[visiblePages().length - 1] < result.pages - 1) {
+        <span class="pagination__ellipsis" aria-hidden="true">…</span>
+      }
+      @if (visiblePages()[visiblePages().length - 1] < result.pages) {
+        <button type="button" class="pagination__page" (click)="changePage(result.pages)">
+          {{ result.pages }}
+        </button>
+      }
       <button
         type="button"
-        class="icon-button button--outline"
+        class="pagination__arrow"
         (click)="changePage(result.page + 1)"
         [disabled]="result.page === result.pages"
-        aria-label="Next"
+        aria-label="Next page"
       >
         <img src="assets/icons/pagination-right.svg" alt="" width="26" height="27" />
       </button>

@@ -125,7 +125,7 @@
       "id": "e870b5d6-c9ce-4162-bbd3-cff26abbe829",
       "name": "Build Library Response",
       "notesInFlow": true,
-      "notes": "Validates Firebase records, filters by cuisine, sorts newest first, and paginates server-side with 20 recipes per page.\n"
+      "notes": "Validates Firebase records, merges favorite counts, derives the six most-liked recipes, filters by cuisine, sorts newest first, and paginates server-side with 20 recipes per page.\n"
     },
     {
       "parameters": {
@@ -255,7 +255,8 @@
           "name": "Code-a-Cuisine Firebase Service Account"
         }
       },
-      "onError": "continueErrorOutput"
+      "onError": "continueErrorOutput",
+      "notes": "Reads persisted favorite counters from Firebase before the library response is assembled."
     },
     {
       "parameters": {
@@ -268,7 +269,8 @@
         656
       ],
       "id": "a515ac84-400e-4e37-9b9f-afb48f119be6",
-      "name": "Normalize Favorite Request"
+      "name": "Normalize Favorite Request",
+      "notes": "Validates and normalizes the recipe identifier supplied by the public favorite endpoint."
     },
     {
       "parameters": {
@@ -287,7 +289,8 @@
       ],
       "id": "bb9bd83b-de19-4933-a4bb-2cc60146d5f9",
       "name": "Favorite Recipe API",
-      "webhookId": "0ac42565-713f-4e15-b3e6-35640d7f3be7"
+      "webhookId": "0ac42565-713f-4e15-b3e6-35640d7f3be7",
+      "notes": "Public POST webhook that accepts one recipe favorite action and delegates validation and persistence."
     },
     {
       "parameters": {
@@ -314,7 +317,8 @@
           "name": "Code-a-Cuisine Firebase Service Account"
         }
       },
-      "onError": "continueErrorOutput"
+      "onError": "continueErrorOutput",
+      "notes": "Atomically increments the selected recipe favorite counter in Firebase Realtime Database."
     },
     {
       "parameters": {
@@ -329,7 +333,8 @@
         368
       ],
       "id": "d15e9e4b-964b-494d-87cb-c1e8ac3fa817",
-      "name": "Respond Favorite"
+      "name": "Respond Favorite",
+      "notes": "Returns a successful favorite acknowledgement after Firebase persisted the increment."
     },
     {
       "parameters": {
@@ -346,7 +351,8 @@
         688
       ],
       "id": "a0f21e08-25ca-4a9f-9bd5-7446f202f0e8",
-      "name": "Respond Invalid Favorite Request"
+      "name": "Respond Invalid Favorite Request",
+      "notes": "Returns HTTP 400 when the favorite request does not contain a safe recipe identifier."
     },
     {
       "parameters": {
@@ -380,7 +386,8 @@
         656
       ],
       "id": "83769fde-50ac-4965-a02e-f9f317a63e47",
-      "name": "Favorite Request Valid?"
+      "name": "Favorite Request Valid?",
+      "notes": "Routes valid favorite requests to Firebase and invalid requests to the controlled 400 response."
     },
     {
       "parameters": {
@@ -398,7 +405,8 @@
             {
               "name": "Prefer",
               "value": "return=minimal"
-            }
+            },
+            {}
           ]
         },
         "sendBody": true,
@@ -451,7 +459,7 @@
         }
       },
       "onError": "continueRegularOutput",
-      "notes": "Sends a technical notification when reading the Firebase recipe library fails.\n"
+      "notes": "Sends a technical notification when reading the Firebase recipe favorite fails.\n"
     },
     {
       "parameters": {
@@ -673,7 +681,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "2fe65356-1948-4ed6-ad64-4f8e3596849a",
+  "versionId": "539cb999-d047-4ca1-83ee-0c44b2cdf5d8",
   "meta": {
     "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
   },

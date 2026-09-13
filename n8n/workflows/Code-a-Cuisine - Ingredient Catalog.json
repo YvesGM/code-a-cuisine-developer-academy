@@ -31,7 +31,8 @@
         224
       ],
       "id": "2f3b61f9-375f-453a-911d-dc037a785e42",
-      "name": "Normalize Catalog Request"
+      "name": "Normalize Catalog Request",
+      "notes": "Normalizes catalog load/register requests and validates optional ingredient names before database access."
     },
     {
       "parameters": {
@@ -65,7 +66,8 @@
         224
       ],
       "id": "03b0a79b-f0b6-4578-b6fd-870a2ea3b1cb",
-      "name": "Catalog Request Valid?"
+      "name": "Catalog Request Valid?",
+      "notes": "Routes valid catalog operations onward and rejects malformed requests with a controlled response."
     },
     {
       "parameters": {
@@ -99,7 +101,8 @@
         96
       ],
       "id": "2de8b9cd-271e-45bc-a44b-885f69ed7494",
-      "name": "Register Ingredient?"
+      "name": "Register Ingredient?",
+      "notes": "Chooses between incrementing one ingredient usage counter and loading the complete suggestion catalog."
     },
     {
       "parameters": {
@@ -116,7 +119,8 @@
         368
       ],
       "id": "13643020-e7c2-492f-8d38-c429920aa491",
-      "name": "Respond Invalid Catalog Request"
+      "name": "Respond Invalid Catalog Request",
+      "notes": "Returns HTTP 400 for malformed ingredient catalog requests."
     },
     {
       "parameters": {
@@ -209,7 +213,8 @@
         96
       ],
       "id": "a663f975-5b9f-4fe0-9832-c005769847ae",
-      "name": "Respond Ingredient Catalog"
+      "name": "Respond Ingredient Catalog",
+      "notes": "Returns the loaded or updated ingredient catalog payload to Angular."
     },
     {
       "parameters": {
@@ -226,7 +231,8 @@
         288
       ],
       "id": "3474f277-e9ea-454f-ae01-837db3a2b812",
-      "name": "Respond Catalog Backend Error"
+      "name": "Respond Catalog Backend Error",
+      "notes": "Returns a controlled backend error when the ingredient catalog database operation fails."
     }
   ],
   "pinData": {},
@@ -333,10 +339,9 @@
     "timeSavedMode": "fixed",
     "errorWorkflow": "nnCj7YCdOd3NX984",
     "callerPolicy": "workflowsFromSameOwner",
-    "executionTimeout": -1,
     "availableInMCP": false
   },
-  "versionId": "39c2c762-8061-4fde-9107-902b0d0d401c",
+  "versionId": "72b7e2f1-91b5-43fc-b13e-ca15def399e0",
   "meta": {
     "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
   },

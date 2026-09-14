@@ -4,7 +4,7 @@ Code-a-Cuisine unterstützt die Resteverwertung: Nutzer erfassen vorhandene Lebe
 
 ## Aktueller Stand
 
-Die funktionale Angular-Basis sowie die n8n-Automation sind vorbereitet. Fünf importierbare Code-a-Cuisine-Workflows liegen unter `n8n/workflows/` und verwenden die bestehenden n8n-Credentials für Supabase, Gemini, SMTP und den Google Service Account.
+Die funktionale Angular-Basis sowie die n8n-Automation sind vorbereitet. Fünf importierbare Code-a-Cuisine-Workflows liegen unter `n8n/workflows/`. Die Git-Exporte enthalten bewusst keine account-spezifischen Credential-Bindings; Supabase, Gemini, SMTP und Firebase werden nach dem Import ausschließlich in n8n zugeordnet.
 
 Produktiver Datenfluss:
 

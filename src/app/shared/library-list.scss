@@ -15,7 +15,7 @@
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr) auto;
   gap: 14px;
-  align-items: center;
+  align-items: flex-end;
   min-height: 76px;
   padding: 10px 14px;
   border-radius: 12px;
@@ -23,7 +23,6 @@
   text-decoration: none;
   transition: background-color 160ms ease;
 
-  &:nth-child(even),
   &:hover {
     background: v.$cream;
   }
@@ -32,11 +31,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    background: v.$cream;
-    font-size: 16px;
+    background: v.$orange-hover;
+    font-size: 18px;
+    font-weight: 500;
   }
 
   &__copy {
@@ -49,7 +50,8 @@
     align-items: center;
     gap: 6px;
     color: v.$green-olive;
-    font-size: 15px;
+    font-size: 16px;
+    font-weight: 500;
 
     img {
       width: 18px;
@@ -58,20 +60,22 @@
   }
 
   h2 {
-    font-size: 19px;
+    font-size: 24px;
     font-weight: 500;
   }
 
   &__badges {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    align-self: center;
+    justify-content: end;
     gap: 8px;
 
     .tag {
       padding: 4px 10px;
       background: v.$green-recipe-badge;
-      font-size: 14px;
+      font-size: 18px;
+      font-weight: 500;
     }
   }
 
@@ -95,7 +99,7 @@
     border: 0;
     background: transparent;
     color: v.$green-dark;
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 500;
 
     &:hover:not(:disabled) {
@@ -104,13 +108,8 @@
   }
 
   &__arrow img {
-    width: 20px;
-    height: 20px;
-  }
-
-  &__page--active {
-    text-decoration: underline;
-    text-underline-offset: 4px;
+    width: 26px;
+    height: 26px;
   }
 
   &__ellipsis {
@@ -126,9 +125,14 @@
 
   .library-recipe {
     grid-template-columns: 32px minmax(0, 1fr);
+    align-items: center;
     gap: 6px 8px;
     min-height: 0;
     padding: 10px 8px;
+
+    &:nth-child(even) {
+      background: v.$cream;
+    }
 
     &__number {
       grid-column: 1;
@@ -145,7 +149,7 @@
     &__time {
       grid-column: 2;
       grid-row: 1;
-      font-size: 13px;
+      font-size: 14px;
     }
 
     h2 {
@@ -163,7 +167,7 @@
 
       .tag {
         padding: 3px 8px;
-        font-size: 13px;
+        font-size: 14px;
       }
     }
   }
@@ -175,7 +179,6 @@
     button {
       min-width: 28px;
       min-height: 28px;
-      font-size: 13px;
     }
   }
 }

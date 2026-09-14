@@ -66,7 +66,11 @@
         <div class="illustrated-heading illustrated-heading--ingredients">
           <h2 id="ingredients-title">Ingredients</h2>
         </div>
-        <div class="ingredient-columns">
+        <div
+          id="recipe-ingredients-content"
+          class="ingredient-columns"
+          [class.mobile-collapsible--collapsed]="!ingredientsExpanded()"
+        >
           <section>
             <h3>Your ingredients</h3>
             <ul>
@@ -96,13 +100,32 @@
             </ul>
           </section>
         </div>
+        <button
+          type="button"
+          class="detail-toggle"
+          aria-controls="recipe-ingredients-content"
+          [attr.aria-expanded]="ingredientsExpanded()"
+          (click)="toggleIngredients()"
+        >
+          <span>{{ ingredientsExpanded() ? 'Hide ingredients' : 'Show ingredients' }}</span>
+          <img
+            class="detail-toggle__arrow"
+            [class.detail-toggle__arrow--open]="ingredientsExpanded()"
+            src="assets/icons/arrow-icon.svg"
+            alt=""
+          />
+        </button>
       </section>
 
       <section class="directions-section" aria-labelledby="directions-title">
         <div class="illustrated-heading illustrated-heading--directions">
           <h2 id="directions-title">Directions</h2>
         </div>
-        <ol class="directions">
+        <ol
+          id="recipe-directions-content"
+          class="directions"
+          [class.mobile-collapsible--collapsed]="!directionsExpanded()"
+        >
           @for (direction of recipe.directions; track direction.step) {
             <li>
               <div class="step-heading">
@@ -121,10 +144,28 @@
             </li>
           }
         </ol>
+        <button
+          type="button"
+          class="detail-toggle"
+          aria-controls="recipe-directions-content"
+          [attr.aria-expanded]="directionsExpanded()"
+          (click)="toggleDirections()"
+        >
+          <span>{{ directionsExpanded() ? 'Hide directions' : 'Show directions' }}</span>
+          <img
+            class="detail-toggle__arrow"
+            [class.detail-toggle__arrow--open]="directionsExpanded()"
+            src="assets/icons/arrow-icon.svg"
+            alt=""
+          />
+        </button>
       </section>
 
       <section class="favorite-prompt" aria-label="Favorite this recipe">
-        <p><strong>Just finished this meal?</strong> Give it a heart, so that the others know this is delicious.</p>
+        <p>
+          <strong>Just finished this meal?</strong>
+          <span>Give it a heart, so that the others know this is delicious.</span>
+        </p>
         <button
           type="button"
           class="favorite-button"
@@ -134,7 +175,10 @@
           aria-label="Favorite this recipe"
           (click)="favorite()"
         >
-          <img src="assets/icons/favourite-icon.svg" alt="" />
+          <img
+            [src]="favorited() ? 'assets/icons/favourite-filled.svg' : 'assets/icons/favourite-icon.svg'"
+            alt=""
+          />
         </button>
         @if (favoriteError()) {
           <small class="favorite-error" role="status">{{ favoriteError() }}</small>

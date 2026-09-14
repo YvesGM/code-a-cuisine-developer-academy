@@ -36,7 +36,7 @@
       <p class="notice">Noch keine gespeicherten Rezepte vorhanden.</p>
     }
   </div>
-  @if (result.pages > 1) {
+  @if (result.items.length > 0) {
     <nav class="pagination" aria-label="Bibliotheksseiten">
       <button
         type="button"

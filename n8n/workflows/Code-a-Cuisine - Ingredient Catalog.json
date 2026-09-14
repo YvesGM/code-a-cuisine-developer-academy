@@ -151,12 +151,6 @@
       "id": "c74312ed-fc0b-443f-9139-ea1a1c116a7e",
       "name": "Register Ingredient Usage",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Atomically inserts a new Ingredient name or increments its usage counter in Supabase."
     },
@@ -189,12 +183,6 @@
       "id": "1d3a39f8-99c9-4036-8489-9d182faf5822",
       "name": "Load Ingredient Catalog",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Loads the complete autocomplete catalog once; Angular filters locally while typing."
     },

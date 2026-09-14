@@ -56,6 +56,8 @@ export class RecipeDetailPage {
   readonly favoritePending = signal(false);
   readonly favorited = signal(storedFavoriteIds().includes(this.initialId));
   readonly favoriteCount = signal(this.recipe()?.favoriteCount ?? 0);
+  readonly ingredientsExpanded = signal(true);
+  readonly directionsExpanded = signal(true);
   readonly diets = DIET_LABELS;
   readonly difficulties = DIFFICULTIES;
   readonly chefs = computed(() =>
@@ -151,6 +153,15 @@ export class RecipeDetailPage {
     effect((registerCleanup) => this.watchRecipe(registerCleanup));
   }
 
+  /** Schaltet die Zutatenliste ausschließlich für die mobile Detailansicht ein oder aus. */
+  toggleIngredients(): void {
+    this.ingredientsExpanded.update((expanded) => !expanded);
+  }
+
+  /** Schaltet die Zubereitungsschritte ausschließlich für die mobile Detailansicht ein oder aus. */
+  toggleDirections(): void {
+    this.directionsExpanded.update((expanded) => !expanded);
+  }
   /** Übernimmt eine erfolgreiche serverseitige Favorisierung genau einmal pro Browser. */
   private acceptFavorite(id: string): void {
     storeFavoriteId(id);

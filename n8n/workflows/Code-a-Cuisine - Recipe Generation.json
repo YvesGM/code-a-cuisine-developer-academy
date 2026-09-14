@@ -106,12 +106,6 @@
       "id": "1f5b06fe-62f3-4e55-bfdc-3e5ec3cc79ec",
       "name": "Log Invalid Request",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Writes an audit entry for rejected requests. Logging failures must not block the HTTP 400 response.\n"
     },
@@ -163,12 +157,6 @@
       "id": "e61c36e3-e908-4eac-829a-a7924e304583",
       "name": "Claim IP + Global Quota",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Atomically reserves three recipe units in Supabase while enforcing the per-IP limit, global daily limit, and short-term throttling.\n"
     },
@@ -241,12 +229,6 @@
       "id": "ed9a9296-c4f9-4943-8692-ffc909d007b9",
       "name": "Log Quota Rejection",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Logs daily-limit and throttling rejections.\n"
     },
@@ -302,12 +284,6 @@
       "id": "b817f61b-1752-4b43-9149-3aa6d4b3a720",
       "name": "Log Quota Backend Error",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Logs failures of the server-side quota and cost-protection mechanism.\n"
     },
@@ -332,12 +308,6 @@
       "name": "Email Quota Backend Error",
       "notesInFlow": true,
       "webhookId": "86aef6de-b8f8-4cd6-856f-e87eab936871",
-      "credentials": {
-        "smtp": {
-          "id": "Tm9Jzpc5URqWeuZm",
-          "name": "SMTP account"
-        }
-      },
       "notes": "Sends an SMTP alert when the quota backend fails.\n"
     },
     {
@@ -386,13 +356,6 @@
       "id": "1d28d424-8241-4e76-b433-2ce27d58407a",
       "name": "Generate 3 Recipes with Gemini",
       "notesInFlow": true,
-      "credentials": {
-        "googlePalmApi": {
-          "id": null,
-          "name": "",
-          "__aiGatewayManaged": true
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Generates only an untrusted recipe draft. IDs, ingredient metadata, totals, validation, and persistence are handled server-side.\n"
     },
@@ -482,12 +445,6 @@
       "id": "ac3244c1-c3ea-47e0-aeed-646dba93d9c1",
       "name": "Persist 3 Recipes in Firebase",
       "notesInFlow": true,
-      "credentials": {
-        "googleApi": {
-          "id": "wl2dRkJ0ULnTTKxT",
-          "name": "Code-a-Cuisine Firebase Service Account"
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Atomically persists the three validated recipes to Firebase Realtime Database using the server-side Google Service Account.\n"
     },
@@ -520,12 +477,6 @@
       "id": "58f3d26e-2c94-4802-87eb-fb55bfcdc289",
       "name": "Complete Quota Claim",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Marks the reserved three recipe units as consumed after successful Firebase persistence.\n"
     },
@@ -562,12 +513,6 @@
       "id": "7139afe4-304b-4827-9fc9-c773bbdecf60",
       "name": "Log Successful Generation",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Writes a non-blocking audit entry for a successful recipe generation."
     },
@@ -619,12 +564,6 @@
       "id": "d24c6704-e5d3-4fb7-9313-769baebb3ee0",
       "name": "Release Quota After AI Error",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Releases the reserved quota when the AI provider fails."
     },
@@ -661,12 +600,6 @@
       "id": "295ae73c-5c68-48ee-b590-41c1714370b5",
       "name": "Log AI Provider Error",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Writes an audit entry for AI provider failures."
     },
@@ -691,12 +624,6 @@
       "name": "Email AI Provider Error",
       "notesInFlow": true,
       "webhookId": "4d59ca24-6842-443c-ae3d-c71342dfbf18",
-      "credentials": {
-        "smtp": {
-          "id": "Tm9Jzpc5URqWeuZm",
-          "name": "SMTP account"
-        }
-      },
       "notes": "Notifies the operator when the AI provider fails."
     },
     {
@@ -747,12 +674,6 @@
       "id": "c02415a6-683d-4e67-8f07-f71363a68a78",
       "name": "Release Quota After Invalid AI",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Releases the reserved quota when the AI output fails server-side validation.\n\n"
     },
@@ -789,12 +710,6 @@
       "id": "2ae5a8f7-2e2a-470f-bd38-0e66fa14384c",
       "name": "Log Invalid AI Response",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Writes an audit entry when the second-stage n8n validation rejects the model output.\n"
     },
@@ -819,12 +734,6 @@
       "name": "Email Invalid AI Response",
       "notesInFlow": true,
       "webhookId": "6b2cd8cb-ef4d-40f3-955c-3000282b4016",
-      "credentials": {
-        "smtp": {
-          "id": "Tm9Jzpc5URqWeuZm",
-          "name": "SMTP account"
-        }
-      },
       "notes": "Alerts the operator when the model output violates the required structure or business rules.\n"
     },
     {
@@ -875,12 +784,6 @@
       "id": "a29e365c-8959-4dbb-b5bb-23bcd6fb06b0",
       "name": "Release Quota After Storage Error",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Releases the reserved quota when Firebase persistence fails."
     },
@@ -917,12 +820,6 @@
       "id": "2b9b733b-e71a-4662-b0d2-d0e204d80c58",
       "name": "Log Firebase Persistence Error",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Logs only Firebase persistence error metadata in Supabase without storing recipe payloads or secrets."
     },
@@ -947,12 +844,6 @@
       "name": "Email Firebase Persistence Error",
       "notesInFlow": true,
       "webhookId": "b7280882-eff7-412b-92a1-e124e85d18ad",
-      "credentials": {
-        "smtp": {
-          "id": "Tm9Jzpc5URqWeuZm",
-          "name": "SMTP account"
-        }
-      },
       "notes": "Alerts the operator when persistent recipe storage fails."
     },
     {

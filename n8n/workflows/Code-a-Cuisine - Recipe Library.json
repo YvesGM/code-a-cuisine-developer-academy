@@ -103,12 +103,6 @@
       "id": "090a913d-5d48-46b0-a143-831693556d70",
       "name": "Read Recipes from Firebase",
       "notesInFlow": true,
-      "credentials": {
-        "googleApi": {
-          "id": "wl2dRkJ0ULnTTKxT",
-          "name": "Code-a-Cuisine Firebase Service Account"
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Reads the protected Firebase recipe library using the server-side Google Service Account. No Firebase credentials are exposed to Angular."
     },
@@ -178,12 +172,6 @@
       "id": "1461aed5-8f37-4bc6-9f71-c94246114a73",
       "name": "Log Firebase Library Error",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "notes": "Writes an audit log for Firebase read failures without storing recipe data or secrets.\n"
     },
     {
@@ -207,12 +195,6 @@
       "name": "Email Firebase Library Error",
       "notesInFlow": true,
       "webhookId": "f7e74261-4fc3-4145-9af5-79829bc9f0fb",
-      "credentials": {
-        "smtp": {
-          "id": "Tm9Jzpc5URqWeuZm",
-          "name": "SMTP account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Sends a technical notification when reading the Firebase recipe library fails.\n"
     },
@@ -249,12 +231,6 @@
       ],
       "id": "2c96ca31-f0e7-4b55-b57b-d53e47e593c6",
       "name": "Read Favorite Counts",
-      "credentials": {
-        "googleApi": {
-          "id": "wl2dRkJ0ULnTTKxT",
-          "name": "Code-a-Cuisine Firebase Service Account"
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Reads persisted favorite counters from Firebase before the library response is assembled."
     },
@@ -311,12 +287,6 @@
       ],
       "id": "90792d11-3927-4886-b3a8-048d6dc26f76",
       "name": "Increment Favorite in Firebase",
-      "credentials": {
-        "googleApi": {
-          "id": "wl2dRkJ0ULnTTKxT",
-          "name": "Code-a-Cuisine Firebase Service Account"
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Atomically increments the selected recipe favorite counter in Firebase Realtime Database."
     },
@@ -423,12 +393,6 @@
       "id": "3e7fb982-100d-411d-bacb-cf0b1706639a",
       "name": "Log Firebase Favorite Error",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "notes": "Writes an audit log for Firebase read failures without storing recipe data or secrets.\n"
     },
     {
@@ -452,12 +416,6 @@
       "name": "Email Firebase Favorite Error",
       "notesInFlow": true,
       "webhookId": "f7e74261-4fc3-4145-9af5-79829bc9f0fb",
-      "credentials": {
-        "smtp": {
-          "id": "Tm9Jzpc5URqWeuZm",
-          "name": "SMTP account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Sends a technical notification when reading the Firebase recipe favorite fails.\n"
     },

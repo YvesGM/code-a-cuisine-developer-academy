@@ -99,12 +99,6 @@
       "id": "a6b45779-b4dd-4d81-9297-40813a94462d",
       "name": "Get Daily Recipe Quota",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Reads the current quota counters without reserving an AI generation slot."
     },
@@ -167,12 +161,6 @@
       "name": "Email Quota Status Error",
       "notesInFlow": true,
       "webhookId": "103d8f03-861e-4846-a29d-01c978c5dba3",
-      "credentials": {
-        "smtp": {
-          "id": "Tm9Jzpc5URqWeuZm",
-          "name": "SMTP account"
-        }
-      },
       "notes": "Notifies the operator when the quota-status backend request fails."
     },
     {
@@ -227,12 +215,6 @@
       "id": "9fa3f392-9b62-45e3-b710-9bd961a34c34",
       "name": "Log Quota Status Error",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Logs failures from the public quota-status endpoint to code_a_cuisine.workflow_runs."
     }

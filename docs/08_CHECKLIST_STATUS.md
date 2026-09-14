@@ -1,6 +1,6 @@
 # 08 – Academy-Checkliste: aktueller Implementierungsstand
 
-Stand: 13.09.2026. Grundlage ist der aktuelle Repository-Stand nach der strukturellen Figma-/Responsive-Umsetzung; finale Browser-/Device-QA bleibt offen.
+Stand: 14.09.2026. Grundlage ist der aktuelle Repository-Stand nach der strukturellen Figma-/Responsive-Umsetzung; finale Browser-/Device-QA bleibt offen.
 
 Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfung noch offen · `[ ]` offen · `[-]` optional.
 
@@ -10,7 +10,7 @@ Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfun
 | ----------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------- |
 | GitHub Repository + README-Link                             | [ ]    | README vorhanden; finalen GitHub-Link vor Abgabe ergänzen.                                                                      |
 | Semantisches HTML                                           | [x]    | Header, Nav, Main, Footer, Form, Fieldset, Article, Section, Listen und Definition Lists werden fachlich eingesetzt.            |
-| Font-Size mindestens 16px / Kleingedrucktes mindestens 14px | [~]    | Drei mobile Library-Mikrotexte stehen noch auf 13px. Wegen der Vorgabe, das aktuelle Design bei diesem Struktur-Refactor nicht zu verändern, bewusst nicht angehoben. |
+| Font-Size mindestens 16px / Kleingedrucktes mindestens 14px | [x]    | Kleinste explizite Schriftgröße im aktuellen SCSS-Stand ist 14px; mobile Library-Mikrotexte wurden auf 14px angehoben. |
 | Angular Frontend                                            | [x]    | Angular 22, Standalone Components, Router, Reactive Forms, Signals.                                                             |
 | JSDoc für Funktionen                                        | [x]    | Eigene fachliche Produktionsfunktionen/-methoden sind dokumentiert; ESLint-Strukturregeln schützen den Refactor-Stand.          |
 | Alle generierten Rezepte in Firebase                        | [~]    | n8n Generation persistiert die drei validierten Recipes in Firebase RTDB; realen E2E-Write noch einmal vor Figma/Abgabe prüfen. |
@@ -19,7 +19,7 @@ Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfun
 
 | Anforderung                           | Status | Nachweis / Restarbeit                                                                                                   |
 | ------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------- |
-| n8n-Projekt in Git                    | [x]    | Fünf aktuelle Workflow-Exporte liegen unter `n8n/workflows/`; alle fünf sind aktiv exportiert und alle Nodes besitzen Beschreibungstexte.                         |
+| n8n-Projekt in Git                    | [x]    | Fünf aktuelle Workflow-Exporte liegen unter `n8n/workflows/`; alle fünf sind aktiv exportiert, alle Nodes besitzen englische Notes und die Exporte enthalten keine gebundenen Credential-Referenzen. |
 | Aussagekräftige Node-Namen            | [x]    | Generation, Library, Quota und Error Notification verwenden fachliche Node-Namen.                                       |
 | Beschreibungstexte                    | [x]    | Alle exportierten Nodes besitzen aussagekräftige englische Notes.                                                       |
 | Error Handling + Logging + E-Mail     | [~]    | Kontrollierte Fehlerbranches, Supabase-Audit, SMTP und Error-Workflow-Zuordnung sind vorhanden; realen Fehler-Smoke-Test noch durchführen. |
@@ -59,7 +59,7 @@ Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfun
 | 7 drei Vorschläge      | [x]             | Exakt 3, eindeutige Titel/Ränge, ≥70 % User-Zutaten, max. 3 getrennte Basiszutaten.                               |
 | 8 optimierte Anleitung | [x] strukturell | Chronologische Steps, Parallelgruppen, Wartezeiten und beginner-friendly Prompt-Regel vorhanden.                  |
 | 9 Arbeitsaufteilung    | [x]             | ToDo-Listen werden direkt aus `assignedCooks` abgeleitet; kein paralleler zweiter State.                          |
-| 10 Nährwerte           | [x]             | kcal + Protein/Carbs/Fat in g/% pro Portion und Gesamt; KI-Werte bleiben Schätzwerte.                             |
+| 10 Nährwerte           | [~]             | Contract/Validierung enthalten kcal + Protein/Carbs/Fat in g/% pro Portion und Gesamt. Die aktuelle Figma-Detailansicht zeigt sichtbar nur Energy sowie Makro-Grammwerte pro Portion; Prozent- und Gesamtwerte sind daher vor Abgabe noch gegen die wörtliche Academy-Vorgabe zu entscheiden. |
 
 ## User Story 11 – Quota
 
@@ -84,6 +84,16 @@ Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfun
 | Pagination >20                     | [x]    | Page Size 20; Library API paginiert und Frontend navigiert.                          |
 | Cuisine-Kategorien                 | [x]    | Zentral definierte Cuisine-Filter.                                                   |
 | vollständige Detailansicht         | [x]    | Nutrition, Zutaten, Extras, Directions und Arbeitsaufteilung verfügbar.              |
+
+
+## Code-Qualitätsaudit 14.09.2026
+
+- Alle handgeschriebenen Dateien unter `src/` liegen unter 400 Zeilen.
+- Eigene benannte Produktionsfunktionen/-methoden liegen im statischen Audit bei maximal 14 Codezeilen.
+- Eigene fachliche Produktionsfunktionen/-methoden besitzen JSDoc; Framework-/Template-Callbacks werden nicht künstlich kommentiert.
+- SCSS verwendet bestehende Owner und verschachtelt Modifier/Elemente (`&--…`, `&__…`) innerhalb ihrer Komponenten; keine parallelen Style-Owner wurden für den Abschlussaudit ergänzt.
+- Alle fünf n8n-Exporte sind aktiv, haben eindeutige Webhook-Pfade, gültige Node-Verbindungen, eindeutige Node-Namen und englische Notes.
+- Account-spezifische n8n-Credential-Bindings wurden aus den Git-Exporten entfernt; nach Import werden Credentials in n8n manuell zugeordnet.
 
 ## Weitere Seite und finale QA
 

@@ -62,12 +62,6 @@
       "id": "cf7776d0-081c-4502-867e-5b8b5a68d1ec",
       "name": "Log Unhandled Error",
       "notesInFlow": true,
-      "credentials": {
-        "supabaseApi": {
-          "id": "q29scgLDJm1zYFcO",
-          "name": "Supabase account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Persists unexpected n8n workflow failures in the server-side audit log."
     },
@@ -92,12 +86,6 @@
       "name": "Email Unhandled Workflow Error",
       "notesInFlow": true,
       "webhookId": "cb0e9cf8-bb45-43e1-b43d-b0f92576dcad",
-      "credentials": {
-        "smtp": {
-          "id": "Tm9Jzpc5URqWeuZm",
-          "name": "SMTP account"
-        }
-      },
       "notes": "Sends an SMTP alert for failures that did not reach an expected business-error branch."
     }
   ],

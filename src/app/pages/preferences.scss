@@ -178,6 +178,12 @@ form {
   }
 }
 
+.generate-label {
+  &--mobile {
+    display: none;
+  }
+}
+
 .form-status {
   display: grid;
   justify-items: center;
@@ -198,6 +204,16 @@ form {
     padding: 16px 16px 40px;
   }
 
+  .generate-label {
+    &--desktop {
+      display: none;
+    }
+
+    &--mobile {
+      display: inline;
+    }
+  }
+
   .back-link {
     margin-bottom: 24px;
   }
@@ -210,6 +226,7 @@ form {
 
   .counts {
     flex-direction: column;
+    gap: 24px;
   }
 
   .count-field > label {
@@ -218,10 +235,6 @@ form {
 
   .preference-options {
     padding-inline: 16px;
-
-    legend {
-      font-size: 20px;
-    }
   }
 
   .choices {

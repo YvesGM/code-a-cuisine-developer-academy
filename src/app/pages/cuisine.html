@@ -11,16 +11,8 @@
 
   @if (cuisine(); as cuisine) {
     <header class="cuisine-heading">
-      @if (cuisine === 'italian') {
-        <img src="assets/img/cuisine.png" alt="Italian cuisine" width="2292" height="288" />
-        <h1 class="visually-hidden">Italian cuisine</h1>
-      } @else {
-        <div class="cuisine-heading__fallback">
-          <img [src]="icons[cuisine]" alt="" width="56" height="56" />
-          <h1>{{ labels[cuisine] }} cuisine</h1>
-          <img [src]="icons[cuisine]" alt="" width="56" height="56" />
-        </div>
-      }
+      <img [src]="banners[cuisine]" [alt]="labels[cuisine] + ' cuisine'" />
+      <h1 class="visually-hidden">{{ labels[cuisine] }} cuisine</h1>
     </header>
 
     <app-library-list [cuisine]="cuisine" />

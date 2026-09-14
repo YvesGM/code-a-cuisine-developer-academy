@@ -81,6 +81,7 @@ export class CookbookPage {
     this.dragMoved = false;
   }
 
+  /** Lädt die Most-Liked-Auswahl genau einmal beim Erzeugen der Cookbook-Seite. */
   constructor() {
     void this.loadMostLiked();
   }

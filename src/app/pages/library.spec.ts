@@ -49,7 +49,22 @@ describe('Public library UI', () => {
     fixture.componentRef.setInput('cuisine', 'german');
     await fixture.whenStable();
     expect(fixture.componentInstance.result()?.total).toBe(3);
-    expect(element.querySelector('nav')).toBeNull();
+    expect(element.querySelector('nav')?.textContent).toContain('1');
+  });
+
+  it('centers the active page inside the three-page pagination window', async () => {
+    const fixture = TestBed.createComponent(LibraryList);
+    const recipe = mockResponse(
+      createRequest([{ id: 'rice', name: 'Rice', amount: 100, unit: 'g' }], {
+        difficulty: 'quick',
+        cuisine: 'fusion',
+        diet: 'none',
+      }),
+    ).recipes[0];
+    fixture.componentInstance.result.set({ items: [recipe], total: 160, page: 4, pages: 8 });
+    expect(fixture.componentInstance.visiblePages()).toEqual([3, 4, 5]);
+    fixture.componentInstance.result.set({ items: [recipe], total: 160, page: 8, pages: 8 });
+    expect(fixture.componentInstance.visiblePages()).toEqual([6, 7, 8]);
   });
 
   it('returns at most six favorited recipes ordered by favorite count in development', async () => {

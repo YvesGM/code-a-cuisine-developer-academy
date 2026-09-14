@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DIET_LABELS, DIFFICULTIES } from '../core/config';
@@ -145,7 +145,7 @@ export class RecipeDetailPage {
     registerCleanup(() => {
       token.active = false;
     });
-    this.loadRecipe(id, token);
+    untracked(() => this.loadRecipe(id, token));
   }
 
   /** Registriert den einzigen reaktiven Loader für öffentliche Recipe-IDs. */

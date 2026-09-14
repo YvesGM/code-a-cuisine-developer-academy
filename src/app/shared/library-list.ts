@@ -30,11 +30,12 @@ export class LibraryList {
     });
   }
 
-  /** Liefert die aktuelle sowie maximal zwei nachfolgende sichtbare Seitenzahlen. */
+  /** Liefert ein zentriertes Dreierfenster um die aktuelle Bibliotheksseite. */
   private paginationWindow(result: RecipePage | null): readonly number[] {
     if (!result) return [];
-    const end = Math.min(result.pages, result.page + 2);
-    return Array.from({ length: end - result.page + 1 }, (_, index) => result.page + index);
+    const windowSize = Math.min(3, result.pages);
+    const start = Math.max(1, Math.min(result.page - 1, result.pages - windowSize + 1));
+    return Array.from({ length: windowSize }, (_, index) => start + index);
   }
 
   /** Setzt sichtbare Ladeflags zurück, bevor eine Repository-Seite angefordert wird. */

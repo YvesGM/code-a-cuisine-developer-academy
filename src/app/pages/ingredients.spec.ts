@@ -87,6 +87,31 @@ describe('IngredientsPage', () => {
     expect(page.editDraft(tomatoes.id)).toBeDefined();
   });
 
+  it('does not reinsert zeroes after clearing an invalid zero amount', () => {
+    const fixture = TestBed.createComponent(IngredientsPage);
+    fixture.detectChanges();
+    const input = fixture.nativeElement.querySelector('#amount') as HTMLInputElement;
+    input.value = '00';
+    input.dispatchEvent(new Event('input'));
+    input.value = '';
+    input.dispatchEvent(new Event('input'));
+    expect(fixture.componentInstance.form.controls.amount.value).toBe('');
+  });
+
+  it('keeps the native amount caret editable inside a four-digit value', () => {
+    const fixture = TestBed.createComponent(IngredientsPage);
+    fixture.detectChanges();
+    const input = fixture.nativeElement.querySelector('#amount') as HTMLInputElement;
+    input.value = '1000';
+    input.dispatchEvent(new Event('input'));
+    input.setSelectionRange(2, 2);
+    input.setRangeText('', 1, 2, 'end');
+    input.dispatchEvent(new Event('input'));
+    expect(input.selectionStart).toBe(1);
+    expect(fixture.componentInstance.form.controls.amount.value).toBe('100');
+    expect(fixture.nativeElement.querySelector('.amount-caret')).toBeNull();
+  });
+
   it('allows the amount input to become empty and converts decimal text only on save', () => {
     const page = TestBed.createComponent(IngredientsPage).componentInstance;
     page.form.setValue({ name: 'Pasta', amount: '500', unit: 'g' });

@@ -55,22 +55,15 @@
         <legend>Serving size</legend>
         <div class="quantity-field">
           <label class="visually-hidden" for="amount">Amount</label>
-          <div class="quantity-input-shell">
+          <div>
             <input
-              #amountInput
               id="amount"
               type="text"
               inputmode="decimal"
               formControlName="amount"
               placeholder="100"
               required
-              (focus)="syncAmountCaret()"
-              (input)="syncAmountCaret()"
-              (click)="syncAmountCaret()"
-              (keyup)="syncAmountCaret()"
-              (pointerup)="syncAmountCaret()"
             />
-            <span class="amount-caret" [style.left.px]="amountCaretLeft()" aria-hidden="true"></span>
           </div>
         </div>
         <div class="unit-field">

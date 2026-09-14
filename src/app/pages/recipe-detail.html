@@ -1,7 +1,7 @@
 <section class="page detail-page">
-  <nav class="detail-navigation" aria-label="Back to recipe results">
-    <a class="back-link" routerLink="/results">
-      <span class="direction-arrow direction-arrow--left" aria-hidden="true"></span>Recipe results
+  <nav class="detail-navigation" aria-label="Back to previous page">
+    <a class="back-link" href="/results" (click)="goBack($event)">
+      <img class="back-link__icon" src="assets/icons/back-arrow-icon.svg" alt="" />Recipe results
     </a>
   </nav>
 

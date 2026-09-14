@@ -194,24 +194,22 @@ input {
   }
 }
 
-.ingredient-input-shell,
-.quantity-input-shell {
+.ingredient-input-shell {
   position: relative;
 }
 
 #name,
 #amount {
   width: 100%;
-  caret-color: transparent;
 }
 
 #name {
+  caret-color: transparent;
   min-width: 100px;
   cursor: text;
 }
 
-.ingredient-caret,
-.amount-caret {
+.ingredient-caret {
   position: absolute;
   top: 50%;
   width: 2px;
@@ -236,14 +234,12 @@ input {
   transform: translate(2px, -50%);
 }
 
-.ingredient-input-shell:focus-within .ingredient-caret,
-.quantity-input-shell:focus-within .amount-caret {
+.ingredient-input-shell:focus-within .ingredient-caret {
   opacity: 1;
   animation: input-caret-blink 1s steps(1, end) infinite;
 }
 
-.ingredient-input-shell:hover:not(:focus-within):has(#name:invalid) .ingredient-caret,
-.quantity-input-shell:hover:not(:focus-within):has(#amount:invalid) .amount-caret {
+.ingredient-input-shell:hover:not(:focus-within):has(#name:invalid) .ingredient-caret {
   left: 12px !important;
   opacity: 1;
 }

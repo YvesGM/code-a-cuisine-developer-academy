@@ -5,6 +5,7 @@
 }
 
 .generating-page {
+  position: relative;
   height: calc(100dvh - 88px);
   min-height: 0;
   display: grid;
@@ -63,21 +64,17 @@ h1 {
   gap: 28px;
 
   .back-link {
+    position: absolute;
+    top: 24px;
+    left: 68px;
     color: v.$cream;
     font-size: 14px;
     font-weight: 600;
     text-decoration: none;
   }
 
-  .direction-arrow {
-    width: 24px;
-    height: 12px;
-    background: linear-gradient(currentColor, currentColor) left center / 29px 2px no-repeat;
-
-    &::before,
-    &::after {
-      height: 2px;
-    }
+  .back-link__icon {
+    filter: brightness(0) invert(1);
   }
 }
 
@@ -103,6 +100,10 @@ h1 {
 }
 
 @media (max-width: v.$breakpoint-mobile) {
+  .error-content .back-link {
+    top: 16px;
+    left: 16px;
+  }
   .generating-page {
     height: calc(100dvh - 44px);
     gap: 40px;

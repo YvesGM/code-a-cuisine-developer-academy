@@ -31,11 +31,9 @@ export class IngredientsPage implements OnInit {
   readonly error = signal('');
   readonly unitMenuOpen = signal(false);
   readonly ingredientCaretLeft = signal(12);
-  readonly amountCaretLeft = signal(12);
   readonly ingredientCaretAtEnd = signal(true);
   readonly activeSuggestionIndex = signal(-1);
   @ViewChild('ingredientInput') private ingredientInput?: ElementRef<HTMLInputElement>;
-  @ViewChild('amountInput') private amountInput?: ElementRef<HTMLInputElement>;
   private readonly caretMeasureContext = document.createElement('canvas').getContext('2d');
   readonly unitLabels: Record<Unit, string> = { piece: 'piece', ml: 'ml', g: 'gram' };
   readonly listUnitLabels: Record<Unit, string> = { piece: '', ml: 'ml', g: 'g' };
@@ -164,15 +162,6 @@ export class IngredientsPage implements OnInit {
     const start = input.selectionStart ?? input.value.length;
     const end = input.selectionEnd ?? start;
     this.ingredientCaretAtEnd.set(start === input.value.length && end === input.value.length);
-  }
-
-  /** Synchronisiert den Figma-Caret mit dem aktuellen Wert im Mengenfeld. */
-  syncAmountCaret(): void {
-    const input = this.amountInput?.nativeElement;
-    if (!input) return;
-    const padding = Number.parseFloat(getComputedStyle(input).paddingLeft) || 0;
-    const left = padding + this.measureInputText(input, input.value) - input.scrollLeft;
-    this.amountCaretLeft.set(left);
   }
 
   /** Misst den sichtbaren Text bis zur aktuellen Cursorposition des Zutatenfelds. */

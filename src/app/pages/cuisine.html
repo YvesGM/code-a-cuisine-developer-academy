@@ -1,7 +1,7 @@
 <section class="page cuisine-page">
   <div class="cuisine-toolbar">
     <a class="back-link" routerLink="/cookbook">
-      <span class="direction-arrow direction-arrow--left" aria-hidden="true"></span>
+      <img class="back-link__icon" src="assets/icons/back-arrow-icon.svg" alt="" />
       <span class="back-link__label">Cookbook</span>
     </a>
     <a class="button button--small cuisine-toolbar__generate" routerLink="/generate">
@@ -11,7 +11,10 @@
 
   @if (cuisine(); as cuisine) {
     <header class="cuisine-heading">
-      <img [src]="banners[cuisine]" [alt]="labels[cuisine] + ' cuisine'" />
+      <picture>
+        <source media="(max-width: 860px)" [srcset]="mobileBanners[cuisine]" />
+        <img [src]="banners[cuisine]" [alt]="labels[cuisine] + ' cuisine'" />
+      </picture>
       <h1 class="visually-hidden">{{ labels[cuisine] }} cuisine</h1>
     </header>
 

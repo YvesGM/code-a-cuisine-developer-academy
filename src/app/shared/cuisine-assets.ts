@@ -20,6 +20,16 @@ export const CUISINE_BANNERS = {
   fusion: 'assets/img/fusion-cuisine-banner.png',
 } as const satisfies Record<Cuisine, string>;
 
+/** Mobile Figma-Banner für die einzelne Cuisine-Listenansicht. */
+export const CUISINE_MOBILE_BANNERS = {
+  german: 'assets/img/german-cuisine-banner-mobile.png',
+  italian: 'assets/img/italien-cuisine-banner-mobile.png',
+  japanese: 'assets/img/japanese-cuisine-banner-mobile.png',
+  indian: 'assets/img/indian-cuisine-banner-mobile.png',
+  gourmet: 'assets/img/gourmet-cuisine-banner-mobile.png',
+  fusion: 'assets/img/fusion-cuisine-banner-mobile.png',
+} as const satisfies Record<Cuisine, string>;
+
 /** Kleine Figma-Kategorieicons für die Cookbook-Überschriften. */
 export const CUISINE_COOKBOOK_ICONS = {
   german: 'assets/img/german-cookbook.png',

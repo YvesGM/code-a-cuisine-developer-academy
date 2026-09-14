@@ -20,16 +20,6 @@
     font-weight: 600;
   }
 
-  .direction-arrow {
-    width: 24px;
-    height: 12px !important;
-    background: linear-gradient(currentColor, currentColor) left center / 29px 2px no-repeat;
-
-    &::before,
-    &::after {
-      height: 2px;
-    }
-  }
 }
 
 .back-link {

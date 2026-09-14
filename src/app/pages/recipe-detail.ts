@@ -1,4 +1,4 @@
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, Location } from '@angular/common';
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -46,6 +46,7 @@ export class RecipeDetailPage {
   private readonly repository = inject(RECIPE_REPOSITORY);
   private readonly state = inject(FlowState);
   private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
   private readonly params = toSignal(this.route.paramMap);
   private readonly revision = signal(0);
   private readonly initialId = this.route.snapshot.paramMap.get('id') ?? '';
@@ -74,13 +75,20 @@ export class RecipeDetailPage {
     return this.state.recipes().find((recipe) => recipe.id === id);
   }
 
+  /** Übernimmt den persistierten Favorite-Status, ohne ein laufendes optimistisches Update zurückzusetzen. */
+  private syncFavoriteState(recipe: Recipe, sameRecipe: boolean): void {
+    const persisted = storedFavoriteIds().includes(recipe.id);
+    const pending = sameRecipe && this.favoritePending();
+    this.favorited.set(pending ? this.favorited() : persisted);
+  }
+
   /** Übernimmt Recipe und Engagement, ohne einen bereits höheren lokalen Like-Stand zurückzusetzen. */
   private setRecipe(recipe: Recipe): void {
     const sameRecipe = this.recipe()?.id === recipe.id;
     const count = recipe.favoriteCount ?? 0;
     this.recipe.set(recipe);
     this.favoriteCount.set(sameRecipe ? Math.max(this.favoriteCount(), count) : count);
-    this.favorited.set(storedFavoriteIds().includes(recipe.id));
+    this.syncFavoriteState(recipe, sameRecipe);
     this.loading.set(false);
     this.error.set('');
   }
@@ -153,6 +161,12 @@ export class RecipeDetailPage {
     effect((registerCleanup) => this.watchRecipe(registerCleanup));
   }
 
+  /** Kehrt zur tatsächlich zuvor besuchten Results- oder Cookbook-Seite zurück. */
+  goBack(event: MouseEvent): void {
+    event.preventDefault();
+    this.location.back();
+  }
+
   /** Schaltet die Zutatenliste ausschließlich für die mobile Detailansicht ein oder aus. */
   toggleIngredients(): void {
     this.ingredientsExpanded.update((expanded) => !expanded);
@@ -162,24 +176,37 @@ export class RecipeDetailPage {
   toggleDirections(): void {
     this.directionsExpanded.update((expanded) => !expanded);
   }
-  /** Übernimmt eine erfolgreiche serverseitige Favorisierung genau einmal pro Browser. */
-  private acceptFavorite(id: string): void {
-    storeFavoriteId(id);
+
+  /** Spiegelt den Favorite sofort im Frontend und sperrt weitere Klicks bis zur Serverantwort. */
+  private beginFavorite(): void {
+    this.favoritePending.set(true);
     this.favorited.set(true);
     this.favoriteCount.update((count) => count + 1);
     this.favoriteError.set('');
   }
 
-  /** Favorisiert das sichtbare Rezept serverseitig und verhindert parallele oder doppelte Klicks. */
+  /** Persistiert nach erfolgreicher Serverantwort nur noch die lokale Browser-Markierung. */
+  private acceptFavorite(id: string): void {
+    storeFavoriteId(id);
+    this.favoriteError.set('');
+  }
+
+  /** Rollt das optimistische Favorite zurück, falls der Server die Änderung nicht bestätigt. */
+  private rejectFavorite(): void {
+    this.favorited.set(false);
+    this.favoriteCount.update((count) => Math.max(0, count - 1));
+    this.favoriteError.set('Favorite could not be saved.');
+  }
+
+  /** Favorisiert das sichtbare Rezept optimistisch und verhindert parallele oder doppelte Klicks. */
   favorite(): void {
     const recipe = this.recipe();
     if (!recipe || this.favorited() || this.favoritePending()) return;
-    this.favoritePending.set(true);
-    this.favoriteError.set('');
+    this.beginFavorite();
     void this.repository
       .favorite(recipe.id)
       .then(() => this.acceptFavorite(recipe.id))
-      .catch(() => this.favoriteError.set('Favorite could not be saved.'))
+      .catch(() => this.rejectFavorite())
       .finally(() => this.favoritePending.set(false));
   }
 

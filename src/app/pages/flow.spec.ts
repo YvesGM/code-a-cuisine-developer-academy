@@ -86,9 +86,43 @@ describe('Functional navigation flow', () => {
     await harness.fixture.whenStable();
     expect(libraryDetail.recipe()).toBe(stored.items[1]);
     expect(harness.routeNativeElement?.textContent).toContain('Wasser');
+    const backEvent = new MouseEvent('click', { cancelable: true });
+    libraryDetail.goBack(backEvent);
+    await harness.fixture.whenStable();
+    expect(TestBed.inject(Router).url).toBe('/cookbook/' + recipe.cuisine);
     await harness.navigateByUrl('/impressum');
     expect(harness.routeNativeElement?.textContent).toContain('Platzhalter');
   });
+  it('updates a favorite immediately and blocks duplicate clicks until persistence finishes', async () => {
+    localStorage.clear();
+    const state = TestBed.inject(FlowState);
+    state.saveIngredient({ name: 'Pasta', amount: 100, unit: 'g' });
+    state.setPreferences({ difficulty: 'quick', cuisine: 'italian', diet: 'none' });
+    await state.generate();
+    const recipe = state.recipes()[0];
+    const repository = TestBed.inject(RECIPE_REPOSITORY);
+    let resolveFavorite!: () => void;
+    const favorite = vi.spyOn(repository, 'favorite').mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          resolveFavorite = resolve;
+        }),
+    );
+    const harness = await RouterTestingHarness.create('/recipe/' + recipe.id);
+    const detail = harness.routeDebugElement?.componentInstance as RecipeDetailPage;
+    const before = detail.favoriteCount();
+    detail.favorite();
+    detail.favorite();
+    expect(detail.favorited()).toBe(true);
+    expect(detail.favoritePending()).toBe(true);
+    expect(detail.favoriteCount()).toBe(before + 1);
+    expect(favorite).toHaveBeenCalledTimes(1);
+    resolveFavorite();
+    await harness.fixture.whenStable();
+    expect(detail.favoritePending()).toBe(false);
+    favorite.mockRestore();
+  });
+
   it.each(['/preferences', '/generating', '/results'])(
     'protects direct navigation to %s without state',
     async (url) => {
@@ -127,7 +161,7 @@ describe('Functional navigation flow', () => {
     await pending;
     harness.detectChanges();
     expect(harness.routeNativeElement?.querySelector('[role="alert"]')).toBeTruthy();
-    expect(harness.routeNativeElement?.querySelector('.back-link .direction-arrow')).toBeTruthy();
+    expect(harness.routeNativeElement?.querySelector('.back-link .back-link__icon')).toBeTruthy();
     const page = harness.routeDebugElement?.componentInstance as GeneratingPage;
     page.retry();
     await harness.fixture.whenStable();

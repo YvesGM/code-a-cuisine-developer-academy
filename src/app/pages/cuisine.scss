@@ -5,8 +5,8 @@
 }
 
 .cuisine-page {
-  max-width: 1303px;
-  padding-top: 24px;
+  max-width: v.$content-width;
+  padding: 24px 68px 80px;
 }
 
 .cuisine-toolbar {
@@ -24,14 +24,24 @@
 .cuisine-heading {
   display: grid;
   align-items: center;
+  width: 100%;
+  max-width: 1143px;
   min-height: 144px;
-  margin-bottom: 56px;
+  margin: 0 auto 56px;
 
-  > img {
+  picture,
+  img {
     display: block;
     width: 100%;
     height: auto;
   }
+}
+
+app-library-list {
+  display: block;
+  width: 100%;
+  max-width: 1143px;
+  margin-inline: auto;
 }
 
 .cuisine-mobile-action {
@@ -40,7 +50,7 @@
 
 @media (max-width: v.$breakpoint-mobile) {
   .cuisine-page {
-    padding-top: 16px;
+    padding: 16px 16px 40px;
   }
 
   .cuisine-toolbar {
@@ -59,7 +69,8 @@
     min-height: 0;
     margin-bottom: 32px;
 
-    > img {
+    picture,
+    img {
       min-height: 44px;
     }
   }

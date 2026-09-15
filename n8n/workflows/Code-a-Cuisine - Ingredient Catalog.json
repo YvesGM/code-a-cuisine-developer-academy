@@ -6,7 +6,9 @@
         "httpMethod": "POST",
         "path": "code-a-cuisine-ingredients",
         "responseMode": "responseNode",
-        "options": {}
+        "options": {
+          "allowedOrigins": "http://localhost:4200,https://code-a-cuisine.schniefs-portfolio.de,https://yves-gildemeister.developerakademie.net"
+        }
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
@@ -18,11 +20,11 @@
       "name": "Ingredient Catalog API",
       "webhookId": "5690de95-027b-46a4-858e-f1d248f35cc5",
       "notesInFlow": true,
-      "notes": "Public Ingredient autocomplete gateway. Angular never receives Supabase credentials."
+      "notes": "Public ingredient autocomplete gateway. Firebase credentials remain server-side in n8n."
     },
     {
       "parameters": {
-        "jsCode": "const body = $json.body ?? {};\nconst action = typeof body.action === 'string' ? body.action.trim() : '';\nconst name = typeof body.name === 'string' ? body.name.replace(/\\s+/g, ' ').trim() : '';\nconst validAction = action === 'list' || action === 'register';\nconst validName = action !== 'register' || (name.length >= 1 && name.length <= 80);\nconst valid = validAction && validName;\nconst errorMessage = !validAction ? 'Unbekannte Catalog-Aktion.' : 'Ingredient-Name muss 1 bis 80 Zeichen enthalten.';\nreturn [{ json: { action, name, valid, errorMessage } }];"
+        "jsCode": "const body = $json.body ?? {};\nconst action = typeof body.action === 'string' ? body.action.trim() : '';\nconst name = typeof body.name === 'string'\n  ? body.name.replace(/\\s+/g, ' ').trim()\n  : '';\n\nconst validAction = action === 'list' || action === 'register';\nconst validName =\n  action !== 'register' || (name.length >= 1 && name.length <= 80);\n\nconst valid = validAction && validName;\n\nconst errorMessage = !validAction\n  ? 'Unbekannte Catalog-Aktion.'\n  : 'Ingredient-Name muss 1 bis 80 Zeichen enthalten.';\n\nconst key = [...name.toLowerCase()]\n  .map((char) => char.codePointAt(0).toString(16))\n  .join('-');\n\nreturn [{\n  json: {\n    action,\n    name,\n    key,\n    valid,\n    errorMessage,\n  },\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -124,22 +126,13 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/register_ingredient",
+        "method": "PATCH",
+        "url": "={{ 'https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app/code-a-cuisine/ingredient-catalog/' + $('Normalize Catalog Request').item.json.key + '.json' }}",
         "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            }
-          ]
-        },
+        "nodeCredentialType": "googleApi",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { p_name: $('Normalize Catalog Request').item.json.name } }}",
+        "jsonBody": "={{ {\n  name: $('Normalize Catalog Request').item.json.name,\n  usageCount: {\n    '.sv': {\n      increment: 1\n    }\n  }\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -151,27 +144,20 @@
       "id": "c74312ed-fc0b-443f-9139-ea1a1c116a7e",
       "name": "Register Ingredient Usage",
       "notesInFlow": true,
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
       "onError": "continueErrorOutput",
-      "notes": "Atomically inserts a new Ingredient name or increments its usage counter in Supabase."
+      "notes": "Atomically inserts a new Ingredient name or increments its usage counter in Firebase."
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/list_ingredient_catalog",
+        "url": "https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app/code-a-cuisine/ingredient-catalog.json",
         "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ {} }}",
+        "nodeCredentialType": "googleApi",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -183,13 +169,19 @@
       "id": "1d3a39f8-99c9-4036-8489-9d182faf5822",
       "name": "Load Ingredient Catalog",
       "notesInFlow": true,
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
       "onError": "continueErrorOutput",
       "notes": "Loads the complete autocomplete catalog once; Angular filters locally while typing."
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ $json }}",
+        "responseBody": "={{ $('Normalize Catalog Request').item.json.action === 'register'\n  ? {\n      ok: true\n    }\n  : {\n      items: Object.values($json ?? {})\n        .filter(\n          item =>\n            item &&\n            typeof item.name === 'string' &&\n            Number.isInteger(item.usageCount)\n        )\n        .sort((a, b) => b.usageCount - a.usageCount)\n    }\n}}",
         "options": {
           "responseCode": 200
         }
@@ -329,7 +321,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "72b7e2f1-91b5-43fc-b13e-ca15def399e0",
+  "versionId": "3de2e9b4-cb0b-4873-958e-21434482df76",
   "meta": {
     "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
   },

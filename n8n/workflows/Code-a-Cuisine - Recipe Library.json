@@ -5,7 +5,9 @@
       "parameters": {
         "path": "code-a-cuisine-library",
         "responseMode": "responseNode",
-        "options": {}
+        "options": {
+          "allowedOrigins": "http://localhost:4200,https://code-a-cuisine.schniefs-portfolio.de,https://yves-gildemeister.developerakademie.net"
+        }
       },
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
@@ -103,6 +105,12 @@
       "id": "090a913d-5d48-46b0-a143-831693556d70",
       "name": "Read Recipes from Firebase",
       "notesInFlow": true,
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
       "onError": "continueErrorOutput",
       "notes": "Reads the protected Firebase recipe library using the server-side Google Service Account. No Firebase credentials are exposed to Angular."
     },
@@ -141,26 +149,13 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
+        "method": "PUT",
+        "url": "={{ 'https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app/code-a-cuisine/workflow-runs/' + $execution.id + '/firebase_library.json' }}",
         "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            },
-            {
-              "name": "Prefer",
-              "value": "return=minimal"
-            }
-          ]
-        },
+        "nodeCredentialType": "googleApi",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { request_id: null, client_ip: null, status: 'failed', stage: 'firebase_library', error_code: 'firebase_read_failed', error_message: 'Firebase library read failed.', metadata: { id: $('Normalize Library Request').item.json.id, cuisine: $('Normalize Library Request').item.json.cuisine, page: $('Normalize Library Request').item.json.page } } }}",
+        "jsonBody": "={{ {\n  request_id: null,\n  client_ip: null,\n  status: 'failed',\n  stage: 'firebase_library',\n  error_code: 'firebase_read_failed',\n  error_message: 'Firebase library read failed.',\n\n  metadata: {\n    id:\n      $('Normalize Library Request').item.json.id,\n\n    cuisine:\n      $('Normalize Library Request').item.json.cuisine,\n\n    page:\n      $('Normalize Library Request').item.json.page\n  },\n\n  created_at: $now.toISO()\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -172,6 +167,13 @@
       "id": "1461aed5-8f37-4bc6-9f71-c94246114a73",
       "name": "Log Firebase Library Error",
       "notesInFlow": true,
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
+      "onError": "continueRegularOutput",
       "notes": "Writes an audit log for Firebase read failures without storing recipe data or secrets.\n"
     },
     {
@@ -195,6 +197,12 @@
       "name": "Email Firebase Library Error",
       "notesInFlow": true,
       "webhookId": "f7e74261-4fc3-4145-9af5-79829bc9f0fb",
+      "credentials": {
+        "smtp": {
+          "id": "Tm9Jzpc5URqWeuZm",
+          "name": "SMTP account"
+        }
+      },
       "onError": "continueRegularOutput",
       "notes": "Sends a technical notification when reading the Firebase recipe library fails.\n"
     },
@@ -231,6 +239,12 @@
       ],
       "id": "2c96ca31-f0e7-4b55-b57b-d53e47e593c6",
       "name": "Read Favorite Counts",
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
       "onError": "continueErrorOutput",
       "notes": "Reads persisted favorite counters from Firebase before the library response is assembled."
     },
@@ -287,6 +301,12 @@
       ],
       "id": "90792d11-3927-4886-b3a8-048d6dc26f76",
       "name": "Increment Favorite in Firebase",
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
       "onError": "continueErrorOutput",
       "notes": "Atomically increments the selected recipe favorite counter in Firebase Realtime Database."
     },
@@ -361,27 +381,13 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
+        "method": "PUT",
+        "url": "={{ 'https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app/code-a-cuisine/workflow-runs/' + $execution.id + '/firebase_favorite.json' }}",
         "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            },
-            {
-              "name": "Prefer",
-              "value": "return=minimal"
-            },
-            {}
-          ]
-        },
+        "nodeCredentialType": "googleApi",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{\n  {\n    request_id: null,\n    client_ip: null,\n    status: 'failed',\n    stage: 'firebase_favorite',\n    error_code: 'firebase_favorite_failed',\n    error_message: 'Firebase favorite write failed.',\n    metadata: {\n      id: $('Normalize Favorite Request').item.json.id\n    }\n  }\n}}",
+        "jsonBody": "={{ {\n  request_id: null,\n  client_ip: null,\n  status: 'failed',\n  stage: 'firebase_favorite',\n  error_code: 'firebase_favorite_failed',\n  error_message: 'Firebase favorite write failed.',\n\n  metadata: {\n    id:\n      $('Normalize Favorite Request').item.json.id\n  },\n\n  created_at: $now.toISO()\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -393,6 +399,13 @@
       "id": "3e7fb982-100d-411d-bacb-cf0b1706639a",
       "name": "Log Firebase Favorite Error",
       "notesInFlow": true,
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
+      "onError": "continueRegularOutput",
       "notes": "Writes an audit log for Firebase read failures without storing recipe data or secrets.\n"
     },
     {
@@ -416,6 +429,12 @@
       "name": "Email Firebase Favorite Error",
       "notesInFlow": true,
       "webhookId": "f7e74261-4fc3-4145-9af5-79829bc9f0fb",
+      "credentials": {
+        "smtp": {
+          "id": "Tm9Jzpc5URqWeuZm",
+          "name": "SMTP account"
+        }
+      },
       "onError": "continueRegularOutput",
       "notes": "Sends a technical notification when reading the Firebase recipe favorite fails.\n"
     },
@@ -639,7 +658,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "539cb999-d047-4ca1-83ee-0c44b2cdf5d8",
+  "versionId": "a73999fd-2f2f-4bd6-95c7-e0ee03638428",
   "meta": {
     "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
   },

@@ -1,78 +1,59 @@
 # 03 – Datenverträge
 
-Verbindliche Quelle: `src/app/core/models.ts`. Zentrale Regeln: `config.ts` und `response-validation.ts`.
+Verbindliche TypeScript-Quelle ist `src/app/models/app.models.ts`.
 
-## Versionierung
-
-Angular↔n8n verwendet `schemaVersion: 2`. Der Request enthält `clientRequestId`, Zutaten, `servings`, `cookCount` und Preferences. Der Response enthält exakt drei vollständige Recipes; n8n ergänzt nach erfolgreicher Firebase-Persistenz `persisted: true`.
-
-## Request
+## Generation Request
 
 ```json
 {
   "schemaVersion": 2,
-  "clientRequestId": "unique-request-id",
-  "ingredients": [{ "id": "ingredient-123", "name": "Pasta", "amount": 120, "unit": "g" }],
+  "clientRequestId": "uuid",
+  "ingredients": [],
+  "preferences": {
+    "difficulty": "quick|medium|complex",
+    "cuisine": "german|italian|indian|japanese|gourmet|fusion",
+    "diet": "vegetarian|vegan|keto|none"
+  },
   "servings": 2,
-  "cookCount": 1,
-  "preferences": { "difficulty": "quick", "cuisine": "italian", "diet": "none" }
+  "cookCount": 1
 }
 ```
 
-## Recipe-Regeln
-
-- exakt drei eindeutige Recipes mit Rängen 1–3
-- Preference-Match für Cuisine, Difficulty und Diet
-- quick 1–20, medium 20–45, complex ab 45 Minuten
-- mindestens 70 % eindeutige User-Ingredient-IDs
-- keine unbekannten oder doppelten `sourceIngredientId`
-- max. drei getrennte `additionalIngredients`
-- Nutrition pro Portion + Gesamtrezept, mathematisch konsistent zu `servings`
-- Directions lückenlos, anfängertauglich, Cook IDs innerhalb `1..cookCount`
-- bei mehreren Helfern mindestens eine konfliktfreie Parallelgruppe und Aufgaben für jede Person
-
-## Firebase-Persistenzvertrag
-
-n8n schreibt nach vollständiger Validierung atomar per PATCH nach:
-
-```text
-/code-a-cuisine/recipes/<recipe-id>
-```
-
-Record:
+## Generation Response
 
 ```json
 {
   "schemaVersion": 2,
-  "createdAt": "2026-09-11T12:00:00.000Z",
-  "payload": {
-    "id": "request-id-1",
-    "title": "...",
-    "cuisine": "italian",
-    "difficulty": "quick",
-    "diet": "none",
-    "cookingTimeMinutes": 18,
-    "servings": 2,
-    "cookCount": 1,
-    "nutrition": {},
-    "ingredients": [],
-    "additionalIngredients": [],
-    "directions": [],
-    "rank": 1
-  }
+  "clientRequestId": "uuid",
+  "recipes": [],
+  "persisted": true
 }
 ```
 
-`payload.id` entspricht dem Firebase-Key. Angular liest Firebase nicht direkt, sondern über `code-a-cuisine-library`; n8n sortiert nach `createdAt`, filtert Cuisine und paginiert mit Page Size 20. Angular validiert den zurückgegebenen Payload erneut. Der Library-Owner ergänzt optional `favoriteCount` als nichtnegativen Integer; dieses Engagement-Feld gehört nicht zum Generation-Request. Listen-Antworten enthalten zusätzlich `topLiked` mit maximal sechs Rezepten aus der gesamten Firebase-Library, ausschließlich mit `favoriteCount > 0` und absteigend nach Favorite-Zahl sortiert.
+n8n validiert Request und AI-Ausgabe serverseitig. Erfolgreiche Generierungen liefern exakt drei Rezepte und werden vor der erfolgreichen Browser-Antwort in Firebase gespeichert.
 
-Öffentliche Favorites werden getrennt vom Recipe-Payload gespeichert:
+## Library
 
-```text
-/code-a-cuisine/favorites/<recipe-id>/count
+`GET code-a-cuisine-library?page=1&cuisine=italian`
+
+```json
+{
+  "items": [],
+  "topLiked": [],
+  "total": 0,
+  "page": 1,
+  "pages": 1
+}
 ```
 
-`POST /webhook/code-a-cuisine-favorite` akzeptiert ausschließlich eine stabile Recipe-ID und inkrementiert den Zähler serverseitig.
+Mit `id=<recipe-id>` liefert derselbe Endpunkt `{ "recipe": ... }`.
 
-## Quota-/Audit-Vertrag
+## Ingredient Catalog
 
-Supabase bleibt für `generation_quota_claims`, `workflow_runs`, `ingredient_catalog` sowie die Quota-/Catalog-RPCs zuständig. Diese Daten sind keine Recipe-Persistenz. Catalog-List liefert `{ items: [{ name, usageCount }] }`; Register liefert `{ item: { name, usageCount } }`.
+List: `{ "action": "list" }` → `{ "items": [{ "name": "Pasta", "usageCount": 4 }] }`
+
+Register: `{ "action": "register", "name": "Pasta" }` → `{ "ok": true }`
+
+## Quota
+
+Quota wird ausschließlich in Firebase gespeichert. Pro erfolgreicher Generierung werden drei Recipe-Einheiten gezählt: maximal 3 pro IP/Tag und 12 systemweit/Tag.

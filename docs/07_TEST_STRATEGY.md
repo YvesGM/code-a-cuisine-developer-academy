@@ -1,16 +1,14 @@
-# 07 – Teststrategie
+# 07 – Test Strategy
 
-Das bestehende Angular/Vitest-/jsdom-System bleibt erhalten.
+Die Academy-Abgabe hält den Testaufbau bewusst klein. Der von Angular erzeugte App-Smoke-Test bleibt bestehen; projektspezifische Test-Framework-Strukturen werden nicht als eigene Architekturschicht geführt.
 
-| Tests                         | Verantwortung                                                                                          |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `business.spec.ts`            | Ingredient-Validierung, Request-Mapping, Ranking, Preference-Match                                     |
-| `response-validation.spec.ts` | Envelope, IDs, Zutaten, Nutrition, Directions und Schema-Fehler                                        |
-| `recipe-repository.spec.ts`   | n8n-Library-Vertrag, kein Browser-Write, persistierte Payload-Validierung, Pagination/Filter           |
-| `flow-state.spec.ts`          | CRUD, Preferences, Doppelstart, Retry, Persistenz-Flag                                                 |
-| `academy.spec.ts`             | Portionen/Helfer, Difficulty, exakt drei, Diversity, 70 %, Extras, Nutrition, Parallelität, Pagination |
-| `pages/flow.spec.ts`          | kompletter Angular-Flow inklusive Library/Impressum                                                    |
-| `pages/library.spec.ts`       | öffentliche Direktaufrufe, Pagination, Filter, Fehler/Retry                                            |
-| `app.spec.ts`                 | Shell-Smoke-Test                                                                                       |
+Die entscheidende Abschlussprüfung ist der reale Flow:
 
-Zusätzlich sind reale n8n-/Firebase-Integrationstests notwendig: Generation schreibt drei Firebase-Records; Library liest sie über n8n; Quota/Audit bleiben Supabase-basiert.
+1. Angular Formulare und Navigation.
+2. n8n Request Validation.
+3. Gemini Generation.
+4. Firebase Recipe Write.
+5. Firebase Library/Detail/Favorite.
+6. Firebase Quota und Ingredient Catalog.
+7. Fehlerantworten und SMTP.
+8. Responsive Browser-QA.

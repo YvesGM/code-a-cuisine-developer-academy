@@ -1,11 +1,11 @@
 import { Component, computed, inject } from '@angular/core';
-import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
-import { N8N_PUBLIC_CONFIG } from '../environments/runtime-config';
+/** Stellt den globalen App-Rahmen mit Navigation, Footer und Router-Outlet bereit. */
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -25,5 +25,5 @@ export class App {
     const hidden = ['/', '/generate', '/preferences', '/generating', '/results'].includes(url);
     return !hidden && !url.startsWith('/recipe/') && !url.startsWith('/cookbook');
   });
-  readonly mockMode = !N8N_PUBLIC_CONFIG.webhookBaseUrl;
+  readonly mockMode = false;
 }

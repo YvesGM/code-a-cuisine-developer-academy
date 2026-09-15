@@ -9,8 +9,8 @@
     "test": "ng test --watch=false",
     "lint": "eslint .",
     "check": "npm run lint && npm test -- --watch=false && npm run build",
-    "format": "prettier --write \"src/**/*.{ts,html,scss}\" \"docs/**/*.md\" \"n8n/**/*.{md,json}\" \"supabase/**/*.md\" \"firebase/**/*.{md,json}\" *.md *.json",
-    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\" \"docs/**/*.md\" \"n8n/**/*.{md,json}\" \"supabase/**/*.md\" \"firebase/**/*.{md,json}\" *.md *.json"
+    "format": "prettier --write \"src/**/*.{ts,html,scss}\" \"docs/**/*.md\" \"n8n/**/*.{md,json}\" \"firebase/**/*.{md,json}\" *.md *.json",
+    "format:check": "prettier --check \"src/**/*.{ts,html,scss}\" \"docs/**/*.md\" \"n8n/**/*.{md,json}\" \"firebase/**/*.{md,json}\" *.md *.json"
   },
   "private": true,
   "packageManager": "npm@11.13.0",

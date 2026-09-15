@@ -1,4 +1,4 @@
-import { Cuisine } from '../core/models';
+import { Cuisine } from '../models/app.models';
 
 /** Lokale Figma-Kategoriebilder; keine Bilder einzelner generierter Rezepte. */
 export const CUISINE_ASSETS = {

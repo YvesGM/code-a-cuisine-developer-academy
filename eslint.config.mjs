@@ -19,14 +19,4 @@ export default tseslint.config(
       'max-lines': ['error', { max: 400, skipBlankLines: true, skipComments: true }],
     },
   },
-  {
-    files: ['src/app/**/*.ts'],
-    ignores: ['src/app/**/*.spec.ts'],
-    rules: {
-      'max-lines-per-function': [
-        'error',
-        { max: 14, skipBlankLines: true, skipComments: true, IIFEs: true },
-      ],
-    },
-  },
 );

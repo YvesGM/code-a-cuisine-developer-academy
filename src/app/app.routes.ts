@@ -1,45 +1,46 @@
 import { Routes } from '@angular/router';
-import { generationGuard, ingredientsGuard, recipesGuard } from './core/guards';
+import { generationGuard, ingredientsGuard, recipesGuard } from './guards/flow.guards';
+
 export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    loadComponent: () => import('./pages/landing').then((m) => m.LandingPage),
+    loadComponent: () => import('./components/landing/landing').then((m) => m.LandingComponent),
   },
   {
     path: 'generate',
-    loadComponent: () => import('./pages/ingredients').then((m) => m.IngredientsPage),
+    loadComponent: () => import('./components/ingredients/ingredients').then((m) => m.IngredientsComponent),
   },
   {
     path: 'preferences',
     canActivate: [ingredientsGuard],
-    loadComponent: () => import('./pages/preferences').then((m) => m.PreferencesPage),
+    loadComponent: () => import('./components/preferences/preferences').then((m) => m.PreferencesComponent),
   },
   {
     path: 'generating',
     canActivate: [generationGuard],
-    loadComponent: () => import('./pages/generating').then((m) => m.GeneratingPage),
+    loadComponent: () => import('./components/generating/generating').then((m) => m.GeneratingComponent),
   },
   {
     path: 'results',
     canActivate: [recipesGuard],
-    loadComponent: () => import('./pages/results').then((m) => m.ResultsPage),
+    loadComponent: () => import('./components/results/results').then((m) => m.ResultsComponent),
   },
   {
     path: 'recipe/:id',
-    loadComponent: () => import('./pages/recipe-detail').then((m) => m.RecipeDetailPage),
+    loadComponent: () => import('./components/recipe-detail/recipe-detail').then((m) => m.RecipeDetailComponent),
   },
   {
     path: 'cookbook',
-    loadComponent: () => import('./pages/cookbook').then((m) => m.CookbookPage),
+    loadComponent: () => import('./components/cookbook/cookbook').then((m) => m.CookbookComponent),
   },
   {
     path: 'cookbook/:cuisine',
-    loadComponent: () => import('./pages/cuisine').then((m) => m.CuisinePage),
+    loadComponent: () => import('./components/cuisine/cuisine').then((m) => m.CuisineComponent),
   },
   {
     path: 'impressum',
-    loadComponent: () => import('./pages/impressum').then((m) => m.ImpressumPage),
+    loadComponent: () => import('./components/impressum/impressum').then((m) => m.ImpressumComponent),
   },
   { path: '**', redirectTo: '' },
 ];

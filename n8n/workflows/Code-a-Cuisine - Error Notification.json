@@ -31,26 +31,13 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
+        "method": "PUT",
+        "url": "={{ 'https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app/code-a-cuisine/workflow-runs/' + $execution.id + '/unhandled_workflow_error.json' }}",
         "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            },
-            {
-              "name": "Prefer",
-              "value": "return=minimal"
-            }
-          ]
-        },
+        "nodeCredentialType": "googleApi",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { request_id: null, client_ip: null, status: 'failed', stage: 'unhandled_workflow_error', error_code: 'unhandled_workflow_error', error_message: $('Build Error Context').item.json.message, metadata: $('Build Error Context').item.json } }}",
+        "jsonBody": "={{ {\n  request_id: null,\n  client_ip: null,\n  status: 'failed',\n  stage: 'unhandled_workflow_error',\n  error_code: 'unhandled_workflow_error',\n  error_message: $('Build Error Context').item.json.message,\n  metadata: $('Build Error Context').item.json,\n  created_at: $now.toISO()\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -62,6 +49,12 @@
       "id": "cf7776d0-081c-4502-867e-5b8b5a68d1ec",
       "name": "Log Unhandled Error",
       "notesInFlow": true,
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
       "onError": "continueRegularOutput",
       "notes": "Persists unexpected n8n workflow failures in the server-side audit log."
     },
@@ -86,6 +79,12 @@
       "name": "Email Unhandled Workflow Error",
       "notesInFlow": true,
       "webhookId": "cb0e9cf8-bb45-43e1-b43d-b0f92576dcad",
+      "credentials": {
+        "smtp": {
+          "id": "Tm9Jzpc5URqWeuZm",
+          "name": "SMTP account"
+        }
+      },
       "notes": "Sends an SMTP alert for failures that did not reach an expected business-error branch."
     }
   ],
@@ -130,7 +129,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "50f77fed-697e-49e0-addb-79bd0d5977ef",
+  "versionId": "1ed10b34-e2fd-43d8-9879-1064b4e96f9b",
   "meta": {
     "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
   },

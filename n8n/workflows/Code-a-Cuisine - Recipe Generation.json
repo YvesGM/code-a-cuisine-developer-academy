@@ -24,7 +24,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const body = $json.body ?? {};\nconst headers = $json.headers ?? {};\nconst errors = [];\n\nfunction header(name) {\n  const value = headers[name] ?? headers[name.toLowerCase()] ?? headers[name.toUpperCase()];\n  return typeof value === 'string' ? value.trim() : '';\n}\n\nfunction isIpv4(value) {\n  const parts = value.split('.');\n  return parts.length === 4 && parts.every((part) => {\n    if (!/^\\d{1,3}$/.test(part)) return false;\n    const number = Number(part);\n    return number >= 0 && number <= 255 && String(number) === String(Number(part));\n  });\n}\n\nfunction isIpv6(value) {\n  let ip = value.toLowerCase();\n  if (ip.startsWith('::ffff:') && ip.includes('.')) return isIpv4(ip.slice(7));\n  if (!/^[0-9a-f:]+$/.test(ip) || ip.includes(':::')) return false;\n  const doubles = (ip.match(/::/g) ?? []).length;\n  if (doubles > 1) return false;\n  const parts = ip.split(':');\n  const groups = parts.filter(Boolean);\n  if (!groups.every((part) => part.length <= 4 && /^[0-9a-f]+$/.test(part))) return false;\n  return ip.includes('::') ? groups.length < 8 : groups.length === 8;\n}\n\nfunction clientIp() {\n  const candidate =\n    header('cf-connecting-ip') ||\n    header('x-real-ip') ||\n    header('x-forwarded-for').split(',')[0]?.trim() ||\n    '';\n  const value = candidate.replace(/^\\[|\\]$/g, '');\n  return isIpv4(value) || isIpv6(value) ? value : '';\n}\n\nconst ip = clientIp();\nif (!ip) errors.push('IP-Adresse fehlt oder ist ungültig.');\n\nif (!body || typeof body !== 'object' || Array.isArray(body)) {\n  errors.push('Request Body muss ein JSON-Objekt sein.');\n}\n\nconst allowedUnits = ['g', 'ml', 'piece'];\nconst difficulties = ['quick', 'medium', 'complex'];\nconst cuisines = ['german', 'italian', 'indian', 'japanese', 'gourmet', 'fusion'];\nconst diets = ['vegetarian', 'vegan', 'keto', 'none'];\n\nif (body.schemaVersion !== 2) errors.push('schemaVersion muss 2 sein.');\nif (typeof body.clientRequestId !== 'string' || !body.clientRequestId.trim()) {\n  errors.push('clientRequestId fehlt.');\n}\nif (!Number.isInteger(body.servings) || body.servings < 1 || body.servings > 12) {\n  errors.push('servings muss zwischen 1 und 12 liegen.');\n}\nif (!Number.isInteger(body.cookCount) || body.cookCount < 1 || body.cookCount > 3) {\n  errors.push('cookCount muss zwischen 1 und 3 liegen.');\n}\nif (!body.preferences || typeof body.preferences !== 'object' || Array.isArray(body.preferences)) {\n  errors.push('preferences fehlen.');\n} else {\n  if (!difficulties.includes(body.preferences.difficulty)) errors.push('difficulty ist ungültig.');\n  if (!cuisines.includes(body.preferences.cuisine)) errors.push('cuisine ist ungültig.');\n  if (!diets.includes(body.preferences.diet)) errors.push('diet ist ungültig.');\n}\nif (!Array.isArray(body.ingredients) || body.ingredients.length < 1) {\n  errors.push('Mindestens eine Zutat ist erforderlich.');\n} else {\n  const ids = new Set();\n  body.ingredients.forEach((ingredient, index) => {\n    if (!ingredient || typeof ingredient !== 'object' || Array.isArray(ingredient)) {\n      errors.push(`Zutat ${index + 1} ist ungültig.`);\n      return;\n    }\n    if (typeof ingredient.id !== 'string' || !ingredient.id.trim() || ids.has(ingredient.id)) {\n      errors.push(`Zutat ${index + 1} benötigt eine eindeutige ID.`);\n    } else ids.add(ingredient.id);\n    if (typeof ingredient.name !== 'string' || !ingredient.name.trim()) {\n      errors.push(`Zutat ${index + 1} benötigt einen Namen.`);\n    }\n    if (typeof ingredient.amount !== 'number' || !Number.isFinite(ingredient.amount) || ingredient.amount <= 0) {\n      errors.push(`Zutat ${index + 1} benötigt eine positive Menge.`);\n    }\n    if (!allowedUnits.includes(ingredient.unit)) {\n      errors.push(`Zutat ${index + 1} hat eine ungültige Einheit.`);\n    }\n  });\n}\n\nreturn [{\n  json: {\n    valid: errors.length === 0,\n    clientIp: ip || null,\n    request: body,\n    errorCode: errors.length ? 'invalid_request' : null,\n    errorMessage: errors.length ? errors.join(' ') : null,\n  },\n}];"
+        "jsCode": "const body = $json.body ?? {};\nconst headers = $json.headers ?? {};\nconst errors = [];\n\nfunction header(name) {\n  const value = headers[name] ?? headers[name.toLowerCase()] ?? headers[name.toUpperCase()];\n  return typeof value === 'string' ? value.trim() : '';\n}\n\nfunction isIpv4(value) {\n  const parts = value.split('.');\n  return parts.length === 4 && parts.every((part) => {\n    if (!/^\\d{1,3}$/.test(part)) return false;\n    const number = Number(part);\n    return number >= 0 && number <= 255 && String(number) === String(Number(part));\n  });\n}\n\nfunction isIpv6(value) {\n  let ip = value.toLowerCase();\n  if (ip.startsWith('::ffff:') && ip.includes('.')) return isIpv4(ip.slice(7));\n  if (!/^[0-9a-f:]+$/.test(ip) || ip.includes(':::')) return false;\n  const doubles = (ip.match(/::/g) ?? []).length;\n  if (doubles > 1) return false;\n  const parts = ip.split(':');\n  const groups = parts.filter(Boolean);\n  if (!groups.every((part) => part.length <= 4 && /^[0-9a-f]+$/.test(part))) return false;\n  return ip.includes('::') ? groups.length < 8 : groups.length === 8;\n}\n\nfunction clientIp() {\n  const candidate =\n    header('cf-connecting-ip') ||\n    header('x-real-ip') ||\n    header('x-forwarded-for').split(',')[0]?.trim() ||\n    '';\n  const value = candidate.replace(/^\\[|\\]$/g, '');\n  return isIpv4(value) || isIpv6(value) ? value : '';\n}\n\nconst ip = clientIp();\nif (!ip) errors.push('IP-Adresse fehlt oder ist ungültig.');\n\nif (!body || typeof body !== 'object' || Array.isArray(body)) {\n  errors.push('Request Body muss ein JSON-Objekt sein.');\n}\n\nconst allowedUnits = ['g', 'ml', 'piece'];\nconst difficulties = ['quick', 'medium', 'complex'];\nconst cuisines = ['german', 'italian', 'indian', 'japanese', 'gourmet', 'fusion'];\nconst diets = ['vegetarian', 'vegan', 'keto', 'none'];\n\nif (body.schemaVersion !== 2) errors.push('schemaVersion muss 2 sein.');\nif (typeof body.clientRequestId !== 'string' || !body.clientRequestId.trim()) {\n  errors.push('clientRequestId fehlt.');\n}\nif (!Number.isInteger(body.servings) || body.servings < 1 || body.servings > 12) {\n  errors.push('servings muss zwischen 1 und 12 liegen.');\n}\nif (!Number.isInteger(body.cookCount) || body.cookCount < 1 || body.cookCount > 3) {\n  errors.push('cookCount muss zwischen 1 und 3 liegen.');\n}\nif (!body.preferences || typeof body.preferences !== 'object' || Array.isArray(body.preferences)) {\n  errors.push('preferences fehlen.');\n} else {\n  if (!difficulties.includes(body.preferences.difficulty)) errors.push('difficulty ist ungültig.');\n  if (!cuisines.includes(body.preferences.cuisine)) errors.push('cuisine ist ungültig.');\n  if (!diets.includes(body.preferences.diet)) errors.push('diet ist ungültig.');\n}\nif (!Array.isArray(body.ingredients) || body.ingredients.length < 1) {\n  errors.push('Mindestens eine Zutat ist erforderlich.');\n} else {\n  const ids = new Set();\n  body.ingredients.forEach((ingredient, index) => {\n    if (!ingredient || typeof ingredient !== 'object' || Array.isArray(ingredient)) {\n      errors.push(`Zutat ${index + 1} ist ungültig.`);\n      return;\n    }\n    if (typeof ingredient.id !== 'string' || !ingredient.id.trim() || ids.has(ingredient.id)) {\n      errors.push(`Zutat ${index + 1} benötigt eine eindeutige ID.`);\n    } else ids.add(ingredient.id);\n    if (typeof ingredient.name !== 'string' || !ingredient.name.trim()) {\n      errors.push(`Zutat ${index + 1} benötigt einen Namen.`);\n    }\n    if (typeof ingredient.amount !== 'number' || !Number.isFinite(ingredient.amount) || ingredient.amount <= 0) {\n      errors.push(`Zutat ${index + 1} benötigt eine positive Menge.`);\n    }\n    if (!allowedUnits.includes(ingredient.unit)) {\n      errors.push(`Zutat ${index + 1} hat eine ungültige Einheit.`);\n    }\n  });\n}\n\nreturn [{\n  json: {\n    valid: errors.length === 0,\n    clientIp: ip || null,\n\n    clientIpKey: ip\n      ? ip.replace(/[^0-9a-zA-Z]/g, '_')\n      : null,\n\n    request: body,\n\n    errorCode:\n      errors.length\n        ? 'invalid_request'\n        : null,\n\n    errorMessage:\n      errors.length\n        ? errors.join(' ')\n        : null,\n  },\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -75,26 +75,13 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
+        "method": "PUT",
+        "url": "={{ 'https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app/code-a-cuisine/workflow-runs/' + $execution.id + '/request_validation.json' }}",
         "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            },
-            {
-              "name": "Prefer",
-              "value": "return=minimal"
-            }
-          ]
-        },
+        "nodeCredentialType": "googleApi",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request?.clientRequestId || null, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'rejected', stage: 'request_validation', error_code: 'invalid_request', error_message: $('Normalize & Validate Request').item.json.errorMessage, metadata: {} } }}",
+        "jsonBody": "={{ {\n  request_id:\n    $('Normalize & Validate Request').item.json.request?.clientRequestId || null,\n\n  client_ip:\n    $('Normalize & Validate Request').item.json.clientIp,\n\n  status: 'rejected',\n  stage: 'request_validation',\n  error_code: 'invalid_request',\n\n  error_message:\n    $('Normalize & Validate Request').item.json.errorMessage,\n\n  metadata: {},\n\n  created_at:\n    $now.toISO()\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -106,8 +93,14 @@
       "id": "1f5b06fe-62f3-4e55-bfdc-3e5ec3cc79ec",
       "name": "Log Invalid Request",
       "notesInFlow": true,
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
       "onError": "continueRegularOutput",
-      "notes": "Writes an audit entry for rejected requests. Logging failures must not block the HTTP 400 response.\n"
+      "notes": "Stores a rejected request audit event in Firebase Realtime Database.\n"
     },
     {
       "parameters": {
@@ -127,38 +120,6 @@
       "name": "Respond Invalid Request",
       "notesInFlow": true,
       "notes": "Returns a structured validation error to the Angular frontend.\n"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/claim_generation_quota",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, p_client_ip: $('Normalize & Validate Request').item.json.clientIp, p_day_key: $now.setZone('Europe/Berlin').toISODate(), p_recipe_count: 3, p_ip_limit: 3, p_global_limit: 12, p_min_interval_seconds: 10 } }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.5,
-      "position": [
-        -784,
-        384
-      ],
-      "id": "e61c36e3-e908-4eac-829a-a7924e304583",
-      "name": "Claim IP + Global Quota",
-      "notesInFlow": true,
-      "onError": "continueErrorOutput",
-      "notes": "Atomically reserves three recipe units in Supabase while enforcing the per-IP limit, global daily limit, and short-term throttling.\n"
     },
     {
       "parameters": {
@@ -188,54 +149,47 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -560,
-        224
+        -448,
+        192
       ],
       "id": "f3ed4e34-b607-4014-948a-7a12354c6a95",
       "name": "Quota Allowed?",
       "notesInFlow": true,
-      "notes": "Allows a paid AI request only after the quota reservation succeeds.\n"
+      "notes": "Allows Gemini generation only when both the per-IP and global Firebase daily limits have room for three recipes.\n"
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
+        "method": "PUT",
+        "url": "={{ 'https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app/code-a-cuisine/workflow-runs/' + $execution.id + '/quota_rejection.json' }}",
         "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            },
-            {
-              "name": "Prefer",
-              "value": "return=minimal"
-            }
-          ]
-        },
+        "nodeCredentialType": "googleApi",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'quota_rejected', stage: 'quota', error_code: $('Claim IP + Global Quota').item.json.reason, error_message: 'Daily recipe quota rejected the request.', metadata: $('Claim IP + Global Quota').item.json } }}",
+        "jsonBody": "={{ {\n  request_id:\n    $('Normalize & Validate Request').item.json.request.clientRequestId,\n\n  client_ip:\n    $('Normalize & Validate Request').item.json.clientIp,\n\n  status:\n    'quota_rejected',\n\n  stage:\n    'quota',\n\n  error_code:\n    $('Evaluate Daily Quota').item.json.reason,\n\n  error_message:\n    'Daily recipe quota rejected the request.',\n\n  metadata:\n    $('Evaluate Daily Quota').item.json,\n\n  created_at:\n    $now.toISO()\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        -352,
+        -272,
         320
       ],
       "id": "ed9a9296-c4f9-4943-8692-ffc909d007b9",
       "name": "Log Quota Rejection",
       "notesInFlow": true,
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
       "onError": "continueRegularOutput",
       "notes": "Logs daily-limit and throttling rejections.\n"
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ { ok: false, error: { code: $('Claim IP + Global Quota').item.json.reason, message: $('Claim IP + Global Quota').item.json.reason === 'global_limit_reached' ? 'Das systemweite Tageslimit ist erreicht. Bitte morgen erneut versuchen.' : ($('Claim IP + Global Quota').item.json.reason === 'throttled' ? 'Bitte kurz warten und dann erneut versuchen.' : ($('Claim IP + Global Quota').item.json.reason === 'duplicate_request' ? 'Diese Anfrage wurde bereits verarbeitet. Bitte starte eine neue Generierung.' : 'Das tägliche Rezeptlimit für diese IP-Adresse ist erreicht.')) }, quota: $('Claim IP + Global Quota').item.json } }}",
+        "responseBody": "={{ {\n  ok: false,\n\n  error: {\n    code:\n      $('Evaluate Daily Quota').item.json.reason,\n\n    message:\n      $('Evaluate Daily Quota').item.json.reason === 'global_limit_reached'\n        ? 'Das systemweite Tageslimit ist erreicht. Bitte morgen erneut versuchen.'\n        : 'Das tägliche Rezeptlimit für diese IP-Adresse ist erreicht.'\n  },\n\n  quota:\n    $('Evaluate Daily Quota').item.json\n} }}",
         "options": {
           "responseCode": 429
         }
@@ -243,7 +197,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        -144,
+        -48,
         320
       ],
       "id": "bd28be6c-2043-40dc-8885-74ad5c70b6de",
@@ -253,47 +207,11 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            },
-            {
-              "name": "Prefer",
-              "value": "return=minimal"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'failed', stage: 'quota_backend', error_code: 'quota_backend_error', error_message: 'Quota RPC failed.', metadata: {} } }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.5,
-      "position": [
-        -560,
-        528
-      ],
-      "id": "b817f61b-1752-4b43-9149-3aa6d4b3a720",
-      "name": "Log Quota Backend Error",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput",
-      "notes": "Logs failures of the server-side quota and cost-protection mechanism.\n"
-    },
-    {
-      "parameters": {
         "fromEmail": "info@schniefs-portfolio.de",
         "toEmail": "info@schniefs-portfolio.de",
         "subject": "Code-a-Cuisine: Quota backend error",
         "emailFormat": "text",
-        "text": "=Request {{ $('Normalize & Validate Request').item.json.request.clientRequestId }} konnte die Supabase-Quota nicht prüfen.\n\nBitte n8n-Ausführung kontrollieren.",
+        "text": "=Firebase konnte für die Quota-Prüfung nicht erreicht werden.\n\nBitte n8n-Ausführung kontrollieren.",
         "options": {
           "appendAttribution": false
         }
@@ -301,19 +219,25 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        -368,
-        528
+        -608,
+        512
       ],
       "id": "ab529cee-7ca5-463a-bdd0-c95eff56a760",
       "name": "Email Quota Backend Error",
       "notesInFlow": true,
       "webhookId": "86aef6de-b8f8-4cd6-856f-e87eab936871",
+      "credentials": {
+        "smtp": {
+          "id": "Tm9Jzpc5URqWeuZm",
+          "name": "SMTP account"
+        }
+      },
       "notes": "Sends an SMTP alert when the quota backend fails.\n"
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ { ok: false, error: { code: 'quota_backend_error', message: 'Die Rezeptgenerierung ist momentan nicht verfügbar. Bitte später erneut versuchen.' } } }}",
+        "responseBody": "={{ {\n  ok: false,\n  error: {\n    code: 'quota_backend_error',\n    message: 'Die Rezeptgenerierung ist momentan nicht verfügbar. Bitte später erneut versuchen.'\n  }\n} }}",
         "options": {
           "responseCode": 503
         }
@@ -321,13 +245,13 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        -176,
-        528
+        -384,
+        512
       ],
       "id": "4d9845c2-1b7a-40f9-8de2-5211e7dcacb7",
       "name": "Respond Quota Backend Error",
       "notesInFlow": true,
-      "notes": "Returns a controlled backend error without exposing internal Supabase details.\n"
+      "notes": "Returns a controlled backend error without exposing internal Firebase details.\n"
     },
     {
       "parameters": {
@@ -356,6 +280,13 @@
       "id": "1d28d424-8241-4e76-b433-2ce27d58407a",
       "name": "Generate 3 Recipes with Gemini",
       "notesInFlow": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": null,
+          "name": "",
+          "__aiGatewayManaged": true
+        }
+      },
       "onError": "continueErrorOutput",
       "notes": "Generates only an untrusted recipe draft. IDs, ingredient metadata, totals, validation, and persistence are handled server-side.\n"
     },
@@ -445,63 +376,24 @@
       "id": "ac3244c1-c3ea-47e0-aeed-646dba93d9c1",
       "name": "Persist 3 Recipes in Firebase",
       "notesInFlow": true,
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
       "onError": "continueErrorOutput",
       "notes": "Atomically persists the three validated recipes to Firebase Realtime Database using the server-side Google Service Account.\n"
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/complete_generation_quota",
+        "method": "PUT",
+        "url": "={{ 'https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app/code-a-cuisine/workflow-runs/' + $execution.id + '/complete.json' }}",
         "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            }
-          ]
-        },
+        "nodeCredentialType": "googleApi",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId } }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.5,
-      "position": [
-        976,
-        -320
-      ],
-      "id": "58f3d26e-2c94-4802-87eb-fb55bfcdc289",
-      "name": "Complete Quota Claim",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput",
-      "notes": "Marks the reserved three recipe units as consumed after successful Firebase persistence.\n"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            },
-            {
-              "name": "Prefer",
-              "value": "return=minimal"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'success', stage: 'complete', error_code: null, error_message: null, metadata: { recipeIds: $('Validate & Build Recipe Response').item.json.response.recipes.map(r => r.id), quota: $('Claim IP + Global Quota').item.json } } }}",
+        "jsonBody": "={{ {\n  request_id:\n    $('Normalize & Validate Request').item.json.request.clientRequestId,\n\n  client_ip:\n    $('Normalize & Validate Request').item.json.clientIp,\n\n  status:\n    'success',\n\n  stage:\n    'complete',\n\n  error_code:\n    null,\n\n  error_message:\n    null,\n\n  metadata: {\n    recipeIds:\n      $('Validate & Build Recipe Response')\n        .item.json.response.recipes\n        .map(r => r.id),\n\n    quota:\n      $('Evaluate Daily Quota').item.json\n  },\n\n  created_at:\n    $now.toISO()\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -513,8 +405,14 @@
       "id": "7139afe4-304b-4827-9fc9-c773bbdecf60",
       "name": "Log Successful Generation",
       "notesInFlow": true,
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
       "onError": "continueRegularOutput",
-      "notes": "Writes a non-blocking audit entry for a successful recipe generation."
+      "notes": "Stores a successful generation audit event in Firebase Realtime Database."
     },
     {
       "parameters": {
@@ -537,58 +435,13 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/release_generation_quota",
+        "method": "PUT",
+        "url": "={{ 'https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app/code-a-cuisine/workflow-runs/' + $execution.id + '/ai_provider.json' }}",
         "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            }
-          ]
-        },
+        "nodeCredentialType": "googleApi",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId } }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.5,
-      "position": [
-        48,
-        176
-      ],
-      "id": "d24c6704-e5d3-4fb7-9313-769baebb3ee0",
-      "name": "Release Quota After AI Error",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput",
-      "notes": "Releases the reserved quota when the AI provider fails."
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            },
-            {
-              "name": "Prefer",
-              "value": "return=minimal"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'failed', stage: 'ai_provider', error_code: 'ai_provider_error', error_message: 'Gemini request failed.', metadata: {} } }}",
+        "jsonBody": "={{ {\n  request_id:\n    $('Normalize & Validate Request').item.json.request.clientRequestId,\n\n  client_ip:\n    $('Normalize & Validate Request').item.json.clientIp,\n\n  status:\n    'failed',\n\n  stage:\n    'ai_provider',\n\n  error_code:\n    'ai_provider_error',\n\n  error_message:\n    'Gemini request failed.',\n\n  metadata: {},\n\n  created_at:\n    $now.toISO()\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -600,8 +453,14 @@
       "id": "295ae73c-5c68-48ee-b590-41c1714370b5",
       "name": "Log AI Provider Error",
       "notesInFlow": true,
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
       "onError": "continueRegularOutput",
-      "notes": "Writes an audit entry for AI provider failures."
+      "notes": "Stores a Gemini provider failure event in Firebase Realtime Database."
     },
     {
       "parameters": {
@@ -624,6 +483,12 @@
       "name": "Email AI Provider Error",
       "notesInFlow": true,
       "webhookId": "4d59ca24-6842-443c-ae3d-c71342dfbf18",
+      "credentials": {
+        "smtp": {
+          "id": "Tm9Jzpc5URqWeuZm",
+          "name": "SMTP account"
+        }
+      },
       "notes": "Notifies the operator when the AI provider fails."
     },
     {
@@ -647,22 +512,13 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/release_generation_quota",
+        "method": "PUT",
+        "url": "={{ 'https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app/code-a-cuisine/workflow-runs/' + $execution.id + '/ai_validation.json' }}",
         "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            }
-          ]
-        },
+        "nodeCredentialType": "googleApi",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId } }}",
+        "jsonBody": "={{ {\n  request_id:\n    $('Normalize & Validate Request').item.json.request.clientRequestId,\n\n  client_ip:\n    $('Normalize & Validate Request').item.json.clientIp,\n\n  status:\n    'failed',\n\n  stage:\n    'ai_validation',\n\n  error_code:\n    $('Validate & Build Recipe Response').item.json.errorCode,\n\n  error_message:\n    $('Validate & Build Recipe Response').item.json.errorMessage,\n\n  metadata: {},\n\n  created_at:\n    $now.toISO()\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -671,47 +527,17 @@
         736,
         32
       ],
-      "id": "c02415a6-683d-4e67-8f07-f71363a68a78",
-      "name": "Release Quota After Invalid AI",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput",
-      "notes": "Releases the reserved quota when the AI output fails server-side validation.\n\n"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            },
-            {
-              "name": "Prefer",
-              "value": "return=minimal"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'failed', stage: 'ai_validation', error_code: $('Validate & Build Recipe Response').item.json.errorCode, error_message: $('Validate & Build Recipe Response').item.json.errorMessage, metadata: {} } }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.5,
-      "position": [
-        976,
-        192
-      ],
       "id": "2ae5a8f7-2e2a-470f-bd38-0e66fa14384c",
       "name": "Log Invalid AI Response",
       "notesInFlow": true,
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
       "onError": "continueRegularOutput",
-      "notes": "Writes an audit entry when the second-stage n8n validation rejects the model output.\n"
+      "notes": "Stores an invalid AI response event in Firebase Realtime Database.\n"
     },
     {
       "parameters": {
@@ -727,13 +553,19 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        1200,
-        192
+        1008,
+        160
       ],
       "id": "ee35b9f9-b7d6-46e7-be3f-4ae7db96c1f5",
       "name": "Email Invalid AI Response",
       "notesInFlow": true,
       "webhookId": "6b2cd8cb-ef4d-40f3-955c-3000282b4016",
+      "credentials": {
+        "smtp": {
+          "id": "Tm9Jzpc5URqWeuZm",
+          "name": "SMTP account"
+        }
+      },
       "notes": "Alerts the operator when the model output violates the required structure or business rules.\n"
     },
     {
@@ -747,8 +579,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        1408,
-        192
+        1200,
+        160
       ],
       "id": "7041c2f2-e859-4946-8ed4-1b7f103e40e7",
       "name": "Respond Invalid AI Response",
@@ -757,71 +589,32 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/rpc/release_generation_quota",
+        "method": "PUT",
+        "url": "={{ 'https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app/code-a-cuisine/workflow-runs/' + $execution.id + '/persistence.json' }}",
         "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            }
-          ]
-        },
+        "nodeCredentialType": "googleApi",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ { p_request_id: $('Normalize & Validate Request').item.json.request.clientRequestId } }}",
+        "jsonBody": "={{ {\n  request_id:\n    $('Normalize & Validate Request').item.json.request.clientRequestId,\n\n  client_ip:\n    $('Normalize & Validate Request').item.json.clientIp,\n\n  status:\n    'failed',\n\n  stage:\n    'persistence',\n\n  error_code:\n    'firebase_write_failed',\n\n  error_message:\n    'Firebase recipe write failed.',\n\n  metadata: {},\n\n  created_at:\n    $now.toISO()\n} }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
         976,
-        -48
-      ],
-      "id": "a29e365c-8959-4dbb-b5bb-23bcd6fb06b0",
-      "name": "Release Quota After Storage Error",
-      "notesInFlow": true,
-      "onError": "continueRegularOutput",
-      "notes": "Releases the reserved quota when Firebase persistence fails."
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://uhzhroacvnwemikgqjqe.supabase.co/rest/v1/workflow_runs",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "supabaseApi",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Profile",
-              "value": "code_a_cuisine"
-            },
-            {
-              "name": "Prefer",
-              "value": "return=minimal"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ { request_id: $('Normalize & Validate Request').item.json.request.clientRequestId, client_ip: $('Normalize & Validate Request').item.json.clientIp, status: 'failed', stage: 'persistence', error_code: 'firebase_write_failed', error_message: 'Firebase recipe write failed.', metadata: {} } }}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.5,
-      "position": [
-        1200,
-        -48
+        -96
       ],
       "id": "2b9b733b-e71a-4662-b0d2-d0e204d80c58",
       "name": "Log Firebase Persistence Error",
       "notesInFlow": true,
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
       "onError": "continueRegularOutput",
-      "notes": "Logs only Firebase persistence error metadata in Supabase without storing recipe payloads or secrets."
+      "notes": "Stores a recipe persistence failure event in Firebase Realtime Database."
     },
     {
       "parameters": {
@@ -837,13 +630,19 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        1392,
-        -48
+        1200,
+        -80
       ],
       "id": "65713ec2-3989-4cec-adce-188a8469ac84",
       "name": "Email Firebase Persistence Error",
       "notesInFlow": true,
       "webhookId": "b7280882-eff7-412b-92a1-e124e85d18ad",
+      "credentials": {
+        "smtp": {
+          "id": "Tm9Jzpc5URqWeuZm",
+          "name": "SMTP account"
+        }
+      },
       "notes": "Alerts the operator when persistent recipe storage fails."
     },
     {
@@ -857,13 +656,78 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        1632,
-        -48
+        1440,
+        -96
       ],
       "id": "2a8cf55b-ecb8-46c6-b0ee-43e3ace545cc",
       "name": "Respond Persistence Error",
       "notesInFlow": true,
       "notes": "Returns a controlled error because Angular receives recipes only after successful persistence."
+    },
+    {
+      "parameters": {
+        "jsCode": "const day =\n  $json && typeof $json === 'object'\n    ? $json\n    : {};\n\nconst source =\n  $('Normalize & Validate Request').item.json;\n\nconst ipUsedRecipes = Number(\n  day.byIp?.[source.clientIpKey]?.usedRecipes ?? 0\n);\n\nconst globalUsedRecipes = Number(\n  day.globalUsedRecipes ?? 0\n);\n\nconst ipLimitRecipes = 3;\nconst globalLimitRecipes = 12;\n\nconst ipRemainingRecipes =\n  Math.max(\n    0,\n    ipLimitRecipes - ipUsedRecipes\n  );\n\nconst globalRemainingRecipes =\n  Math.max(\n    0,\n    globalLimitRecipes - globalUsedRecipes\n  );\n\nconst allowed =\n  ipRemainingRecipes >= 3 &&\n  globalRemainingRecipes >= 3;\n\nconst reason =\n  ipRemainingRecipes < 3\n    ? 'ip_limit_reached'\n    : (\n        globalRemainingRecipes < 3\n          ? 'global_limit_reached'\n          : null\n      );\n\nreturn [{\n  json: {\n    allowed,\n    reason,\n\n    dayKey:\n      $now\n        .setZone('Europe/Berlin')\n        .toISODate(),\n\n    clientIpKey:\n      source.clientIpKey,\n\n    ipUsedRecipes,\n    ipLimitRecipes,\n    ipRemainingRecipes,\n\n    globalUsedRecipes,\n    globalLimitRecipes,\n    globalRemainingRecipes,\n  },\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -608,
+        192
+      ],
+      "id": "c08b7a6d-0a09-46b2-8af3-dde36f55804b",
+      "name": "Evaluate Daily Quota",
+      "notes": "Calculates whether another three-recipe generation fits inside the Firebase daily limits."
+    },
+    {
+      "parameters": {
+        "url": "={{ 'https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app/code-a-cuisine/quota/' + $now.setZone('Europe/Berlin').toISODate() + '.json' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -800,
+        368
+      ],
+      "id": "93da536d-e326-4937-84e1-74b13a66cfb2",
+      "name": "Read Daily Quota from Firebase",
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
+      "onError": "continueErrorOutput",
+      "notes": "Calculates whether another three-recipe generation fits inside the Firebase daily limits."
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ 'https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app/code-a-cuisine/quota/' + $('Evaluate Daily Quota').item.json.dayKey + '.json' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  globalUsedRecipes: {\n    '.sv': {\n      increment: 3\n    }\n  },\n\n  ['byIp/' + $('Evaluate Daily Quota').item.json.clientIpKey + '/usedRecipes']: {\n    '.sv': {\n      increment: 3\n    }\n  },\n\n  ['byIp/' + $('Evaluate Daily Quota').item.json.clientIpKey + '/lastGeneratedAt']: {\n    '.sv': 'timestamp'\n  }\n} }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        976,
+        -320
+      ],
+      "id": "df1b1969-9569-4f25-a4fc-709944b989a6",
+      "name": "Record Quota Usage in Firebase",
+      "credentials": {
+        "googleApi": {
+          "id": "wl2dRkJ0ULnTTKxT",
+          "name": "Code-a-Cuisine Firebase Service Account"
+        }
+      },
+      "notes": "Records the three successfully persisted recipes against the Firebase daily quota."
     }
   ],
   "pinData": {},
@@ -894,7 +758,7 @@
       "main": [
         [
           {
-            "node": "Claim IP + Global Quota",
+            "node": "Read Daily Quota from Firebase",
             "type": "main",
             "index": 0
           }
@@ -913,35 +777,6 @@
         [
           {
             "node": "Respond Invalid Request",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Claim IP + Global Quota": {
-      "main": [
-        [
-          {
-            "node": "Quota Allowed?",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Log Quota Backend Error",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Log Quota Backend Error": {
-      "main": [
-        [
-          {
-            "node": "Email Quota Backend Error",
             "type": "main",
             "index": 0
           }
@@ -997,17 +832,6 @@
             "index": 0
           }
         ],
-        [
-          {
-            "node": "Release Quota After AI Error",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Release Quota After AI Error": {
-      "main": [
         [
           {
             "node": "Log AI Provider Error",
@@ -1072,17 +896,6 @@
         ],
         [
           {
-            "node": "Release Quota After Invalid AI",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Release Quota After Invalid AI": {
-      "main": [
-        [
-          {
             "node": "Log Invalid AI Response",
             "type": "main",
             "index": 0
@@ -1116,25 +929,14 @@
       "main": [
         [
           {
-            "node": "Complete Quota Claim",
+            "node": "Record Quota Usage in Firebase",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Release Quota After Storage Error",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Complete Quota Claim": {
-      "main": [
-        [
-          {
-            "node": "Log Successful Generation",
+            "node": "Log Firebase Persistence Error",
             "type": "main",
             "index": 0
           }
@@ -1146,17 +948,6 @@
         [
           {
             "node": "Respond 3 Recipes",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Release Quota After Storage Error": {
-      "main": [
-        [
-          {
-            "node": "Log Firebase Persistence Error",
             "type": "main",
             "index": 0
           }
@@ -1184,6 +975,46 @@
           }
         ]
       ]
+    },
+    "Evaluate Daily Quota": {
+      "main": [
+        [
+          {
+            "node": "Quota Allowed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Daily Quota from Firebase": {
+      "main": [
+        [
+          {
+            "node": "Evaluate Daily Quota",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Quota Backend Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Record Quota Usage in Firebase": {
+      "main": [
+        [
+          {
+            "node": "Log Successful Generation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -1195,7 +1026,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "2d23f9b4-06dd-4364-a7f9-77371413c7f8",
+  "versionId": "3f72b435-032a-484c-9197-f2be29c76e63",
   "meta": {
     "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
   },

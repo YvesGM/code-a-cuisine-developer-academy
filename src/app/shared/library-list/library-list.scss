@@ -1,0 +1,184 @@
+@use '../../../styles/variables' as v;
+
+:host {
+  display: block;
+}
+
+.library-recipes {
+  display: grid;
+  gap: 6px;
+  max-width: 980px;
+  margin-inline: auto;
+}
+
+.library-recipe {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: flex-end;
+  min-height: 76px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: v.$green-middle;
+  text-decoration: none;
+  transition: background-color 160ms ease;
+
+  &:hover {
+    background: v.$cream;
+  }
+
+  &__number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: v.$orange-hover;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  &__copy {
+    display: grid;
+    gap: 4px;
+  }
+
+  &__time {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: v.$green-olive;
+    font-size: 16px;
+    font-weight: 500;
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  h2 {
+    font-size: 24px;
+    font-weight: 500;
+  }
+
+  &__badges {
+    display: flex;
+    flex-wrap: wrap;
+    align-self: center;
+    justify-content: end;
+    gap: 8px;
+
+    .tag {
+      padding: 4px 10px;
+      background: v.$green-recipe-badge;
+      font-size: 18px;
+      font-weight: 500;
+    }
+  }
+
+  &__likes img {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 56px;
+
+  button {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 4px;
+    border: 0;
+    background: transparent;
+    color: v.$green-dark;
+    font-size: 18px;
+    font-weight: 500;
+
+    &:hover:not(:disabled) {
+      background: v.$sage;
+    }
+  }
+
+  &__arrow img {
+    width: 26px;
+    height: 26px;
+  }
+
+  &__ellipsis {
+    min-width: 20px;
+    text-align: center;
+  }
+}
+
+@media (max-width: v.$breakpoint-mobile) {
+  .library-recipes {
+    gap: 8px;
+  }
+
+  .library-recipe {
+    grid-template-columns: 32px minmax(0, 1fr);
+    align-items: center;
+    gap: 6px 8px;
+    min-height: 0;
+    padding: 10px 8px;
+
+    &:nth-child(even) {
+      background: v.$cream;
+    }
+
+    &__number {
+      grid-column: 1;
+      grid-row: 1;
+      width: 28px;
+      height: 28px;
+      font-size: 14px;
+    }
+
+    &__copy {
+      display: contents;
+    }
+
+    &__time {
+      grid-column: 2;
+      grid-row: 1;
+      font-size: 14px;
+    }
+
+    h2 {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      padding-inline: 4px;
+      font-size: 16px;
+    }
+
+    &__badges {
+      grid-column: 1 / -1;
+      grid-row: 3;
+      justify-content: flex-start;
+      padding-inline: 4px;
+
+      .tag {
+        padding: 3px 8px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .pagination {
+    gap: 8px;
+    margin-top: 40px;
+
+    button {
+      min-width: 28px;
+      min-height: 28px;
+    }
+  }
+}

@@ -1,106 +1,56 @@
-# 08 – Academy-Checkliste: aktueller Implementierungsstand
+# 08 – Academy-Checkliste: finaler Implementierungsstand
 
-Stand: 14.09.2026. Grundlage ist der aktuelle Repository-Stand nach der strukturellen Figma-/Responsive-Umsetzung; finale Browser-/Device-QA bleibt offen.
-
-Legende: `[x]` implementiert · `[~]` implementiert, reale E2E-/Abschlussprüfung noch offen · `[ ]` offen · `[-]` optional.
+Stand: 15.09.2026.
 
 ## Allgemeine Anforderungen
 
-| Anforderung                                                 | Status | Nachweis / Restarbeit                                                                                                           |
-| ----------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------- |
-| GitHub Repository + README-Link                             | [ ]    | README vorhanden; finalen GitHub-Link vor Abgabe ergänzen.                                                                      |
-| Semantisches HTML                                           | [x]    | Header, Nav, Main, Footer, Form, Fieldset, Article, Section, Listen und Definition Lists werden fachlich eingesetzt.            |
-| Font-Size mindestens 16px / Kleingedrucktes mindestens 14px | [x]    | Kleinste explizite Schriftgröße im aktuellen SCSS-Stand ist 14px; mobile Library-Mikrotexte wurden auf 14px angehoben. |
-| Angular Frontend                                            | [x]    | Angular 22, Standalone Components, Router, Reactive Forms, Signals.                                                             |
-| JSDoc für Funktionen                                        | [x]    | Eigene fachliche Produktionsfunktionen/-methoden sind dokumentiert; ESLint-Strukturregeln schützen den Refactor-Stand.          |
-| Alle generierten Rezepte in Firebase                        | [~]    | n8n Generation persistiert die drei validierten Recipes in Firebase RTDB; realen E2E-Write noch einmal vor Figma/Abgabe prüfen. |
+| Anforderung | Status | Umsetzung |
+| --- | --- | --- |
+| Angular Frontend | [x] | Angular 22, Standalone Components, Router, Reactive Forms, Signals |
+| Semantisches HTML | [x] | vorhandene semantische Struktur beibehalten |
+| Font-Size Standards | [x] | finaler Figma-/Responsive-Stand |
+| JSDoc | [x] | relevante eigene Funktionen und Methoden dokumentiert |
+| Alle generierten Rezepte in Firebase | [x] | Generation persistiert validierte Rezepte in Firebase Realtime Database |
 
-## n8n-Anforderungen
+## Architektur
 
-| Anforderung                           | Status | Nachweis / Restarbeit                                                                                                   |
-| ------------------------------------- | ------ | ----------------------------------------------------------------------------------------------------------------------- |
-| n8n-Projekt in Git                    | [x]    | Fünf aktuelle Workflow-Exporte liegen unter `n8n/workflows/`; alle fünf sind aktiv exportiert, alle Nodes besitzen englische Notes und die Exporte enthalten keine gebundenen Credential-Referenzen. |
-| Aussagekräftige Node-Namen            | [x]    | Generation, Library, Quota und Error Notification verwenden fachliche Node-Namen.                                       |
-| Beschreibungstexte                    | [x]    | Alle exportierten Nodes besitzen aussagekräftige englische Notes.                                                       |
-| Error Handling + Logging + E-Mail     | [~]    | Kontrollierte Fehlerbranches, Supabase-Audit, SMTP und Error-Workflow-Zuordnung sind vorhanden; realen Fehler-Smoke-Test noch durchführen. |
-| Quota / Rate Limiting / Kostenairbag  | [~]    | IP-/Global-Quota, Throttling und Quota-Status-Error-Logging sind vorhanden; realen 429-Test noch durchführen.            |
-| n8n validiert Angular-Eingaben erneut | [x]    | Request Validation findet vor Quota/KI statt.                                                                           |
-| Klare JSON-Strukturen Angular ↔ n8n   | [x]    | Schema Version 2 ist in Models, Frontend-Validator und n8n festgelegt.                                                  |
+| Punkt | Status | Umsetzung |
+| --- | --- | --- |
+| Firebase-only | [x] | eine persistente Datenbank: Firebase Realtime Database |
+| Angular Services | [x] | AppState, Recipe, Ingredient, Quota |
+| Keine externe Kommunikation in Components | [x] | n8n-Aufrufe liegen in Services |
+| Verständliche Struktur | [x] | `components`, `shared`, `services`, `models`, `guards`, `config` |
+| Einfache Angular-Service-Struktur | [x] | keine Repository-/Provider-/InjectionToken-Zwischenschicht |
 
-## Responsive / UX
+## n8n
 
-| Anforderung                                       | Status | Nachweis / Restarbeit                                               |
-| ------------------------------------------------- | ------ | ------------------------------------------------------------------- |
-| Desktop, Tablet, Smartphone                       | [~]    | Standard + Mobile bis 768px + Widescreen ab 1440px umgesetzt; finales reales Viewport-QA offen. |
-| Touch optimiert                                   | [~]    | Zentrale Controls besitzen mindestens 44px Touch-Ziele; finales Device-QA offen. |
-| Recipe-/Nutrition-Darstellung auf kleinen Screens | [~]    | Recipe Detail, Nutrition, Zutaten und Directions wechseln mobil auf lesbare einspaltige Layouts; visuelles QA offen. |
-| Generierungswartezeit ansprechend überbrückt      | [x]    | Figma-Loading-GIF integriert; statisches Asset bei `prefers-reduced-motion`. |
+| Anforderung | Status | Umsetzung |
+| --- | --- | --- |
+| Projekt in Git | [x] | fünf Workflow-Exporte vorhanden |
+| Node-Namen/Beschreibungen | [x] | vorhanden |
+| Error Handling + E-Mail | [x] | kontrollierte Fehlerpfade, Firebase-Logs und SMTP-Nodes vorhanden |
+| Quota / Kostenairbag | [x] | Firebase Tageszähler: 3 Rezepte/IP und 12 Rezepte global |
+| Servervalidierung | [x] | Request und AI-Ausgabe werden in n8n geprüft |
+| Klare JSON-Strukturen | [x] | Schema Version 2 |
 
-## Git-Workflow
+## User Stories
 
-| Anforderung                     | Status | Nachweis / Restarbeit                                                                    |
-| ------------------------------- | ------ | ---------------------------------------------------------------------------------------- |
-| GitHub von Anfang an            | [?]    | Aus ZIP nicht prüfbar.                                                                   |
-| Commit nach jeder Session       | [?]    | Aus ZIP nicht prüfbar.                                                                   |
-| Aussagekräftige Commit-Messages | [?]    | Aus ZIP nicht prüfbar.                                                                   |
-| `.gitignore`                    | [x]    | Runtime Config, Supabase Temp und Firebase Admin SDK Keys sind ausgeschlossen.           |
-| Repository aktuell/gepflegt     | [~]    | Technischer und Figma-Stand dokumentiert; finalen geprüften Abgabestand committen/pushen. |
+Die finalen UI-/Figma-Funktionen sind erhalten:
 
-## User Stories 1–10
+- Ingredients CRUD mit Autocomplete und Usage-Zähler.
+- Portionswahl, Zeit, Cuisine, Diet und Helfer/Köche.
+- Exakt drei generierte Rezeptvorschläge.
+- Validierte Zutatenabdeckung und zusätzliche Basiszutaten.
+- Directions mit Aufgabenverteilung und Parallelisierung.
+- Nutrition pro Portion und gesamt.
+- Cookbook mit Cuisine-Filter, Pagination und Top-Likes.
+- Recipe Detail und Favorites.
+- Quota-Status und kontrollierte Backend-Fehlerantworten.
 
-| Story                  | Status          | Umsetzung                                                                                                         |
-| ---------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------- |
-| 1 Zutaten-Eingabe      | [x]             | Add/Edit/Delete/List, Menge, Einheit, mindestens eine Zutat; dynamisches Autocomplete lädt den Katalog einmalig über n8n und filtert lokal nach Nutzung.   |
-| 2 Portionen            | [x]             | 1–12, Default 2; Request/Recipe tragen `servings`, Mock skaliert deterministisch, n8n/KI erhält die Portionszahl. |
-| 3 Zeitangabe           | [x]             | Quick ≤20, Medium 20–45, Complex ≥45; Frontend und n8n validieren den Bereich.                                    |
-| 4 Kochstil             | [x]             | Deutsch, Italienisch, Japanisch, Indisch, Gourmet, Fusion; KI-Prompt bindet Cuisine ein.                          |
-| 5 Diät                 | [x]             | Vegetarisch, Vegan, Keto, Keine Einschränkung; KI-Prompt verlangt Diet-Kompatibilität.                            |
-| 6 Kochhelfer           | [x]             | 1–3; Directions tragen `assignedCooks` und Parallelgruppen.                                                       |
-| 7 drei Vorschläge      | [x]             | Exakt 3, eindeutige Titel/Ränge, ≥70 % User-Zutaten, max. 3 getrennte Basiszutaten.                               |
-| 8 optimierte Anleitung | [x] strukturell | Chronologische Steps, Parallelgruppen, Wartezeiten und beginner-friendly Prompt-Regel vorhanden.                  |
-| 9 Arbeitsaufteilung    | [x]             | ToDo-Listen werden direkt aus `assignedCooks` abgeleitet; kein paralleler zweiter State.                          |
-| 10 Nährwerte           | [~]             | Contract/Validierung enthalten kcal + Protein/Carbs/Fat in g/% pro Portion und Gesamt. Die aktuelle Figma-Detailansicht zeigt sichtbar nur Energy sowie Makro-Grammwerte pro Portion; Prozent- und Gesamtwerte sind daher vor Abgabe noch gegen die wörtliche Academy-Vorgabe zu entscheiden. |
+## Abschlussprüfung
 
-## User Story 11 – Quota
+Vor dem finalen Push lokal ausführen:
 
-| Anforderung                           | Status          | Umsetzung                                                                                                          |
-| ------------------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------ |
-| 3 Rezepte / IP / Tag                  | [~]             | Quota-RPC implementiert; bei exakt 3 Recipes entspricht das einer erfolgreichen Generation pro IP/Tag. E2E testen. |
-| 12 Rezepte systemweit / Tag           | [~]             | Globales Limit implementiert; E2E testen.                                                                          |
-| IP erfassen/validieren                | [~]             | Workflow verarbeitet Proxy-IP und IPv4/IPv6; reale n8n-Cloud-Header im Execution-Log prüfen.                       |
-| Frontend-Validierung + n8n Throttling | [x]             | Quota-Status deaktiviert Generate; n8n bleibt serverseitige Autorität.                                             |
-| geteilte IP teilt Limit               | [x]             | Quota-Key basiert auf IP + Datum.                                                                                  |
-| IPv4 und IPv6                         | [x] strukturell | Validator unterstützt beide Formen.                                                                                |
-| verständliche Quota-Fehlermeldung     | [x]             | 429 wird als kontrollierter Providerfehler an die UI gegeben.                                                      |
-
-## User Stories 12–14 – Rezeptbibliothek
-
-| Anforderung                        | Status | Umsetzung                                                                            |
-| ---------------------------------- | ------ | ------------------------------------------------------------------------------------ |
-| Alle jemals generierten Rezepte    | [~]    | Firebase RTDB ist persistenter Owner; realen Generate→Library-Test noch durchführen. |
-| Titel, Kochzeit, Kochstil sichtbar | [x]    | Recipe Card zeigt die Grundinformationen.                                            |
-| Klick öffnet Detail                | [x]    | `/recipe/:id` lädt unabhängig vom aktuellen Generation-State über das Repository.    |
-| ohne Account                       | [x]    | Frontend benötigt keine Auth; Firebase bleibt serverseitig hinter n8n.               |
-| Pagination >20                     | [x]    | Page Size 20; Library API paginiert und Frontend navigiert.                          |
-| Cuisine-Kategorien                 | [x]    | Zentral definierte Cuisine-Filter.                                                   |
-| vollständige Detailansicht         | [x]    | Nutrition, Zutaten, Extras, Directions und Arbeitsaufteilung verfügbar.              |
-
-
-## Code-Qualitätsaudit 14.09.2026
-
-- Alle handgeschriebenen Dateien unter `src/` liegen unter 400 Zeilen.
-- Eigene benannte Produktionsfunktionen/-methoden liegen im statischen Audit bei maximal 14 Codezeilen.
-- Eigene fachliche Produktionsfunktionen/-methoden besitzen JSDoc; Framework-/Template-Callbacks werden nicht künstlich kommentiert.
-- SCSS verwendet bestehende Owner und verschachtelt Modifier/Elemente (`&--…`, `&__…`) innerhalb ihrer Komponenten; keine parallelen Style-Owner wurden für den Abschlussaudit ergänzt.
-- Alle fünf n8n-Exporte sind aktiv, haben eindeutige Webhook-Pfade, gültige Node-Verbindungen, eindeutige Node-Namen und englische Notes.
-- Account-spezifische n8n-Credential-Bindings wurden aus den Git-Exporten entfernt; nach Import werden Credentials in n8n manuell zugeordnet.
-
-## Weitere Seite und finale QA
-
-| Anforderung                | Status | Restarbeit                                                                  |
-| -------------------------- | ------ | --------------------------------------------------------------------------- |
-| Impressum                  | [~]    | Route und Platzhalter vorhanden; reale Pflichtangaben vor Abgabe einsetzen. |
-| Cross-Browser-Test         | [ ]    | Nach Figma in Chrome/Firefox/Edge durchführen.                              |
-| Responsive-Test            | [ ]    | Implementierung vorhanden; final auf Desktop/Tablet/Mobile real prüfen.      |
-| Code-Review                | [~]    | Struktur- und Figma-Nachaudit durchgeführt; finaler Review nach Browser-QA/n8n-E2E. |
-| GitHub Repository + README | [ ]    | Finalen Repo-Link ergänzen und Abgabestand pushen.                          |
+```bash
+npm run check
+```

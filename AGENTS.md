@@ -1,24 +1,16 @@
 # Code-a-Cuisine: verbindliche Arbeitsregeln
 
-- Existing-System-First: zuerst vorhandene Owner, Datenverträge und vollständigen Flow nachvollziehen.
-- Root Cause vor Änderung; kleinste passende Änderung, keine Quickfixes oder Parallelimplementierungen.
-- Ein State-Owner, zentrale Models und API Contracts; bestehende Lösungen erweitern.
-- Keine erfundenen Anforderungen, versteckten Fallbacks oder unbestätigten n8n-/Persistenzstrukturen.
-- Strict TypeScript, kein `any`; keine neue Abstraktion ohne konkreten Owner-/Wiederverwendungsbedarf.
-- Handgeschriebene Anwendungscode-Dateien bleiben unter 400 Zeilen.
-- Eigene Produktionsfunktionen und Methoden bleiben bei maximal 14 Codezeilen und besitzen genau eine fachliche Verantwortung.
-- Aussagekräftige JSDoc dokumentiert eigene fachliche Funktionen und Methoden; keine künstlichen Kommentare auf Framework-Code.
-- Die Limits werden für `src/**/*.ts` durch ESLint abgesichert. Declarative Test-Callbacks sind von der Funktionslängenregel ausgenommen; Testdateien bleiben weiterhin unter 400 Zeilen.
-- Export-/Historienartefakte wie `package-lock.json`, n8n-Workflow-JSONs, Binärassets und bereits angewendete SQL-Migrationen werden nicht künstlich geteilt, weil ihre Dateigrenzen vom jeweiligen Tool-/History-Format bestimmt werden.
-- Keine externe Kommunikation in Components, keine Businesslogik in Templates.
-- Nach Änderungen passende Tests ausführen und Dokumentation aktualisieren.
-- Nach Architekturblöcken und vor Abschluss: Lint, Tests und Production Build.
-- Phasenstatus: `[ ]` nicht begonnen, `[~]` in Arbeit, `[x]` validiert, `[!]` blockiert.
-- Keine Phase gilt vor erfolgreichen Tests, Lint und Build als abgeschlossen.
-- Offene Anforderungen zentral konfigurieren und in `docs/06_OPEN_DECISIONS.md` dokumentieren.
-- Aktueller Stand: Academy-Schema 2, Firebase-Rezeptpersistenz sowie n8n Generation, Library, Quota und Error Notification sind vorbereitet. E2E-Validierung und finales Figma-Styling folgen separat.
-- `FlowState` besitzt den aktuellen Workflow. `RecipeRepository` kapselt Library-Zugriffe; Angular spricht dafür ausschließlich den n8n-Library-Endpunkt an.
-- Rezeptwrites und -reads laufen produktiv serverseitig über n8n und Firebase Realtime Database. Keine Firebase-Service-Credentials oder Supabase-Keys ins Angular-Bundle einführen.
-- Supabase bleibt serverseitiger Owner für Quota, Throttling, Workflow-Audit-Logs und den dynamischen Ingredient-Catalog; Angular greift darauf ausschließlich über n8n zu.
-- Generierung liefert exakt drei Preference-konforme Rezepte. Contract-Regeln stehen in `docs/03_DATA_CONTRACTS.md`.
-- Textdateien als UTF-8 erhalten und beschädigte Sonderzeichen nach Änderungen prüfen.
+- Existing-System-First: vorhandene Komponenten, Services, Datenverträge und n8n-Flows zuerst nachvollziehen.
+- Root Cause vor Änderung; bestehende Owner direkt anpassen statt parallele Lösungen einzubauen.
+- Angular bleibt bewusst einfach: Components für UI, Services für State und externe Kommunikation, Models für Typen, Guards für Navigation.
+- Keine zusätzlichen Architektur- oder Abstraktionsschichten ohne konkreten Bedarf.
+- Externe Kommunikation findet ausschließlich in Angular-Services statt, nicht in Components.
+- Persistente Daten liegen ausschließlich in Firebase Realtime Database und werden ausschließlich serverseitig über n8n gelesen/geschrieben.
+- Keine Firebase-Service-Credentials, AI-Secrets oder SMTP-Secrets ins Angular-Bundle oder Repository einführen.
+- n8n ist der einzige Backend-Gateway des Frontends und validiert Requests serverseitig erneut.
+- Bestehendes Figma-/Responsive-Styling nicht nebenbei verändern. HTML/SCSS nur anfassen, wenn die Aufgabe ausdrücklich UI betrifft.
+- Eigene fachliche Funktionen und Methoden kurz und eindeutig halten; Ziel sind maximal 14 Zeilen pro Funktionskörper.
+- JSDoc für eigene fachliche Funktionen, Methoden und zentrale Klassen verwenden, wenn es die Verantwortung erklärt.
+- Handgeschriebene Anwendungscode-Dateien bleiben überschaubar und fachlich eindeutig.
+- Nach Änderungen: TypeScript/Lint, Tests soweit vorhanden und Production Build prüfen.
+- Textdateien als UTF-8 erhalten und Sonderzeichen nach Änderungen prüfen.

@@ -1,43 +1,39 @@
 # n8n Workflows
 
-## Credential policy
+Code-a-Cuisine verwendet n8n als einzigen Backend-Gateway. Persistente Daten werden ausschließlich in Firebase Realtime Database gespeichert.
 
-The workflow exports in `n8n/workflows/` intentionally contain **no bound n8n credential IDs or credential names**. This keeps account-specific references out of Git while preserving every node, parameter, connection, note, webhook path and workflow branch.
+## Benötigte Credentials
 
-After importing the workflows into n8n, assign the required credentials again in the affected nodes:
+Nach dem Import der Workflows zuordnen:
 
-- **Supabase API credential**: quota claims/status, workflow audit logging and ingredient-catalog RPC nodes.
-- **SMTP credential**: all `Email ... Error` nodes and the unhandled-error notification node.
-- **Google API / Firebase service-account credential**: Firebase recipe reads/writes and favorite reads/increments.
-- **Gemini / Google AI credential**: `Generate 3 Recipes with Gemini`.
+- Google API / Firebase Service Account: alle Firebase HTTP Request Nodes.
+- Gemini / Google AI: `Generate 3 Recipes with Gemini`.
+- SMTP: alle `Email ... Error` Nodes.
 
-No private key, API key, database password, access token or SMTP password belongs in the repository.
+Die Exporte enthalten absichtlich keine account-spezifischen Credential-IDs oder Secrets.
 
-## Firebase connection
+## Firebase
 
-The Firebase nodes target:
+Datenbank:
 
 ```text
 https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app
 ```
 
-The Firebase Admin service-account JSON stays outside the Git repository and is configured only as an n8n credential.
+Verwendete Bereiche:
 
-Firebase credential assignment is required in:
-
-- `Code-a-Cuisine - Recipe Generation` → `Persist 3 Recipes in Firebase`
-- `Code-a-Cuisine - Recipe Library` → `Read Recipes from Firebase`
-- `Code-a-Cuisine - Recipe Library` → `Read Favorite Counts`
-- `Code-a-Cuisine - Recipe Library` → `Increment Favorite in Firebase`
+```text
+/code-a-cuisine/recipes
+/code-a-cuisine/favorites
+/code-a-cuisine/ingredient-catalog
+/code-a-cuisine/quota
+/code-a-cuisine/workflow-runs
+```
 
 ## Workflows
 
-- `Code-a-Cuisine - Recipe Generation.json`
-- `Code-a-Cuisine - Recipe Library.json`
-- `Code-a-Cuisine - Ingredient Catalog.json`
-- `Code-a-Cuisine - Quota Status.json`
-- `Code-a-Cuisine - Error Notification.json`
-
-All exported nodes use descriptive English names and English notes. Quota, audit logging and the dynamic ingredient catalog remain in Supabase. Recipes and favorite counters are stored in Firebase.
-
-The public generation and favorite webhooks define the currently approved browser origins. If the deployment domains change, update the corresponding `Allowed Origins (CORS)` option in n8n before publishing the workflow.
+- Recipe Generation: validiert Request und IP, prüft Firebase-Quota, erzeugt exakt drei Rezepte, validiert die AI-Antwort, schreibt Rezepte und Quota nach Firebase und gibt die Response zurück.
+- Recipe Library: liest Rezepte/Favorites aus Firebase und verarbeitet Favorite-Increments.
+- Ingredient Catalog: liest den Firebase-Katalog und erhöht Usage-Zähler.
+- Quota Status: liest die Tageszähler aus Firebase und liefert den öffentlichen Status.
+- Error Notification: schreibt unhandled Workflow-Fehler nach Firebase und verschickt eine SMTP-Meldung.

@@ -1,0 +1,122 @@
+@use '../../../styles/variables' as v;
+
+:host {
+  display: block;
+}
+
+.generating-page {
+  position: relative;
+  height: calc(100dvh - 88px);
+  min-height: 0;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 48px;
+  padding-block: 0;
+  overflow: hidden;
+}
+
+.generating-content,
+.error-content {
+  display: grid;
+  justify-items: center;
+}
+
+.generating-content {
+  gap: 32px;
+}
+
+picture {
+  display: block;
+  width: 220px;
+  height: 268px;
+  overflow: hidden;
+  border-radius: v.$radius;
+  background: #c4d0c4;
+
+  img {
+    width: 220px;
+    max-width: none;
+    height: 309px;
+    margin-top: -41px;
+  }
+}
+
+h1 {
+  font-family: 'Ubuntu', 'Trebuchet MS', sans-serif;
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.dots span {
+  animation: loading-dot 3s steps(1, end) infinite;
+
+  &:nth-child(2) {
+    animation-delay: 0.5s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 1s;
+  }
+}
+
+.error-content {
+  gap: 28px;
+
+  .back-link {
+    position: absolute;
+    top: 24px;
+    left: 68px;
+    color: v.$cream;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .back-link__icon {
+    filter: brightness(0) invert(1);
+  }
+}
+
+.status-panel {
+  max-width: 567px;
+
+  h1 {
+    font-size: 28px;
+  }
+}
+
+@keyframes loading-dot {
+  0%,
+  50%,
+  100% {
+    opacity: 1;
+  }
+
+  25%,
+  75% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: v.$breakpoint-mobile) {
+  .error-content .back-link {
+    top: 16px;
+    left: 16px;
+  }
+  .generating-page {
+    height: calc(100dvh - 44px);
+    gap: 40px;
+    padding-inline: 16px;
+  }
+
+  h1 {
+    font-size: 36px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dots span {
+    animation: none;
+  }
+}

@@ -6,200 +6,167 @@
   </nav>
 
   @if (error()) {
-    <div class="status-panel">
-      <p class="notice notice--error" role="alert">{{ error() }}</p>
-      <button type="button" (click)="reload()">Retry</button>
-    </div>
+  <div class="status-panel">
+    <p class="notice notice--error" role="alert">{{ error() }}</p>
+    <button type="button" (click)="reload()">Retry</button>
+  </div>
   } @else if (recipe(); as recipe) {
-    <article class="recipe-sheet">
-      <header class="recipe-heading">
-        <div class="recipe-summary">
-          <p class="recipe-time">
-            <img class="icon" src="assets/icons/clock-icon.svg" alt="" />Cooking time:
-            {{ recipe.cookingTimeMinutes }}min
-          </p>
-          <h1>{{ recipe.title }}</h1>
-          <div class="cooking-team">
-            <span>Cooking person: {{ recipe.cookCount }}</span>
-            <div class="chef-badges" aria-label="Cooking team">
-              @for (cook of chefs(); track cook) {
-                <span class="chef-badge chef-badge--{{ cook }}">
-                  <img [src]="chefIcon(cook)" alt="" />
-                  <span>Chef {{ cook }}</span>
-                </span>
-              }
-            </div>
-          </div>
-        </div>
-
-        <section class="nutrition" aria-labelledby="nutrition-title">
-          <div class="recipe-tags">
-            <span class="tag tag--selected">{{ diets[recipe.diet] }}</span>
-            <span class="tag tag--selected">{{ difficulties[recipe.difficulty].label }}</span>
-            <span class="tag tag--selected favorite-count">
-              <img src="assets/icons/favourite-small.svg" alt="" />{{ favoriteCount() }}
-            </span>
-          </div>
-          <h2 id="nutrition-title">Nutritional information</h2>
-          <dl>
-            <div>
-              <dt>Energy</dt>
-              <dd>{{ recipe.nutrition.perServing.energyKcal | number: '1.0-0' }} kcal</dd>
-            </div>
-            <div>
-              <dt>Protein</dt>
-              <dd>{{ recipe.nutrition.perServing.protein.grams | number: '1.0-0' }}g</dd>
-            </div>
-            <div>
-              <dt>Fat</dt>
-              <dd>{{ recipe.nutrition.perServing.fat.grams | number: '1.0-0' }}g</dd>
-            </div>
-            <div>
-              <dt>Carbs</dt>
-              <dd>{{ recipe.nutrition.perServing.carbs.grams | number: '1.0-0' }}g</dd>
-            </div>
-          </dl>
-        </section>
-      </header>
-
-      <section class="ingredients-section" aria-labelledby="ingredients-title">
-        <div class="illustrated-heading illustrated-heading--ingredients">
-          <h2 id="ingredients-title">Ingredients</h2>
-        </div>
-        <div
-          id="recipe-ingredients-content"
-          class="ingredient-columns"
-          [class.mobile-collapsible--collapsed]="!ingredientsExpanded()"
-        >
-          <section>
-            <h3>Your ingredients</h3>
-            <ul>
-              @for (ingredient of recipe.ingredients; track ingredient.sourceIngredientId) {
-                <li>
-                  <span class="ingredient-row">
-                    <span>{{ ingredient.amount | number: '1.0-3' }}{{ ingredient.unit }}</span>
-                    <span>{{ ingredient.name }}</span>
-                  </span>
-                </li>
-              }
-            </ul>
-          </section>
-          <section>
-            <h3>Extra ingredients</h3>
-            <ul>
-              @for (ingredient of recipe.additionalIngredients; track $index) {
-                <li>
-                  <span class="ingredient-row">
-                    <span>{{ ingredient.amount | number: '1.0-3' }}{{ ingredient.unit }}</span>
-                    <span>{{ ingredient.name }}</span>
-                  </span>
-                </li>
-              } @empty {
-                <li>No extra ingredients needed.</li>
-              }
-            </ul>
-          </section>
-        </div>
-        <button
-          type="button"
-          class="detail-toggle"
-          aria-controls="recipe-ingredients-content"
-          [attr.aria-expanded]="ingredientsExpanded()"
-          (click)="toggleIngredients()"
-        >
-          <span>{{ ingredientsExpanded() ? 'Hide ingredients' : 'Show ingredients' }}</span>
-          <img
-            class="detail-toggle__arrow"
-            [class.detail-toggle__arrow--open]="ingredientsExpanded()"
-            src="assets/icons/arrow-icon.svg"
-            alt=""
-          />
-        </button>
-      </section>
-
-      <section class="directions-section" aria-labelledby="directions-title">
-        <div class="illustrated-heading illustrated-heading--directions">
-          <h2 id="directions-title">Directions</h2>
-        </div>
-        <ol
-          id="recipe-directions-content"
-          class="directions"
-          [class.mobile-collapsible--collapsed]="!directionsExpanded()"
-        >
-          @for (direction of recipe.directions; track direction.step) {
-            <li>
-              <div class="step-heading">
-                <span class="step-number" aria-hidden="true">{{ direction.step }}.</span>
-                <h3>{{ direction.title }}</h3>
-                <div class="step-chefs" aria-label="Assigned chefs">
-                  @for (cook of direction.assignedCooks; track cook) {
-                    <span class="chef-badge chef-badge--{{ cook }}">
-                      <img [src]="chefIcon(cook)" alt="" />
-                      <span>Chef {{ cook }}</span>
-                    </span>
-                  }
-                </div>
-              </div>
-              <p>{{ direction.instruction }}</p>
-            </li>
-          }
-        </ol>
-        <button
-          type="button"
-          class="detail-toggle"
-          aria-controls="recipe-directions-content"
-          [attr.aria-expanded]="directionsExpanded()"
-          (click)="toggleDirections()"
-        >
-          <span>{{ directionsExpanded() ? 'Hide directions' : 'Show directions' }}</span>
-          <img
-            class="detail-toggle__arrow"
-            [class.detail-toggle__arrow--open]="directionsExpanded()"
-            src="assets/icons/arrow-icon.svg"
-            alt=""
-          />
-        </button>
-      </section>
-
-      <section class="favorite-prompt" aria-label="Favorite this recipe">
-        <p>
-          <strong>Just finished this meal?</strong>
-          <span>Give it a heart, so that the others know this is delicious.</span>
+  <article class="recipe-sheet">
+    <header class="recipe-heading">
+      <div class="recipe-summary">
+        <p class="recipe-time">
+          <img class="icon" src="assets/icons/clock-icon.svg" alt="" />Cooking time:
+          {{ recipe.cookingTimeMinutes }}min
         </p>
-        <button
-          type="button"
-          class="favorite-button"
-          [class.favorite-button--active]="favorited()"
-          [disabled]="favorited() || favoritePending()"
-          [attr.aria-pressed]="favorited()"
-          aria-label="Favorite this recipe"
-          (click)="favorite()"
-        >
-          <img
-            [src]="favorited() ? 'assets/icons/favourite-filled.svg' : 'assets/icons/favourite-icon.svg'"
-            alt=""
-          />
-        </button>
-        @if (favoriteError()) {
-          <small class="favorite-error" role="status">{{ favoriteError() }}</small>
-        }
-      </section>
-    </article>
+        <h1>{{ recipe.title }}</h1>
+        <div class="cooking-team">
+          <span>Cooking person: {{ recipe.cookCount }}</span>
+          <div class="chef-badges" aria-label="Cooking team">
+            @for (cook of chefs(); track cook) {
+            <span class="chef-badge chef-badge--{{ cook }}">
+              <img [src]="chefIcon(cook)" alt="" />
+              <span>Chef {{ cook }}</span>
+            </span>
+            }
+          </div>
+        </div>
+      </div>
 
-    <aside class="cookbook-cta">
-      <p>Find inspiration for your next culinary adventure!</p>
-      <a class="button button--primary" routerLink="/cookbook">Cookbook</a>
-    </aside>
-    <div class="detail-actions">
-      <a class="hero-link" routerLink="/generate">
-        Generate new recipe
-        <span class="direction-arrow" aria-hidden="true"></span>
-      </a>
-    </div>
+      <section class="nutrition" aria-labelledby="nutrition-title">
+        <div class="recipe-tags">
+          <span class="tag tag--selected">{{ diets[recipe.diet] }}</span>
+          <span class="tag tag--selected">{{ difficulties[recipe.difficulty].label }}</span>
+          <span class="tag tag--selected favorite-count">
+            <img src="assets/icons/favourite-small.svg" alt="" />{{ favoriteCount() }}
+          </span>
+        </div>
+        <h2 id="nutrition-title">Nutritional information</h2>
+        <dl>
+          <div>
+            <dt>Energy</dt>
+            <dd>{{ recipe.nutrition.perServing.energyKcal | number: '1.0-0' }} kcal</dd>
+          </div>
+          <div>
+            <dt>Protein</dt>
+            <dd>{{ recipe.nutrition.perServing.protein.grams | number: '1.0-0' }}g</dd>
+          </div>
+          <div>
+            <dt>Fat</dt>
+            <dd>{{ recipe.nutrition.perServing.fat.grams | number: '1.0-0' }}g</dd>
+          </div>
+          <div>
+            <dt>Carbs</dt>
+            <dd>{{ recipe.nutrition.perServing.carbs.grams | number: '1.0-0' }}g</dd>
+          </div>
+        </dl>
+      </section>
+    </header>
+
+    <section class="ingredients-section" aria-labelledby="ingredients-title">
+      <div class="illustrated-heading illustrated-heading--ingredients">
+        <h2 id="ingredients-title">Ingredients</h2>
+      </div>
+      <div id="recipe-ingredients-content" class="ingredient-columns"
+        [class.mobile-collapsible--collapsed]="!ingredientsExpanded()">
+        <section>
+          <h3>Your ingredients</h3>
+          <ul>
+            @for (ingredient of recipe.ingredients; track ingredient.sourceIngredientId) {
+            <li>
+              <span class="ingredient-row">
+                <span>{{ ingredient.amount | number: '1.0-3' }}{{ ingredient.unit }}</span>
+                <span>{{ ingredient.name }}</span>
+              </span>
+            </li>
+            }
+          </ul>
+        </section>
+        <section>
+          <h3>Extra ingredients</h3>
+          <ul>
+            @for (ingredient of recipe.additionalIngredients; track $index) {
+            <li>
+              <span class="ingredient-row">
+                <span>{{ ingredient.amount | number: '1.0-3' }}{{ ingredient.unit }}</span>
+                <span>{{ ingredient.name }}</span>
+              </span>
+            </li>
+            } @empty {
+            <li>No extra ingredients needed.</li>
+            }
+          </ul>
+        </section>
+      </div>
+      <button type="button" class="detail-toggle" aria-controls="recipe-ingredients-content"
+        [attr.aria-expanded]="ingredientsExpanded()" (click)="toggleIngredients()">
+        <span>{{ ingredientsExpanded() ? 'Hide ingredients' : 'Show ingredients' }}</span>
+        <img class="detail-toggle__arrow" [class.detail-toggle__arrow--open]="ingredientsExpanded()"
+          src="assets/icons/arrow-icon.svg" alt="" />
+      </button>
+    </section>
+
+    <section class="directions-section" aria-labelledby="directions-title">
+      <div class="illustrated-heading illustrated-heading--directions">
+        <h2 id="directions-title">Directions</h2>
+      </div>
+      <ol id="recipe-directions-content" class="directions"
+        [class.mobile-collapsible--collapsed]="!directionsExpanded()">
+        @for (direction of recipe.directions; track direction.step) {
+        <li>
+          <div class="step-heading">
+            <span class="step-number" aria-hidden="true">{{ direction.step }}.</span>
+            <h3>{{ direction.title }}</h3>
+            <div class="step-chefs" aria-label="Assigned chefs">
+              @for (cook of direction.assignedCooks; track cook) {
+              <span class="chef-badge chef-badge--{{ cook }}">
+                <img [src]="chefIcon(cook)" alt="" />
+                <span>Chef {{ cook }}</span>
+              </span>
+              }
+            </div>
+          </div>
+          <p>{{ direction.instruction }}</p>
+        </li>
+        }
+      </ol>
+      <button type="button" class="detail-toggle" aria-controls="recipe-directions-content"
+        [attr.aria-expanded]="directionsExpanded()" (click)="toggleDirections()">
+        <span>{{ directionsExpanded() ? 'Hide directions' : 'Show directions' }}</span>
+        <img class="detail-toggle__arrow" [class.detail-toggle__arrow--open]="directionsExpanded()"
+          src="assets/icons/arrow-icon.svg" alt="" />
+      </button>
+    </section>
+
+    <section class="favorite-prompt" aria-label="Favorite this recipe">
+      <p>
+        <strong>Just finished this meal?</strong>
+        <span>Give it a heart, so that the others know this is delicious.</span>
+      </p>
+      <button type="button" class="favorite-button" [class.favorite-button--active]="favorited()"
+        [disabled]="favorited() || favoritePending()" [attr.aria-pressed]="favorited()"
+        aria-label="Favorite this recipe" (click)="favorite()">
+        <img [src]="favorited() ? 'assets/icons/favourite-filled.svg' : 'assets/icons/favourite-icon.svg'" alt="" />
+      </button>
+      @if (favoriteError()) {
+      <small class="favorite-error" role="status">{{ favoriteError() }}</small>
+      }
+    </section>
+  </article>
+
+  <aside class="cookbook-cta">
+    <p>Find inspiration for your next culinary adventure!</p>
+    <a class="button button--primary" routerLink="/cookbook">Cookbook</a>
+  </aside>
+  <div class="detail-actions">
+    <a class="hero-link" routerLink="/generate">
+      Generate new recipe
+      <span class="direction-arrow" aria-hidden="true"></span>
+    </a>
+  </div>
   } @else if (!loading()) {
-    <div class="status-panel">
-      <h1>Recipe not found</h1>
-      <p>This recipe ID is not stored in the library.</p>
-    </div>
+  <div class="status-panel">
+    <h1>Recipe not found</h1>
+    <p>This recipe ID is not stored in the library.</p>
+  </div>
   }
 </section>

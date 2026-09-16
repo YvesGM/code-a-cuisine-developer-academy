@@ -8,8 +8,8 @@
   max-width: v.$content-width;
   padding: 24px 68px 80px;
 
-  > h1,
-  > form {
+  >h1,
+  >form {
     width: 100%;
     max-width: 750px;
     margin-inline: auto;
@@ -49,7 +49,7 @@ form {
   display: grid;
   gap: 16px;
 
-  > label {
+  >label {
     font-size: 20px;
   }
 }
@@ -133,12 +133,12 @@ form {
     min-height: 0;
     opacity: 0;
 
-    &:checked + span {
+    &:checked+span {
       background: v.$green-selected;
       color: v.$green-dark;
     }
 
-    &:focus-visible + span {
+    &:focus-visible+span {
       outline: 3px solid #a75b18;
       outline-offset: 4px;
     }
@@ -158,7 +158,7 @@ form {
     transition: background-color 220ms ease;
   }
 
-  &:hover input:not(:checked) + span {
+  &:hover input:not(:checked)+span {
     background: v.$orange-hover;
   }
 
@@ -219,7 +219,7 @@ form {
     gap: 24px;
   }
 
-  .count-field > label {
+  .count-field>label {
     font-size: 18px;
   }
 
@@ -272,7 +272,7 @@ form {
   .count-field {
     gap: 4px;
 
-    > label {
+    >label {
       font-size: 16px;
       font-weight: 500;
     }

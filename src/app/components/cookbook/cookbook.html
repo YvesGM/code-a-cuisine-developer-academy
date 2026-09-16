@@ -19,66 +19,43 @@
         <img src="assets/icons/favourite-icon.svg" alt="" width="34" height="32" />
       </h2>
       @if (loading()) {
-        <p class="most-liked__status" role="status">Loading favorites…</p>
+      <p class="most-liked__status" role="status">Loading favorites…</p>
       } @else if (error()) {
-        <p class="most-liked__status" role="alert">{{ error() }}</p>
+      <p class="most-liked__status" role="alert">{{ error() }}</p>
       } @else {
-        <div
-          #mostLikedTrack
-          class="most-liked__track"
-          (pointerdown)="startDrag($event)"
-          (pointermove)="moveDrag($event)"
-          (pointerup)="endDrag($event)"
-          (pointercancel)="endDrag($event)"
-        >
-          @for (recipe of mostLiked(); track recipe.id) {
-            <a
-              class="liked-card"
-              [routerLink]="['/recipe', recipe.id]"
-              (click)="protectLikedClick($event)"
-            >
-              <div class="liked-card__meta">
-                <span>
-                  <img src="assets/icons/clock-icon.svg" alt="" width="18" height="18" />
-                  Cooking time: {{ recipe.cookingTimeMinutes }}min
-                </span>
-                <span class="liked-card__count">
-                  <img src="assets/icons/favourite-small.svg" alt="" width="20" height="20" />
-                  {{ recipe.favoriteCount ?? 0 }}
-                </span>
-              </div>
-              <h3>{{ recipe.title }}</h3>
-            </a>
-          } @empty {
-            <p class="most-liked__status">No liked recipes yet.</p>
-          }
-        </div>
+      <div #mostLikedTrack class="most-liked__track" (pointerdown)="startDrag($event)" (pointermove)="moveDrag($event)"
+        (pointerup)="endDrag($event)" (pointercancel)="endDrag($event)">
+        @for (recipe of mostLiked(); track recipe.id) {
+        <a class="liked-card" [routerLink]="['/recipe', recipe.id]" (click)="protectLikedClick($event)">
+          <div class="liked-card__meta">
+            <span>
+              <img src="assets/icons/clock-icon.svg" alt="" width="18" height="18" />
+              Cooking time: {{ recipe.cookingTimeMinutes }}min
+            </span>
+            <span class="liked-card__count">
+              <img src="assets/icons/favourite-small.svg" alt="" width="20" height="20" />
+              {{ recipe.favoriteCount ?? 0 }}
+            </span>
+          </div>
+          <h3>{{ recipe.title }}</h3>
+        </a>
+        } @empty {
+        <p class="most-liked__status">No liked recipes yet.</p>
+        }
+      </div>
       }
     </div>
   </section>
 
   <nav class="cuisine-grid" aria-label="Browse recipes by cuisine">
     @for (cuisine of cuisines; track cuisine) {
-      <a class="cuisine-card" [routerLink]="['/cookbook', cuisine]">
-        <h2>
-          <span>{{ labels[cuisine] }} cuisine</span>
-          <img
-            class="cuisine-card__icon"
-            [src]="icons[cuisine]"
-            alt=""
-            width="28"
-            height="28"
-          />
-        </h2>
-        <img
-          class="cuisine-card__image"
-          [src]="images[cuisine]"
-          alt=""
-          width="800"
-          height="800"
-          loading="lazy"
-        />
-      </a>
+    <a class="cuisine-card" [routerLink]="['/cookbook', cuisine]">
+      <h2>
+        <span>{{ labels[cuisine] }} cuisine</span>
+        <img class="cuisine-card__icon" [src]="icons[cuisine]" alt="" width="28" height="28" />
+      </h2>
+      <img class="cuisine-card__image" [src]="images[cuisine]" alt="" width="800" height="800" loading="lazy" />
+    </a>
     }
   </nav>
 

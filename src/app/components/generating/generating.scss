@@ -87,6 +87,7 @@ h1 {
 }
 
 @keyframes loading-dot {
+
   0%,
   50%,
   100% {
@@ -104,6 +105,7 @@ h1 {
     top: 16px;
     left: 16px;
   }
+
   .generating-page {
     height: calc(100dvh - 44px);
     gap: 40px;

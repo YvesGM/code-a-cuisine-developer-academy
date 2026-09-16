@@ -1,26 +1,25 @@
 <section class="page generating-page" aria-labelledby="generating-title">
   @if (state.status() === 'generating') {
-    <div class="generating-content" role="status" aria-live="polite">
-      <picture>
-        <img src="assets/img/generating.gif" alt="" width="436" height="613" />
-      </picture>
-      <h1 id="generating-title">
-        Generating<span class="dots" aria-hidden="true"
-          ><span>.</span><span>.</span><span>.</span></span
-        ><span class="visually-hidden">...</span>
-      </h1>
-    </div>
+  <div class="generating-content" role="status" aria-live="polite">
+    <picture>
+      <img src="assets/img/generating.gif" alt="" width="436" height="613" />
+    </picture>
+    <h1 id="generating-title">
+      Generating<span class="dots" aria-hidden="true"><span>.</span><span>.</span><span>.</span></span><span
+        class="visually-hidden">...</span>
+    </h1>
+  </div>
   }
   @if (state.error()) {
-    <div class="error-content">
-      <div class="status-panel">
-        <h1 id="generating-title">Rezeptgenerierung</h1>
-        <p class="notice notice--error" role="alert">{{ state.error() }}</p>
-        <button type="button" (click)="retry()">Retry</button>
-      </div>
-      <a class="back-link" routerLink="/preferences">
-        <img class="back-link__icon" src="assets/icons/back-arrow-icon.svg" alt="" />Preferences
-      </a>
+  <div class="error-content">
+    <div class="status-panel">
+      <h1 id="generating-title">Rezeptgenerierung</h1>
+      <p class="notice notice--error" role="alert">{{ state.error() }}</p>
+      <button type="button" (click)="retry()">Retry</button>
     </div>
+    <a class="back-link" routerLink="/preferences">
+      <img class="back-link__icon" src="assets/icons/back-arrow-icon.svg" alt="" />Preferences
+    </a>
+  </div>
   }
 </section>

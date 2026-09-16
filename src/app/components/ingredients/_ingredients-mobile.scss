@@ -2,6 +2,7 @@
 
 @mixin responsive {
   @media (max-width: 1080px) {
+
     .ingredient-workspace,
     .next-step {
       grid-template-columns: minmax(0, 1fr);

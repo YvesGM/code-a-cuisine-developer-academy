@@ -23,3 +23,4 @@ export class GeneratingComponent {
     void this.state.generate();
   }
 }
+D

@@ -9,41 +9,21 @@
       <div class="ingredient-field">
         <label for="name">Ingredient</label>
         <div class="ingredient-input-shell">
-          <input
-            #ingredientInput
-            id="name"
-            formControlName="name"
-            autocomplete="off"
-            required
-            (focus)="syncIngredientCaret()"
-            (input)="handleIngredientInput()"
-            (click)="syncIngredientCaret()"
-            (keyup)="syncIngredientCaret()"
-            (select)="syncIngredientCaret()"
-            (pointerup)="syncIngredientCaret()"
-            (keydown)="handleIngredientKeydown($event)"
-          />
-          <span
-            class="ingredient-caret"
-            [style.left.px]="ingredientCaretLeft()"
-            aria-hidden="true"
-          ></span>
+          <input #ingredientInput id="name" formControlName="name" autocomplete="off" required
+            (focus)="syncIngredientCaret()" (input)="handleIngredientInput()" (click)="syncIngredientCaret()"
+            (keyup)="syncIngredientCaret()" (select)="syncIngredientCaret()" (pointerup)="syncIngredientCaret()"
+            (keydown)="handleIngredientKeydown($event)" />
+          <span class="ingredient-caret" [style.left.px]="ingredientCaretLeft()" aria-hidden="true"></span>
           @if (suggestionSuffix()) {
-          <span
-            class="ingredient-ghost"
-            [style.left.px]="ingredientCaretLeft()"
-            aria-hidden="true"
-          >{{ suggestionSuffix() }}</span>
+          <span class="ingredient-ghost" [style.left.px]="ingredientCaretLeft()" aria-hidden="true">{{
+            suggestionSuffix() }}</span>
           }
         </div>
         @if (suggestions().length) {
         <div class="ingredient-examples" aria-label="Ingredient suggestions">
           @for (suggestion of suggestions(); track suggestion.name; let index = $index) {
-          <button
-            type="button"
-            [class.ingredient-example--active]="index === activeSuggestionIndex()"
-            (click)="selectSuggestion(suggestion.name)"
-          >
+          <button type="button" [class.ingredient-example--active]="index === activeSuggestionIndex()"
+            (click)="selectSuggestion(suggestion.name)">
             {{ suggestion.name }}
           </button>
           }
@@ -56,14 +36,7 @@
         <div class="quantity-field">
           <label class="visually-hidden" for="amount">Amount</label>
           <div>
-            <input
-              id="amount"
-              type="text"
-              inputmode="decimal"
-              formControlName="amount"
-              placeholder="100"
-              required
-            />
+            <input id="amount" type="text" inputmode="decimal" formControlName="amount" placeholder="100" required />
           </div>
         </div>
         <div class="unit-field">
@@ -106,42 +79,22 @@
           @if (editDraft(ingredient.id); as draft) {
           <div class="ingredient-edit-fields">
             <span class="ingredient-edit-bullet" aria-hidden="true"></span>
-            <input
-              #editAmountInput
-              class="ingredient-edit-amount"
-              type="text"
-              inputmode="decimal"
-              [value]="draft.amount"
-              [attr.aria-label]="'Amount for ' + ingredient.name"
-              (input)="updateEditAmount(ingredient.id, editAmountInput.value)"
-            />
+            <input #editAmountInput class="ingredient-edit-amount" type="text" inputmode="decimal"
+              [value]="draft.amount" [attr.aria-label]="'Amount for ' + ingredient.name"
+              (input)="updateEditAmount(ingredient.id, editAmountInput.value)" />
             <div class="unit-field ingredient-edit-unit">
-              <button
-                class="unit-trigger"
-                type="button"
-                aria-haspopup="listbox"
-                [attr.aria-label]="'Unit for ' + ingredient.name"
-                [attr.aria-expanded]="draft.unitMenuOpen"
-                (click)="toggleEditUnitMenu(ingredient.id)"
-                (keydown.escape)="closeEditUnitMenu(ingredient.id)"
-              >
+              <button class="unit-trigger" type="button" aria-haspopup="listbox"
+                [attr.aria-label]="'Unit for ' + ingredient.name" [attr.aria-expanded]="draft.unitMenuOpen"
+                (click)="toggleEditUnitMenu(ingredient.id)" (keydown.escape)="closeEditUnitMenu(ingredient.id)">
                 <span>{{ unitLabels[draft.unit] }}</span>
-                <img
-                  class="unit-arrow"
-                  [class.unit-arrow--open]="draft.unitMenuOpen"
-                  src="assets/icons/arrow-icon.svg"
-                  alt=""
-                />
+                <img class="unit-arrow" [class.unit-arrow--open]="draft.unitMenuOpen" src="assets/icons/arrow-icon.svg"
+                  alt="" />
               </button>
               @if (draft.unitMenuOpen) {
               <div class="unit-menu" role="listbox" [attr.aria-label]="'Unit for ' + ingredient.name">
                 @for (unit of units; track unit) {
-                <button
-                  type="button"
-                  role="option"
-                  [attr.aria-selected]="draft.unit === unit"
-                  (click)="selectEditUnit(ingredient.id, unit)"
-                >
+                <button type="button" role="option" [attr.aria-selected]="draft.unit === unit"
+                  (click)="selectEditUnit(ingredient.id, unit)">
                   {{ unitLabels[unit] }}
                 </button>
                 }

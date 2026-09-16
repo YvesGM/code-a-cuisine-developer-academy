@@ -32,7 +32,7 @@
   gap: 16px;
   margin-bottom: 0;
 
-  > p {
+  >p {
     max-width: 440px;
     font-size: 22px;
     font-weight: 400;
@@ -42,7 +42,7 @@
 .most-liked {
   min-width: 0;
 
-  > h2 {
+  >h2 {
     display: flex;
     align-items: center;
     gap: 12px;
@@ -106,7 +106,7 @@
     gap: 12px;
     font-size: 15px;
 
-    > span {
+    >span {
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -208,7 +208,7 @@
     margin-bottom: 40px;
   }
 
-  .page-heading > p {
+  .page-heading>p {
     font-size: 18px;
   }
 

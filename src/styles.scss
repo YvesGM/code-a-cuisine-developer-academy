@@ -1,28 +1,34 @@
 @use 'styles/variables' as v;
 @use 'styles/fonts';
+
 * {
   box-sizing: border-box;
   scrollbar-width: thin;
   scrollbar-color: rgba(16, 49, 11, 0.5) transparent;
+
   &::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
+
   &::-webkit-scrollbar-track,
   &::-webkit-scrollbar-corner {
     background: transparent;
   }
+
   &::-webkit-scrollbar-thumb {
     border: 2px solid transparent;
     border-radius: 999px;
     background: rgba(16, 49, 11, 0.5);
     background-clip: padding-box;
+
     &:hover {
       background: v.$green-dark;
       background-clip: padding-box;
     }
   }
 }
+
 body {
   margin: 0;
   color: v.$green-dark;
@@ -31,58 +37,70 @@ body {
   font-size: 18px;
   line-height: 1.4;
 }
+
 h1,
 h2,
 h3,
 p {
   margin: 0;
 }
+
 h1 {
   font-size: 54px;
   font-weight: 600;
   line-height: 1.2;
 }
+
 h2 {
   font-size: 28px;
   font-weight: 600;
   line-height: 1.25;
 }
+
 h3 {
   font-size: 24px;
   font-weight: 600;
   line-height: 1.25;
 }
+
 small,
 .fine-print {
   font-size: 14px;
   line-height: 1.5;
 }
+
 a {
   color: inherit;
   text-underline-offset: 5px;
 }
+
 img {
   display: block;
   max-width: 100%;
 }
+
 button,
 input,
 select {
   font: inherit;
 }
+
 button,
 a,
 input,
 select {
   -webkit-tap-highlight-color: transparent;
 }
+
 button {
   cursor: pointer;
+
   &:disabled {
     cursor: not-allowed;
     opacity: 0.5;
   }
 }
+
 button,
 .button {
   display: inline-flex;
@@ -102,15 +120,18 @@ button,
     background-color 160ms,
     color 160ms;
 }
+
 button:hover:not(:disabled),
 .button:hover {
   background: v.$green-hover;
 }
+
 .button {
   &--primary {
     min-height: 60px;
     font-size: 24px;
   }
+
   &--cream {
     background: v.$cream;
     color: v.$green-dark;
@@ -118,38 +139,45 @@ button:hover:not(:disabled),
       background-color 220ms ease,
       color 220ms ease,
       font-weight 220ms ease;
+
     &:hover:not(:disabled) {
       background: v.$orange-hover;
       color: v.$green-dark;
       font-weight: 700;
     }
   }
+
   &--outline {
     border-color: currentColor;
     background: transparent;
     color: inherit;
+
     &:hover:not(:disabled) {
       background: v.$sage;
       color: v.$green-dark;
     }
   }
+
   &--small {
     min-height: 44px;
     padding: 8px 12px;
     font-size: 16px;
   }
 }
+
 .icon {
   width: 24px;
   height: 24px;
   object-fit: contain;
   flex-shrink: 0;
 }
+
 .icon-button {
   width: 44px;
   min-height: 44px;
   padding: 10px;
 }
+
 input,
 select {
   width: 100%;
@@ -162,48 +190,58 @@ select {
   background: #fff;
   font-size: 16px;
 }
+
 input::placeholder {
   color: #677467;
 }
+
 fieldset {
   min-width: 0;
   margin: 0;
   padding: 0;
   border: 0;
 }
+
 legend {
   padding: 0;
   font-weight: 600;
 }
+
 label {
   font-size: 20px;
   font-weight: 600;
 }
+
 :focus-visible {
   outline: 3px solid #a75b18;
   outline-offset: 4px;
 }
+
 .page {
   width: 100%;
   max-width: v.$content-width;
   margin-inline: auto;
   padding: 64px 80px 80px;
 }
+
 .page-heading {
   display: grid;
   gap: 24px;
   margin-bottom: 56px;
-  > p {
+
+  >p {
     font-size: 24px;
     font-weight: 500;
   }
 }
+
 .actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 16px;
 }
+
 .direction-arrow {
   position: relative;
   display: inline-block;
@@ -211,6 +249,7 @@ label {
   height: 16px;
   flex-shrink: 0;
   background: linear-gradient(currentColor, currentColor) left center / 29px 3px no-repeat;
+
   &::before,
   &::after {
     position: absolute;
@@ -223,10 +262,20 @@ label {
     content: '';
     transform-origin: right center;
   }
-  &::before { transform: rotate(45deg); }
-  &::after { transform: rotate(-45deg); }
-  &--left { transform: rotate(180deg); }
+
+  &::before {
+    transform: rotate(45deg);
+  }
+
+  &::after {
+    transform: rotate(-45deg);
+  }
+
+  &--left {
+    transform: rotate(180deg);
+  }
 }
+
 .hero-link {
   --hero-link-hover-background: rgba(57, 96, 57, 0.1);
   display: inline-flex;
@@ -239,29 +288,36 @@ label {
   font-weight: 500;
   text-decoration: none;
   transition: background-color 160ms ease;
+
   &--cream {
     --hero-link-hover-background: rgba(250, 240, 230, 0.1);
   }
+
   &:hover {
     background: var(--hero-link-hover-background);
     text-decoration: none;
+
     .direction-arrow {
       animation: hero-link-arrow-fade 440ms ease-in-out;
     }
   }
 }
+
 @keyframes hero-link-arrow-fade {
   0% {
     opacity: 1;
   }
+
   40%,
   60% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
 }
+
 .back-link {
   display: inline-flex;
   align-items: center;
@@ -277,16 +333,19 @@ label {
     flex-shrink: 0;
   }
 }
+
 .notice {
   padding: 16px 20px;
   border: 1px solid currentColor;
   border-radius: 12px;
   overflow-wrap: anywhere;
+
   &--error {
     color: #7a2525;
     background: #fff1ee;
   }
 }
+
 .status-panel {
   display: grid;
   justify-items: start;
@@ -296,6 +355,7 @@ label {
   background: v.$cream;
   color: v.$green-dark;
 }
+
 .tag {
   display: inline-flex;
   align-items: center;
@@ -306,6 +366,7 @@ label {
   color: v.$green-dark;
   font-size: 16px;
 }
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -315,74 +376,94 @@ label {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
 @media (max-width: 1080px) {
   h1 {
     font-size: 36px;
   }
-  .page-heading > p {
+
+  .page-heading>p {
     font-size: 20px;
   }
 }
+
 @media (max-width: 900px) {
   h1 {
     font-size: 32px;
   }
-  .page-heading > p {
+
+  .page-heading>p {
     font-size: 18px;
   }
 }
+
 @media (max-width: v.$breakpoint-mobile) {
   body {
     font-size: 16px;
   }
+
   h2 {
     font-size: 24px;
   }
+
   h3 {
     font-size: 20px;
   }
+
   button,
   .button {
     padding-inline: 16px;
     font-size: 16px;
   }
+
   .button--primary {
     min-height: 52px;
   }
+
   .page {
     padding: 40px 16px;
   }
+
   .page-heading {
     gap: 16px;
     margin-bottom: 32px;
   }
+
   .status-panel {
     padding: 24px;
   }
 }
+
 ::view-transition-old(root) {
   animation: page-fade-out 260ms ease forwards;
 }
+
 ::view-transition-new(root) {
   animation: page-fade-in 280ms ease forwards;
 }
+
 @keyframes page-fade-out {
   from {
     opacity: 1;
   }
+
   to {
     opacity: 0;
   }
 }
+
 @keyframes page-fade-in {
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
 }
+
 @media (prefers-reduced-motion: reduce) {
+
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation-duration: 1ms;

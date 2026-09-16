@@ -3,12 +3,15 @@
 :host {
   display: block;
 }
+
 .legal-page {
   max-width: 1000px;
 }
+
 h1 {
   margin-bottom: 32px;
 }
+
 dl {
   display: grid;
   gap: 12px;
@@ -16,14 +19,17 @@ dl {
   border-radius: v.$radius;
   background: v.$cream;
 }
+
 dt {
   font-size: 20px;
   font-weight: 600;
 }
+
 dd {
   margin: 0 0 20px;
   overflow-wrap: anywhere;
 }
+
 dd:last-child {
   margin-bottom: 0;
 }

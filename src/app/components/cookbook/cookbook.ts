@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CUISINE_LABELS } from '../../config/app.constants';
+import { CUISINE_LABELS } from '../../constants/recipe-flow.constants';
 import { Cuisine, Recipe } from '../../models/app.models';
 import { RecipeService } from '../../services/recipe.service';
 import { CUISINE_ASSETS, CUISINE_COOKBOOK_ICONS } from '../../shared/cuisine-assets';

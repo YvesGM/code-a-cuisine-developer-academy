@@ -1,4 +1,4 @@
-import { OPTIONS } from '../config/app.constants';
+import { OPTIONS } from '../constants/recipe-flow.constants';
 
 export type Unit = (typeof OPTIONS.units)[number];
 export type Cuisine = (typeof OPTIONS.cuisines)[number];

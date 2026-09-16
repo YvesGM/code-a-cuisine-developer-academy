@@ -117,8 +117,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        -224,
-        368
+        -144,
+        544
       ],
       "id": "13643020-e7c2-492f-8d38-c429920aa491",
       "name": "Respond Invalid Catalog Request",
@@ -177,8 +177,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        272,
-        96
+        416,
+        -128
       ],
       "id": "a663f975-5b9f-4fe0-9832-c005769847ae",
       "name": "Respond Ingredient Catalog",
@@ -195,8 +195,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        272,
-        288
+        448,
+        384
       ],
       "id": "3474f277-e9ea-454f-ae01-837db3a2b812",
       "name": "Respond Catalog Backend Error",
@@ -309,7 +309,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "86ca2a48-256f-482d-b51f-13b499fd69b2",
+  "versionId": "afdc6322-3c07-4065-969d-b7f0cda7bd32",
   "meta": {
     "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
   },

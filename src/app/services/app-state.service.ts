@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { LIMITS, OPTIONS } from '../config/app.constants';
+import { LIMITS, OPTIONS } from '../constants/recipe-flow.constants';
 import { GenerationRequest, Ingredient, IngredientInput, Preferences, Recipe } from '../models/app.models';
 import { RecipeApiError, RecipeService } from './recipe.service';
 
@@ -172,7 +172,7 @@ export class AppStateService {
   }
 
   /**
-   * Marks the active request for loading and race protection.
+   * Marks one generation request as active so older responses cannot replace newer state.
    *
    * @param {string} requestId - The client request identifier for the active generation.
    * @returns {void} No value is returned.
@@ -209,7 +209,7 @@ export class AppStateService {
   /**
    * Validates the configured preference values.
    *
-   * @param {Preferences} value - The value to normalize or validate.
+   * @param {Preferences} value - The selected preference set to validate.
    * @returns {boolean} True when all selected preferences are supported.
    */
   private validPreferences(value: Preferences): boolean {
@@ -219,7 +219,7 @@ export class AppStateService {
   /**
    * Validates integer counters against their limits.
    *
-   * @param {number} value - The value to normalize or validate.
+   * @param {number} value - The numeric counter value to validate.
    * @param {{min: number, max: number}} limits - The allowed minimum and maximum values.
    * @returns {boolean} True when the value is an integer inside the supplied limits.
    */

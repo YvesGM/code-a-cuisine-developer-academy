@@ -82,8 +82,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        -240,
-        208
+        -96,
+        304
       ],
       "id": "82d42541-6b8a-4f12-bbf7-e39400536ae9",
       "name": "Respond Invalid Library Request",
@@ -155,8 +155,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        272,
-        48
+        512,
+        208
       ],
       "id": "1461aed5-8f37-4bc6-9f71-c94246114a73",
       "name": "Log Firebase Library Error",
@@ -178,8 +178,8 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        512,
-        48
+        752,
+        208
       ],
       "id": "b1434fe6-9a57-43a9-bef4-09a702ebdd56",
       "name": "Email Firebase Library Error",
@@ -199,8 +199,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        752,
-        48
+        992,
+        208
       ],
       "id": "9c9d365f-97d8-4969-b6f9-99484ea6b496",
       "name": "Respond Library Error",
@@ -231,8 +231,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -704,
-        656
+        -1200,
+        688
       ],
       "id": "a515ac84-400e-4e37-9b9f-afb48f119be6",
       "name": "Normalize Favorite Request",
@@ -250,8 +250,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -928,
-        656
+        -1424,
+        688
       ],
       "id": "bb9bd83b-de19-4933-a4bb-2cc60146d5f9",
       "name": "Favorite Recipe API",
@@ -272,8 +272,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        -240,
-        480
+        -736,
+        512
       ],
       "id": "90792d11-3927-4886-b3a8-048d6dc26f76",
       "name": "Increment Favorite in Firebase",
@@ -289,8 +289,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        16,
-        368
+        -480,
+        400
       ],
       "id": "d15e9e4b-964b-494d-87cb-c1e8ac3fa817",
       "name": "Respond Favorite",
@@ -307,8 +307,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        -240,
-        688
+        -528,
+        960
       ],
       "id": "a0f21e08-25ca-4a9f-9bd5-7446f202f0e8",
       "name": "Respond Invalid Favorite Request",
@@ -342,8 +342,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -480,
-        656
+        -976,
+        688
       ],
       "id": "83769fde-50ac-4965-a02e-f9f317a63e47",
       "name": "Favorite Request Valid?",
@@ -363,8 +363,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        16,
-        592
+        -304,
+        800
       ],
       "id": "3e7fb982-100d-411d-bacb-cf0b1706639a",
       "name": "Log Firebase Favorite Error",
@@ -386,8 +386,8 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        256,
-        592
+        -64,
+        800
       ],
       "id": "ec3e9159-14c2-45e5-b3fb-8eb13f03dba2",
       "name": "Email Firebase Favorite Error",
@@ -407,8 +407,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        496,
-        592
+        160,
+        800
       ],
       "id": "65e18104-7ed9-4fb4-83e8-24ff20e299be",
       "name": "Respond Favorite Error",
@@ -616,7 +616,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "17006215-a811-4a86-929d-cbf2bc86a60a",
+  "versionId": "12c85d90-fddf-4c63-8570-7f94be89c985",
   "meta": {
     "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
   },

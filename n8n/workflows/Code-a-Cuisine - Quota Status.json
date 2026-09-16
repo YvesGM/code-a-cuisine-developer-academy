@@ -121,8 +121,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        -240,
-        240
+        -48,
+        432
       ],
       "id": "70df2cd4-cc89-48f2-a96c-662e2030e42c",
       "name": "Respond Invalid IP",
@@ -143,8 +143,8 @@
       "type": "n8n-nodes-base.emailSend",
       "typeVersion": 2.1,
       "position": [
-        176,
-        80
+        416,
+        224
       ],
       "id": "b69a0220-fb0f-46bb-a6ba-8030e75bf8b1",
       "name": "Email Quota Status Error",
@@ -163,8 +163,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        400,
-        80
+        640,
+        224
       ],
       "id": "c19f3004-f311-4eb6-9d33-2cf2de3a3d2c",
       "name": "Respond Quota Status Error",
@@ -185,8 +185,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        -32,
-        80
+        208,
+        224
       ],
       "id": "9fa3f392-9b62-45e3-b710-9bd961a34c34",
       "name": "Log Quota Status Error",
@@ -287,7 +287,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "177c7978-e685-45e9-bc3a-59bfb4032ffd",
+  "versionId": "b84204c0-3cad-4582-86e8-b56f5aad6361",
   "meta": {
     "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
   },

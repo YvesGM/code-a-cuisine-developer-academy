@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { CUISINE_LABELS, DIET_LABELS, DIFFICULTIES, LIMITS, OPTIONS } from '../../config/app.constants';
+import { CUISINE_LABELS, DIET_LABELS, DIFFICULTIES, LIMITS, OPTIONS } from '../../constants/recipe-flow.constants';
 import { AppStateService } from '../../services/app-state.service';
 import { Preferences, QuotaStatus } from '../../models/app.models';
 import { QuotaService } from '../../services/quota.service';

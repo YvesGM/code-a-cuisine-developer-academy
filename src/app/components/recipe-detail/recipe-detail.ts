@@ -2,7 +2,7 @@ import { DecimalPipe, Location } from '@angular/common';
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { DIET_LABELS, DIFFICULTIES } from '../../config/app.constants';
+import { DIET_LABELS, DIFFICULTIES } from '../../constants/recipe-flow.constants';
 import { AppStateService } from '../../services/app-state.service';
 import { Recipe } from '../../models/app.models';
 import { RecipeService } from '../../services/recipe.service';

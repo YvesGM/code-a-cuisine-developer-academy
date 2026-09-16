@@ -3,17 +3,17 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AppStateService } from '../services/app-state.service';
 
 /**
- * Prevents preferences access without at least one stored ingredient.
- *
- * @returns {boolean|UrlTree} True when navigation is allowed; otherwise a redirect tree.
+ * Protects the preferences page from direct access without ingredient input.
+ * Missing ingredients redirect to `/generate`, where the recipe flow starts.
+ * @returns {boolean|UrlTree} True for valid flow state, otherwise the redirect target.
  */
 export const ingredientsGuard: CanActivateFn = () =>
   inject(AppStateService).ingredients().length > 0 || inject(Router).parseUrl('/generate');
 
 /**
- * Allows the loading page only for a started generation flow.
- *
- * @returns {boolean|UrlTree} True when navigation is allowed; otherwise a redirect tree.
+ * Allows the generation page only after ingredients and preferences are available.
+ * Missing ingredients return to `/generate`; missing preferences return to `/preferences`.
+ * @returns {boolean|UrlTree} True while generation may be shown, otherwise the required previous step.
  */
 export const generationGuard: CanActivateFn = () => {
   const state = inject(AppStateService);
@@ -24,9 +24,9 @@ export const generationGuard: CanActivateFn = () => {
 };
 
 /**
- * Protects results from direct access without current recipes.
- *
- * @returns {boolean|UrlTree} True when navigation is allowed; otherwise a redirect tree.
+ * Prevents direct results access until recipes exist in the current application state.
+ * Active or failed generation returns to `/generating`; incomplete input returns to the last valid form step.
+ * @returns {boolean|UrlTree} True when recipes exist, otherwise the route that can restore a valid flow.
  */
 export const recipesGuard: CanActivateFn = () => {
   const state = inject(AppStateService);

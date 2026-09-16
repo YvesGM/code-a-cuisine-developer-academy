@@ -1,5 +1,6 @@
 @use 'styles/variables' as v;
 @use 'styles/fonts';
+@use 'styles/responsive' as responsive;
 
 * {
   box-sizing: border-box;
@@ -377,95 +378,4 @@ label {
   white-space: nowrap;
 }
 
-@media (max-width: 1080px) {
-  h1 {
-    font-size: 36px;
-  }
-
-  .page-heading>p {
-    font-size: 20px;
-  }
-}
-
-@media (max-width: 900px) {
-  h1 {
-    font-size: 32px;
-  }
-
-  .page-heading>p {
-    font-size: 18px;
-  }
-}
-
-@media (max-width: v.$breakpoint-mobile) {
-  body {
-    font-size: 16px;
-  }
-
-  h2 {
-    font-size: 24px;
-  }
-
-  h3 {
-    font-size: 20px;
-  }
-
-  button,
-  .button {
-    padding-inline: 16px;
-    font-size: 16px;
-  }
-
-  .button--primary {
-    min-height: 52px;
-  }
-
-  .page {
-    padding: 40px 16px;
-  }
-
-  .page-heading {
-    gap: 16px;
-    margin-bottom: 32px;
-  }
-
-  .status-panel {
-    padding: 24px;
-  }
-}
-
-::view-transition-old(root) {
-  animation: page-fade-out 260ms ease forwards;
-}
-
-::view-transition-new(root) {
-  animation: page-fade-in 280ms ease forwards;
-}
-
-@keyframes page-fade-out {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes page-fade-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation-duration: 1ms;
-  }
-}
+@include responsive.global-responsive;

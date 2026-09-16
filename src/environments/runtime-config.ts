@@ -1,18 +1,15 @@
-/**
- * Public runtime configuration for the statically delivered Angular app.
- * Secrets remain exclusively in n8n/Firebase credentials; the browser knows only the n8n webhook base URL.
- */
+/** Public runtime values exposed by the static host before Angular starts. */
 export interface RuntimeConfig {
   readonly n8nWebhookBaseUrl?: string;
 }
 
-declare global {
-  var __CODE_A_CUISINE_CONFIG__: RuntimeConfig | undefined;
-}
+type RuntimeGlobal = typeof globalThis & {
+  __CODE_A_CUISINE_CONFIG__?: RuntimeConfig;
+};
 
-const runtime = globalThis.__CODE_A_CUISINE_CONFIG__;
+const runtime = (globalThis as RuntimeGlobal).__CODE_A_CUISINE_CONFIG__;
 
-/** Public n8n base URL; contains no API secrets. */
+/** Public n8n base URL; contains no API secrets or credentials. */
 export const N8N_PUBLIC_CONFIG = {
   webhookBaseUrl: runtime?.n8nWebhookBaseUrl?.trim().replace(/\/+$/, '') ?? '',
 } as const;

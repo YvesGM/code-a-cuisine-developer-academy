@@ -11,7 +11,7 @@
 | `services/ingredient.service.ts` | Ingredient Catalog |
 | `services/quota.service.ts` | Quota status |
 | `models/app.models.ts` | Shared data contracts |
-| `config/app.constants.ts` | Options, limits, and webhook paths |
+| `constants/recipe-flow.constants.ts` | Options, limits, and webhook paths |
 | `guards/flow.guards.ts` | Navigation within the generation flow |
 
 The Angular structure intentionally stays direct: UI belongs in components, while state and external communication belong in services.

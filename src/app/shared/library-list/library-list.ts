@@ -1,6 +1,6 @@
 import { Component, computed, effect, inject, input, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DIET_LABELS, DIFFICULTIES, LIMITS } from '../../config/app.constants';
+import { DIET_LABELS, DIFFICULTIES, LIMITS } from '../../constants/recipe-flow.constants';
 import { Cuisine, RecipePage } from '../../models/app.models';
 import { RecipeService } from '../../services/recipe.service';
 /** Reusably loads and renders a paginated recipe list. */

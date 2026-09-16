@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AppStateService } from '../../services/app-state.service';
-import { CUISINE_LABELS, DIFFICULTIES } from '../../config/app.constants';
+import { CUISINE_LABELS, DIFFICULTIES } from '../../constants/recipe-flow.constants';
 import { RecipeCardComponent } from '../../shared/recipe-card/recipe-card';
 /** Displays the three validated recipe suggestions from the current generation flow. */
 @Component({

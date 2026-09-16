@@ -25,7 +25,7 @@ src/app/
 ├─ services/     Application state and all n8n requests
 ├─ models/       Shared interfaces and types
 ├─ guards/       Route guards
-├─ config/       Central UI and domain constants
+├─ constants/    Central UI and domain constants
 ├─ app.routes.ts
 └─ app.ts
 ```

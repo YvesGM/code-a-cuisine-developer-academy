@@ -1,6 +1,6 @@
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CUISINE_LABELS, DIET_LABELS, DIFFICULTIES } from '../../config/app.constants';
+import { CUISINE_LABELS, DIET_LABELS, DIFFICULTIES } from '../../constants/recipe-flow.constants';
 import { Recipe } from '../../models/app.models';
 
 /** Renders a recipe as a reusable card in results and the library. */

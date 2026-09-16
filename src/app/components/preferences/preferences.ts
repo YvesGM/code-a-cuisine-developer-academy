@@ -5,7 +5,7 @@ import { CUISINE_LABELS, DIET_LABELS, DIFFICULTIES, LIMITS, OPTIONS } from '../.
 import { AppStateService } from '../../services/app-state.service';
 import { Preferences, QuotaStatus } from '../../models/app.models';
 import { QuotaService } from '../../services/quota.service';
-/** Erfasst Portionszahl, Kochanzahl und Rezeptpräferenzen vor der Generierung. */
+/** Captures servings, cook count, and recipe preferences before generation. */
 @Component({
   selector: 'app-preferences',
   imports: [ReactiveFormsModule, RouterLink],
@@ -55,12 +55,18 @@ export class PreferencesComponent {
       Validators.required,
     ),
   });
-  /** Lädt beim Öffnen transparent die serverseitige Tagesquota; Mock-Modus bleibt ohne Anzeige. */
+  /**
+   * Loads the server-side daily quota when the preferences page is created.
+   */
   constructor() {
     void this.refreshQuota();
   }
 
-  /** Aktualisiert die Quota-Anzeige, ohne eine Generierung zu reservieren. */
+  /**
+   * Refreshes the quota display without reserving a generation.
+   *
+   * @returns {Promise<void>} A promise that resolves after the quota status has been refreshed.
+   */
   private async refreshQuota(): Promise<void> {
     this.quotaError.set('');
     try {
@@ -73,7 +79,11 @@ export class PreferencesComponent {
     }
   }
 
-  /** Übernimmt den vollständigen gültigen Entwurf in den Owner und öffnet den Generation-Status. */
+  /**
+   * Applies the complete valid draft to the owner and opens the generation status.
+   *
+   * @returns {void} No value is returned.
+   */
   generate(): void {
     const { difficulty, cuisine, diet, servings, cookCount } = this.form.getRawValue();
     if (!difficulty || !cuisine || !diet || this.form.invalid) return;
@@ -84,7 +94,13 @@ export class PreferencesComponent {
     void this.router.navigateByUrl('/generating');
   }
 
-  /** Ändert den Formularentwurf über die Zählerbuttons innerhalb der bestehenden Grenzen. */
+  /**
+   * Changes the form draft through the counter buttons within the configured limits.
+   *
+   * @param {('servings'|'cookCount')} name - The counter field to update.
+   * @param {(-1|1)} delta - The amount to add or subtract.
+   * @returns {void} No value is returned.
+   */
   adjustCount(name: 'servings' | 'cookCount', delta: -1 | 1): void {
     const control = this.form.controls[name];
     if (!Number.isInteger(control.value)) return;

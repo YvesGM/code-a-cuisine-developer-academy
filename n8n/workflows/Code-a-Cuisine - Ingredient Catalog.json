@@ -24,7 +24,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const body = $json.body ?? {};\nconst action = typeof body.action === 'string' ? body.action.trim() : '';\nconst name = typeof body.name === 'string'\n  ? body.name.replace(/\\s+/g, ' ').trim()\n  : '';\n\nconst validAction = action === 'list' || action === 'register';\nconst validName =\n  action !== 'register' || (name.length >= 1 && name.length <= 80);\n\nconst valid = validAction && validName;\n\nconst errorMessage = !validAction\n  ? 'Unbekannte Catalog-Aktion.'\n  : 'Ingredient-Name muss 1 bis 80 Zeichen enthalten.';\n\nconst key = [...name.toLowerCase()]\n  .map((char) => char.codePointAt(0).toString(16))\n  .join('-');\n\nreturn [{\n  json: {\n    action,\n    name,\n    key,\n    valid,\n    errorMessage,\n  },\n}];"
+        "jsCode": "const body = $json.body ?? {};\nconst action = typeof body.action === 'string' ? body.action.trim() : '';\nconst name = typeof body.name === 'string'\n  ? body.name.replace(/\\s+/g, ' ').trim()\n  : '';\n\nconst validAction = action === 'list' || action === 'register';\nconst validName =\n  action !== 'register' || (name.length >= 1 && name.length <= 80);\n\nconst valid = validAction && validName;\n\nconst errorMessage = !validAction\n  ? 'Unknown catalog action.'\n  : 'Ingredient name must contain between 1 and 80 characters.';\n\nconst key = [...name.toLowerCase()]\n  .map((char) => char.codePointAt(0).toString(16))\n  .join('-');\n\nreturn [{\n  json: {\n    action,\n    name,\n    key,\n    valid,\n    errorMessage,\n  },\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -144,12 +144,6 @@
       "id": "c74312ed-fc0b-443f-9139-ea1a1c116a7e",
       "name": "Register Ingredient Usage",
       "notesInFlow": true,
-      "credentials": {
-        "googleApi": {
-          "id": "wl2dRkJ0ULnTTKxT",
-          "name": "Code-a-Cuisine Firebase Service Account"
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Atomically inserts a new Ingredient name or increments its usage counter in Firebase."
     },
@@ -169,12 +163,6 @@
       "id": "1d3a39f8-99c9-4036-8489-9d182faf5822",
       "name": "Load Ingredient Catalog",
       "notesInFlow": true,
-      "credentials": {
-        "googleApi": {
-          "id": "wl2dRkJ0ULnTTKxT",
-          "name": "Code-a-Cuisine Firebase Service Account"
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Loads the complete autocomplete catalog once; Angular filters locally while typing."
     },
@@ -199,7 +187,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ { ok: false, error: { code: 'ingredient_catalog_backend_error', message: 'Zutatenvorschläge sind momentan nicht verfügbar.' } } }}",
+        "responseBody": "={{ { ok: false, error: { code: 'ingredient_catalog_backend_error', message: 'Ingredient suggestions are currently unavailable.' } } }}",
         "options": {
           "responseCode": 503
         }
@@ -321,7 +309,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "3de2e9b4-cb0b-4873-958e-21434482df76",
+  "versionId": "86ca2a48-256f-482d-b51f-13b499fd69b2",
   "meta": {
     "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
   },

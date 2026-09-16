@@ -1,16 +1,16 @@
 import { Cuisine } from '../models/app.models';
 
-/** Lokale Figma-Kategoriebilder; keine Bilder einzelner generierter Rezepte. */
+/** Local Figma category images; no images of individual generated recipes. */
 export const CUISINE_ASSETS = {
   german: 'assets/img/german-cuisine.png',
-  italian: 'assets/img/italia-cuisine.png',
+  italian: 'assets/img/italian-cuisine.png',
   japanese: 'assets/img/japanese-cuisine.png',
   indian: 'assets/img/india-cuisine.png',
   gourmet: 'assets/img/gourmet-cuisine.png',
   fusion: 'assets/img/fusion-cuisine.png',
 } as const satisfies Record<Cuisine, string>;
 
-/** Breite Figma-Banner für die einzelne Cuisine-Listenansicht. */
+/** Wide Figma banners for the individual cuisine list view. */
 export const CUISINE_BANNERS = {
   german: 'assets/img/german-cuisine-banner.png',
   italian: 'assets/img/italian-cuisine-banner.png',
@@ -20,17 +20,17 @@ export const CUISINE_BANNERS = {
   fusion: 'assets/img/fusion-cuisine-banner.png',
 } as const satisfies Record<Cuisine, string>;
 
-/** Mobile Figma-Banner für die einzelne Cuisine-Listenansicht. */
+/** Mobile Figma banners for the individual cuisine list view. */
 export const CUISINE_MOBILE_BANNERS = {
   german: 'assets/img/german-cuisine-banner-mobile.png',
-  italian: 'assets/img/italien-cuisine-banner-mobile.png',
+  italian: 'assets/img/italian-cuisine-banner-mobile.png',
   japanese: 'assets/img/japanese-cuisine-banner-mobile.png',
   indian: 'assets/img/indian-cuisine-banner-mobile.png',
   gourmet: 'assets/img/gourmet-cuisine-banner-mobile.png',
   fusion: 'assets/img/fusion-cuisine-banner-mobile.png',
 } as const satisfies Record<Cuisine, string>;
 
-/** Kleine Figma-Kategorieicons für die Cookbook-Überschriften. */
+/** Small Figma category icons for cookbook headings. */
 export const CUISINE_COOKBOOK_ICONS = {
   german: 'assets/img/german-cookbook.png',
   italian: 'assets/img/italian-cookbook.png',

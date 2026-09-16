@@ -1,7 +1,7 @@
 <div class="app-shell" [class.app-shell--dark]="dark()" [class.app-shell--landing]="landing()">
-  <a class="skip-link" href="#main-content">Zum Inhalt</a>
+  <a class="skip-link" href="#main-content">Skip to content</a>
   <header class="site-header">
-    <a class="brand" routerLink="/" aria-label="Code-a-Cuisine Startseite">
+    <a class="brand" routerLink="/" aria-label="Code-a-Cuisine home">
       <img [src]="dark() ? 'assets/hero-logo-white.svg' : 'assets/hero-logo-green.svg'" alt="Code-a-Cuisine" width="142"
         height="48" />
     </a>
@@ -9,11 +9,11 @@
   <main id="main-content" tabindex="-1"><router-outlet /></main>
   @if (footerVisible()) {
   <footer class="site-footer">
-    <a routerLink="/impressum">Impressum</a>
+    <a routerLink="/legal-notice">Legal notice</a>
     @if (mockMode) {
     <p class="fine-print">
-      Development-Modus: deterministische Beispieldaten. Cuisine, Diet, Zeit und Nutrition sind
-      Demo-Angaben; keine geprüften Kochanleitungen.
+      Development mode: deterministic sample data. Cuisine, diet, time, and nutrition are
+      demo values; not verified cooking instructions.
     </p>
     }
   </footer>

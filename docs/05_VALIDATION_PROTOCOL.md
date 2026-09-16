@@ -1,30 +1,30 @@
 # 05 – Validation Protocol
 
-## Vor Abgabe
+## Before Submission
 
-1. Firebase-Credential in allen Firebase HTTP Nodes zuordnen.
-2. Gemini-Credential im Generation-Workflow zuordnen.
-3. SMTP-Credential in Error-Mail-Nodes zuordnen.
-4. Alle fünf Workflows aktivieren.
-5. Quota-Status testen.
-6. Generation mit gültiger IP ausführen.
-7. Prüfen, dass exakt drei Rezepte unter `/code-a-cuisine/recipes` landen.
-8. Cookbook und Recipe Detail gegen Firebase testen.
-9. Favorite-Increment prüfen.
-10. Ingredient-Catalog-Usage prüfen.
-11. Tagesquota und verständliche 429-Antwort testen.
+1. Assign the Firebase credential to every Firebase HTTP Request node.
+2. Assign the Gemini credential in the generation workflow.
+3. Assign the SMTP credential to every error-mail node.
+4. Activate all five workflows.
+5. Test the quota status.
+6. Run a generation with a valid client IP.
+7. Verify that exactly three recipes are written under `/code-a-cuisine/recipes`.
+8. Test Cookbook and Recipe Detail against Firebase.
+9. Verify the favorite increment.
+10. Verify ingredient-catalog usage updates.
+11. Test the daily quota and the controlled 429 response.
 
-## Erwartete Fehlerpfade
+## Expected Error Paths
 
-- ungültiger Request → 400
-- IP-/Global-Quota → 429
-- Firebase-Quota-Fehler → 503 + Mail
-- Gemini-Providerfehler → kontrollierter 5xx-Fehler + Log/Mail
-- ungültige AI-Ausgabe → 422 + Log/Mail
-- Firebase-Persistenzfehler → kontrollierter 5xx-Fehler + Log/Mail
-- Firebase-Libraryfehler → kontrollierter 5xx-Fehler + Log/Mail
+- Invalid request → 400
+- IP/global quota reached → 429
+- Firebase quota failure → 503 + email
+- Gemini provider failure → controlled 5xx response + log/email
+- Invalid AI output → 422 + log/email
+- Firebase persistence failure → controlled 5xx response + log/email
+- Firebase library failure → controlled 5xx response + log/email
 
-## Codeprüfung
+## Code Check
 
 ```bash
 npm run lint

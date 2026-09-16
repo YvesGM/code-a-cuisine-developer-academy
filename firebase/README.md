@@ -1,14 +1,14 @@
 # Firebase Realtime Database
 
-Firebase Realtime Database ist die einzige persistente Datenbank von Code-a-Cuisine. Angular greift nicht direkt darauf zu; Lesen und Schreiben erfolgen ausschließlich über n8n.
+Firebase Realtime Database is the only persistent database used by Code-a-Cuisine. Angular does not access it directly; all reads and writes are handled through n8n.
 
-## Datenbank
+## Database
 
 ```text
 https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app
 ```
 
-## Datenpfade
+## Data Paths
 
 ```text
 /code-a-cuisine/recipes/<recipe-id>
@@ -21,7 +21,7 @@ https://code-a-cuisine-2be14-default-rtdb.europe-west1.firebasedatabase.app
 
 ## Service Account
 
-Das Firebase-Admin-Service-Account-JSON darf nicht committed werden. In n8n wird ein Google/Firebase-Credential mit diesen Scopes benötigt:
+The Firebase Admin service-account JSON must never be committed. n8n uses a Google/Firebase credential with these scopes:
 
 ```text
 https://www.googleapis.com/auth/userinfo.email
@@ -30,7 +30,7 @@ https://www.googleapis.com/auth/firebase.database
 
 ## Security Rules
 
-Da nur der n8n-Service-Account zugreift, können die öffentlichen Regeln geschlossen bleiben:
+Because only the n8n service account accesses the database, the public rules can remain closed:
 
 ```json
 {

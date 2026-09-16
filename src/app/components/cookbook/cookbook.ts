@@ -14,7 +14,7 @@ const COOKBOOK_CUISINES: readonly Cuisine[] = [
   'fusion',
 ];
 
-/** Zeigt Cookbook-Kategorien und die sechs meistfavorisierten Rezepte. */
+/** Displays cookbook categories and the six most-liked recipes. */
 @Component({
   selector: 'app-cookbook',
   imports: [RouterLink],
@@ -35,7 +35,11 @@ export class CookbookComponent {
   private dragging = false;
   private dragMoved = false;
 
-  /** Lädt die sechs serverseitig über alle gespeicherten Rezepte ermittelten Favoriten. */
+  /**
+   * Loads the six most-liked recipes calculated server-side across all stored recipes.
+   *
+   * @returns {Promise<void>} A promise that resolves after the most-liked recipes finish loading.
+   */
   private async loadMostLiked(): Promise<void> {
     try {
       const result = await this.recipes.list({ page: 1 });
@@ -47,7 +51,12 @@ export class CookbookComponent {
     }
   }
 
-  /** Startet Desktop-Drag-Scrolling ohne die native Touch-Geste zu ersetzen. */
+  /**
+   * Starts desktop drag scrolling without replacing the native touch gesture.
+   *
+   * @param {PointerEvent} event - The browser event that triggered the action.
+   * @returns {void} No value is returned.
+   */
   startDrag(event: PointerEvent): void {
     if (event.pointerType !== 'mouse') return;
     const track = event.currentTarget as HTMLElement;
@@ -58,7 +67,12 @@ export class CookbookComponent {
     track.setPointerCapture(event.pointerId);
   }
 
-  /** Verschiebt den Most-Liked-Track proportional zur gedrückt gehaltenen Mausbewegung. */
+  /**
+   * Moves the most-liked track proportionally to the active pointer movement.
+   *
+   * @param {PointerEvent} event - The browser event that triggered the action.
+   * @returns {void} No value is returned.
+   */
   moveDrag(event: PointerEvent): void {
     if (!this.dragging) return;
     const track = event.currentTarget as HTMLElement;
@@ -67,7 +81,12 @@ export class CookbookComponent {
     track.scrollLeft = this.dragStartScroll - distance;
   }
 
-  /** Beendet Desktop-Drag-Scrolling und gibt den Pointer wieder frei. */
+  /**
+   * Ends desktop drag scrolling and releases the pointer.
+   *
+   * @param {PointerEvent} event - The browser event that triggered the action.
+   * @returns {void} No value is returned.
+   */
   endDrag(event: PointerEvent): void {
     if (!this.dragging) return;
     const track = event.currentTarget as HTMLElement;
@@ -75,14 +94,21 @@ export class CookbookComponent {
     if (track.hasPointerCapture(event.pointerId)) track.releasePointerCapture(event.pointerId);
   }
 
-  /** Verhindert nur den Link-Klick, der unmittelbar aus einer Drag-Geste entsteht. */
+  /**
+   * Prevents only the link click that directly follows a drag gesture.
+   *
+   * @param {MouseEvent} event - The browser event that triggered the action.
+   * @returns {void} No value is returned.
+   */
   protectLikedClick(event: MouseEvent): void {
     if (!this.dragMoved) return;
     event.preventDefault();
     this.dragMoved = false;
   }
 
-  /** Lädt die Most-Liked-Auswahl genau einmal beim Erzeugen der Cookbook-Seite. */
+  /**
+   * Loads the most-liked selection exactly once when the cookbook page is created.
+   */
   constructor() {
     void this.loadMostLiked();
   }

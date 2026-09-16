@@ -1,8 +1,8 @@
 # Code-a-Cuisine
 
-Code-a-Cuisine ist eine Angular-Anwendung zur KI-gestützten Rezeptgenerierung aus vorhandenen Zutaten. Das Frontend kommuniziert ausschließlich mit n8n. n8n übernimmt Validierung, Gemini-Aufruf und alle Zugriffe auf Firebase Realtime Database.
+Code-a-Cuisine is an Angular application for AI-assisted recipe generation based on available ingredients. The frontend communicates exclusively with n8n. n8n handles server-side validation, the Gemini request, and all access to the Firebase Realtime Database.
 
-## Architektur
+## Architecture
 
 ```text
 Angular Components
@@ -14,34 +14,34 @@ Angular Services
    └─ Firebase Realtime Database
 ```
 
-Es gibt eine persistente Datenbank: Firebase Realtime Database. Angular greift nicht direkt auf Firebase zu.
+There is exactly one persistent database: Firebase Realtime Database. Angular does not access Firebase directly.
 
-## Angular-Struktur
+## Angular Structure
 
 ```text
 src/app/
-├─ components/   Seitenkomponenten, jeweils im eigenen Ordner
-├─ shared/       wiederverwendete UI-Komponenten und UI-Assets
-├─ services/     State und alle n8n-Aufrufe
-├─ models/       gemeinsame Interfaces und Types
-├─ guards/       Route Guards
-├─ config/       zentrale UI-/Domain-Konstanten
+├─ components/   Page components, each in its own folder
+├─ shared/       Reusable UI components and UI assets
+├─ services/     Application state and all n8n requests
+├─ models/       Shared interfaces and types
+├─ guards/       Route guards
+├─ config/       Central UI and domain constants
 ├─ app.routes.ts
 └─ app.ts
 ```
 
-Jede Seitenkomponente enthält TypeScript, HTML und SCSS gemeinsam in ihrem eigenen Ordner. Die Datenflüsse bleiben direkt und nachvollziehbar.
+Each page component keeps its TypeScript, HTML, and SCSS files together in its own folder. Data flows are intentionally kept direct and easy to follow.
 
 ## Services
 
-- `AppStateService`: aktueller Zutaten-, Preference- und Generation-State.
-- `RecipeService`: Generate, Library, Detail und Favorites über n8n.
-- `IngredientService`: Zutatenkatalog und Usage-Zähler über n8n/Firebase.
-- `QuotaService`: sichtbarer Tagesquota-Status über n8n/Firebase.
+- `AppStateService`: manages ingredients, preferences, and the current generation state.
+- `RecipeService`: handles generation, library access, recipe details, and favorites through n8n.
+- `IngredientService`: loads the ingredient catalog and updates usage counters through n8n and Firebase.
+- `QuotaService`: loads the visible status of the daily usage limit through n8n and Firebase.
 
 ## Firebase
 
-Persistente Pfade:
+Persistent paths:
 
 ```text
 /code-a-cuisine/recipes/<recipe-id>
@@ -51,11 +51,11 @@ Persistente Pfade:
 /code-a-cuisine/workflow-runs/<execution-id>/...
 ```
 
-Angular kennt keine Firebase-Credentials. Alle Zugriffe laufen über n8n mit dem Firebase-Service-Account.
+Angular contains no Firebase credentials. All access is handled through n8n using the Firebase service account.
 
 ## n8n Workflows
 
-Unter `n8n/workflows/` liegen:
+The following workflows are stored under `n8n/workflows/`:
 
 - `Code-a-Cuisine - Recipe Generation.json`
 - `Code-a-Cuisine - Recipe Library.json`
@@ -63,14 +63,16 @@ Unter `n8n/workflows/` liegen:
 - `Code-a-Cuisine - Quota Status.json`
 - `Code-a-Cuisine - Error Notification.json`
 
-## Entwicklung
+## Development
+
+Install dependencies and start the local development environment:
 
 ```bash
 npm ci
 npm start
 ```
 
-Abschlussprüfung:
+## Final Check
 
 ```bash
 npm run lint

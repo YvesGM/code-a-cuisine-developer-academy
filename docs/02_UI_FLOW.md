@@ -1,14 +1,14 @@
 # 02 – UI Flow
 
-| Route | Aufgabe |
+| Route | Purpose |
 | --- | --- |
 | `/` | Landing |
-| `/generate` | Zutaten hinzufügen, bearbeiten und entfernen |
-| `/preferences` | Portionen, Zeit, Cuisine, Diet und Helfer wählen |
-| `/generating` | Loading- und Fehlerstatus |
-| `/results` | drei generierte Rezepte |
+| `/generate` | Add, edit, and remove ingredients |
+| `/preferences` | Select servings, time, cuisine, diet, and cooks |
+| `/generating` | Loading and error state |
+| `/results` | Three generated recipes |
 | `/recipe/:id` | Recipe Detail |
-| `/cookbook` | Most Liked und Cuisine-Kategorien |
-| `/cookbook/:cuisine` | paginierte Cuisine-Library |
+| `/cookbook` | Most Liked and cuisine categories |
+| `/cookbook/:cuisine` | Paginated cuisine library |
 
-`AppStateService` hält nur den aktuellen Generierungsflow. Gespeicherte Rezepte werden über `RecipeService` aus der Firebase-Library geladen. Aktuelle Results können in der Detailansicht direkt aus dem State verwendet werden, damit kein unnötiger Ladezustand entsteht.
+`AppStateService` stores only the current generation flow. Stored recipes are loaded from the Firebase library through `RecipeService`. Current results can be used directly in the detail view to avoid an unnecessary loading state.

@@ -1,7 +1,7 @@
 import { Component, effect, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AppStateService } from '../../services/app-state.service';
-/** Zeigt den Generierungsstatus und leitet erfolgreiche Requests zu Results weiter. */
+/** Displays the generation status and forwards successful requests to results. */
 @Component({
   selector: 'app-generating',
   imports: [RouterLink],
@@ -11,16 +11,21 @@ import { AppStateService } from '../../services/app-state.service';
 export class GeneratingComponent {
   readonly state = inject(AppStateService);
   private readonly router = inject(Router);
-  /** Ersetzt die Loading-Route nach erfolgreicher Generierung und Service-Speicherung. */
+  /**
+   * Replaces the loading route after successful generation and service persistence.
+   */
   constructor() {
     effect(() => {
       if (this.state.status() === 'success')
         void this.router.navigateByUrl('/results', { replaceUrl: true });
     });
   }
-  /** Startet nach einem kontrollierten Fehler einen neuen Request über denselben Owner. */
+  /**
+   * Starts a new request through the same owner after a controlled error.
+   *
+   * @returns {void} No value is returned.
+   */
   retry(): void {
     void this.state.generate();
   }
 }
-D

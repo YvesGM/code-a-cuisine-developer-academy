@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CUISINE_LABELS, OPTIONS } from '../../config/app.constants';
 import { CUISINE_BANNERS, CUISINE_MOBILE_BANNERS } from '../../shared/cuisine-assets';
 import { LibraryListComponent } from '../../shared/library-list/library-list';
-/** Zeigt die paginierte Rezeptliste einer ausgewählten Küche. */
+/** Displays the paginated recipe list for a selected cuisine. */
 @Component({
   selector: 'app-cuisine',
   imports: [RouterLink, LibraryListComponent],

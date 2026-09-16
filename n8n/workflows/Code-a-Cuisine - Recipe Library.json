@@ -23,7 +23,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const query = $json.query ?? {};\nconst cuisines = ['german', 'italian', 'indian', 'japanese', 'gourmet', 'fusion'];\nconst rawId = typeof query.id === 'string' ? query.id.trim() : '';\nconst rawCuisine = typeof query.cuisine === 'string' ? query.cuisine.trim() : '';\nconst rawPage = typeof query.page === 'string' ? query.page.trim() : '1';\nconst page = Number(rawPage);\nconst errors = [];\n\nif (rawId && (rawCuisine || rawPage !== '1')) errors.push('id darf nicht mit Filter/Pagination kombiniert werden.');\nif (rawCuisine && !cuisines.includes(rawCuisine)) errors.push('Unbekannte Cuisine.');\nif (!Number.isInteger(page) || page < 1) errors.push('page muss eine positive Ganzzahl sein.');\nif (rawId && /[.#$\\[\\]\\/]/.test(rawId)) errors.push('Ungültige Recipe-ID.');\n\nreturn [{ json: { valid: errors.length === 0, id: rawId || null, cuisine: rawCuisine || null, page, errorMessage: errors.join(' ') } }];"
+        "jsCode": "const query = $json.query ?? {};\nconst cuisines = ['german', 'italian', 'indian', 'japanese', 'gourmet', 'fusion'];\nconst rawId = typeof query.id === 'string' ? query.id.trim() : '';\nconst rawCuisine = typeof query.cuisine === 'string' ? query.cuisine.trim() : '';\nconst rawPage = typeof query.page === 'string' ? query.page.trim() : '1';\nconst page = Number(rawPage);\nconst errors = [];\n\nif (rawId && (rawCuisine || rawPage !== '1')) errors.push('id cannot be combined with filter or pagination parameters.');\nif (rawCuisine && !cuisines.includes(rawCuisine)) errors.push('Unknown cuisine.');\nif (!Number.isInteger(page) || page < 1) errors.push('page must be a positive integer.');\nif (rawId && /[.#$\\[\\]\\/]/.test(rawId)) errors.push('Invalid recipe ID.');\n\nreturn [{ json: { valid: errors.length === 0, id: rawId || null, cuisine: rawCuisine || null, page, errorMessage: errors.join(' ') } }];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -105,18 +105,12 @@
       "id": "090a913d-5d48-46b0-a143-831693556d70",
       "name": "Read Recipes from Firebase",
       "notesInFlow": true,
-      "credentials": {
-        "googleApi": {
-          "id": "wl2dRkJ0ULnTTKxT",
-          "name": "Code-a-Cuisine Firebase Service Account"
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Reads the protected Firebase recipe library using the server-side Google Service Account. No Firebase credentials are exposed to Angular."
     },
     {
       "parameters": {
-        "jsCode": "const request = $('Normalize Library Request').item.json;\nconst raw = $('Read Recipes from Firebase').item.json;\nconst records = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};\n\nconst favoriteRaw = $json;\nconst favorites =\n  favoriteRaw && typeof favoriteRaw === 'object' && !Array.isArray(favoriteRaw)\n    ? favoriteRaw\n    : {};\n\nconst allowedCuisines = [\n  'german',\n  'italian',\n  'indian',\n  'japanese',\n  'gourmet',\n  'fusion',\n];\n\nfunction fail(message) {\n  throw new Error(message);\n}\n\nfunction favoriteCount(id) {\n  const entry = favorites[id];\n  const count =\n    entry && typeof entry === 'object' && !Array.isArray(entry)\n      ? entry.count\n      : 0;\n\n  return Number.isInteger(count) && count >= 0 ? count : 0;\n}\n\nfunction validRecord(id, record) {\n  if (!record || typeof record !== 'object' || Array.isArray(record)) {\n    fail('Ungültiger Firebase-Record.');\n  }\n\n  if (\n    record.schemaVersion !== 2 ||\n    typeof record.createdAt !== 'string' ||\n    Number.isNaN(Date.parse(record.createdAt))\n  ) {\n    fail('Ungültige Firebase-Metadaten.');\n  }\n\n  const recipe = record.payload;\n\n  if (\n    !recipe ||\n    typeof recipe !== 'object' ||\n    Array.isArray(recipe) ||\n    recipe.id !== id\n  ) {\n    fail('Ungültiger Firebase-Recipe-Payload.');\n  }\n\n  if (typeof recipe.title !== 'string' || !recipe.title.trim()) {\n    fail('Recipe-Titel fehlt.');\n  }\n\n  if (!allowedCuisines.includes(recipe.cuisine)) {\n    fail('Recipe-Cuisine ist ungültig.');\n  }\n\n  return {\n    recipe: {\n      ...recipe,\n      favoriteCount: favoriteCount(id),\n    },\n    createdAt: record.createdAt,\n  };\n}\n\nif (request.id) {\n  const record = records[request.id];\n\n  if (!record) {\n    return [{ json: { recipe: null } }];\n  }\n\n  return [\n    {\n      json: {\n        recipe: validRecord(request.id, record).recipe,\n      },\n    },\n  ];\n}\n\nconst allItems = Object.entries(records).map(([id, record]) =>\n  validRecord(id, record),\n);\n\nconst topLiked = [...allItems]\n  .filter((item) => item.recipe.favoriteCount > 0)\n  .sort((a, b) =>\n    b.recipe.favoriteCount - a.recipe.favoriteCount ||\n    b.createdAt.localeCompare(a.createdAt),\n  )\n  .slice(0, 6)\n  .map((item) => item.recipe);\n\nlet items = allItems;\n\nif (request.cuisine) {\n  items = items.filter(\n    (item) => item.recipe.cuisine === request.cuisine,\n  );\n}\n\nitems.sort(\n  (a, b) =>\n    b.createdAt.localeCompare(a.createdAt) ||\n    String(a.recipe.id).localeCompare(String(b.recipe.id)),\n);\n\nconst total = items.length;\nconst pageSize = 20;\nconst pages = Math.max(1, Math.ceil(total / pageSize));\nconst page = Math.min(request.page, pages);\nconst offset = (page - 1) * pageSize;\n\nreturn [\n  {\n    json: {\n      items: items\n        .slice(offset, offset + pageSize)\n        .map((item) => item.recipe),\n      topLiked,\n      total,\n      page,\n      pages,\n    },\n  },\n];"
+        "jsCode": "const request = $('Normalize Library Request').item.json;\nconst raw = $('Read Recipes from Firebase').item.json;\nconst records = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};\n\nconst favoriteRaw = $json;\nconst favorites =\n  favoriteRaw && typeof favoriteRaw === 'object' && !Array.isArray(favoriteRaw)\n    ? favoriteRaw\n    : {};\n\nconst allowedCuisines = [\n  'german',\n  'italian',\n  'indian',\n  'japanese',\n  'gourmet',\n  'fusion',\n];\n\nfunction fail(message) {\n  throw new Error(message);\n}\n\nfunction favoriteCount(id) {\n  const entry = favorites[id];\n  const count =\n    entry && typeof entry === 'object' && !Array.isArray(entry)\n      ? entry.count\n      : 0;\n\n  return Number.isInteger(count) && count >= 0 ? count : 0;\n}\n\nfunction validRecord(id, record) {\n  if (!record || typeof record !== 'object' || Array.isArray(record)) {\n    fail('Invalid Firebase record.');\n  }\n\n  if (\n    record.schemaVersion !== 2 ||\n    typeof record.createdAt !== 'string' ||\n    Number.isNaN(Date.parse(record.createdAt))\n  ) {\n    fail('Invalid Firebase metadata.');\n  }\n\n  const recipe = record.payload;\n\n  if (\n    !recipe ||\n    typeof recipe !== 'object' ||\n    Array.isArray(recipe) ||\n    recipe.id !== id\n  ) {\n    fail('Invalid Firebase recipe payload.');\n  }\n\n  if (typeof recipe.title !== 'string' || !recipe.title.trim()) {\n    fail('Recipe title is missing.');\n  }\n\n  if (!allowedCuisines.includes(recipe.cuisine)) {\n    fail('Recipe cuisine is invalid.');\n  }\n\n  return {\n    recipe: {\n      ...recipe,\n      favoriteCount: favoriteCount(id),\n    },\n    createdAt: record.createdAt,\n  };\n}\n\nif (request.id) {\n  const record = records[request.id];\n\n  if (!record) {\n    return [{ json: { recipe: null } }];\n  }\n\n  return [\n    {\n      json: {\n        recipe: validRecord(request.id, record).recipe,\n      },\n    },\n  ];\n}\n\nconst allItems = Object.entries(records).map(([id, record]) =>\n  validRecord(id, record),\n);\n\nconst topLiked = [...allItems]\n  .filter((item) => item.recipe.favoriteCount > 0)\n  .sort((a, b) =>\n    b.recipe.favoriteCount - a.recipe.favoriteCount ||\n    b.createdAt.localeCompare(a.createdAt),\n  )\n  .slice(0, 6)\n  .map((item) => item.recipe);\n\nlet items = allItems;\n\nif (request.cuisine) {\n  items = items.filter(\n    (item) => item.recipe.cuisine === request.cuisine,\n  );\n}\n\nitems.sort(\n  (a, b) =>\n    b.createdAt.localeCompare(a.createdAt) ||\n    String(a.recipe.id).localeCompare(String(b.recipe.id)),\n);\n\nconst total = items.length;\nconst pageSize = 20;\nconst pages = Math.max(1, Math.ceil(total / pageSize));\nconst page = Math.min(request.page, pages);\nconst offset = (page - 1) * pageSize;\n\nreturn [\n  {\n    json: {\n      items: items\n        .slice(offset, offset + pageSize)\n        .map((item) => item.recipe),\n      topLiked,\n      total,\n      page,\n      pages,\n    },\n  },\n];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -167,12 +161,6 @@
       "id": "1461aed5-8f37-4bc6-9f71-c94246114a73",
       "name": "Log Firebase Library Error",
       "notesInFlow": true,
-      "credentials": {
-        "googleApi": {
-          "id": "wl2dRkJ0ULnTTKxT",
-          "name": "Code-a-Cuisine Firebase Service Account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Writes an audit log for Firebase read failures without storing recipe data or secrets.\n"
     },
@@ -182,7 +170,7 @@
         "toEmail": "info@schniefs-portfolio.de",
         "subject": "Code-a-Cuisine: Firebase library error",
         "emailFormat": "text",
-        "text": "Die öffentliche Recipe-Library konnte Firebase nicht lesen.\n\nBitte n8n/Firebase-Ausführung kontrollieren.",
+        "text": "The public recipe library could not read from Firebase.\n\nPlease check the n8n/Firebase execution.",
         "options": {
           "appendAttribution": false
         }
@@ -197,19 +185,13 @@
       "name": "Email Firebase Library Error",
       "notesInFlow": true,
       "webhookId": "f7e74261-4fc3-4145-9af5-79829bc9f0fb",
-      "credentials": {
-        "smtp": {
-          "id": "Tm9Jzpc5URqWeuZm",
-          "name": "SMTP account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Sends a technical notification when reading the Firebase recipe library fails.\n"
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ { ok: false, error: { code: 'firebase_read_failed', message: 'Die Rezeptebibliothek ist momentan nicht verfügbar.' } } }}",
+        "responseBody": "={{ { ok: false, error: { code: 'firebase_read_failed', message: 'The recipe library is currently unavailable.' } } }}",
         "options": {
           "responseCode": 502
         }
@@ -239,18 +221,12 @@
       ],
       "id": "2c96ca31-f0e7-4b55-b57b-d53e47e593c6",
       "name": "Read Favorite Counts",
-      "credentials": {
-        "googleApi": {
-          "id": "wl2dRkJ0ULnTTKxT",
-          "name": "Code-a-Cuisine Firebase Service Account"
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Reads persisted favorite counters from Firebase before the library response is assembled."
     },
     {
       "parameters": {
-        "jsCode": "const body = $json.body ?? {};\nconst rawId = typeof body.id === 'string' ? body.id.trim() : '';\nconst errors = [];\n\nif (!rawId) {\n  errors.push('Recipe-ID fehlt.');\n}\n\nif (rawId && /[.#$\\[\\]\\/]/.test(rawId)) {\n  errors.push('Ungültige Recipe-ID.');\n}\n\nreturn [\n  {\n    json: {\n      valid: errors.length === 0,\n      id: rawId || null,\n      errorMessage: errors.join(' '),\n    },\n  },\n];"
+        "jsCode": "const body = $json.body ?? {};\nconst rawId = typeof body.id === 'string' ? body.id.trim() : '';\nconst errors = [];\n\nif (!rawId) {\n  errors.push('Recipe ID is missing.');\n}\n\nif (rawId && /[.#$\\[\\]\\/]/.test(rawId)) {\n  errors.push('Invalid recipe ID.');\n}\n\nreturn [\n  {\n    json: {\n      valid: errors.length === 0,\n      id: rawId || null,\n      errorMessage: errors.join(' '),\n    },\n  },\n];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -301,12 +277,6 @@
       ],
       "id": "90792d11-3927-4886-b3a8-048d6dc26f76",
       "name": "Increment Favorite in Firebase",
-      "credentials": {
-        "googleApi": {
-          "id": "wl2dRkJ0ULnTTKxT",
-          "name": "Code-a-Cuisine Firebase Service Account"
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Atomically increments the selected recipe favorite counter in Firebase Realtime Database."
     },
@@ -399,14 +369,8 @@
       "id": "3e7fb982-100d-411d-bacb-cf0b1706639a",
       "name": "Log Firebase Favorite Error",
       "notesInFlow": true,
-      "credentials": {
-        "googleApi": {
-          "id": "wl2dRkJ0ULnTTKxT",
-          "name": "Code-a-Cuisine Firebase Service Account"
-        }
-      },
       "onError": "continueRegularOutput",
-      "notes": "Writes an audit log for Firebase read failures without storing recipe data or secrets.\n"
+      "notes": "Writes an audit log for Firebase favorite write failures without storing recipe data or secrets.\n"
     },
     {
       "parameters": {
@@ -414,7 +378,7 @@
         "toEmail": "info@schniefs-portfolio.de",
         "subject": "Code-a-Cuisine: Firebase favorite error",
         "emailFormat": "text",
-        "text": "=Ein Recipe-Favorite konnte nicht in Firebase gespeichert werden.\n\nRecipe ID:\n{{ $('Normalize Favorite Request').item.json.id }}\n\nBitte n8n/Firebase-Ausführung kontrollieren.",
+        "text": "=A recipe favorite could not be saved to Firebase.\n\nRecipe ID:\n{{ $('Normalize Favorite Request').item.json.id }}\n\nPlease check the n8n/Firebase execution.",
         "options": {
           "appendAttribution": false
         }
@@ -429,14 +393,8 @@
       "name": "Email Firebase Favorite Error",
       "notesInFlow": true,
       "webhookId": "f7e74261-4fc3-4145-9af5-79829bc9f0fb",
-      "credentials": {
-        "smtp": {
-          "id": "Tm9Jzpc5URqWeuZm",
-          "name": "SMTP account"
-        }
-      },
       "onError": "continueRegularOutput",
-      "notes": "Sends a technical notification when reading the Firebase recipe favorite fails.\n"
+      "notes": "Sends a technical notification when writing the Firebase recipe favorite fails.\n"
     },
     {
       "parameters": {
@@ -454,7 +412,7 @@
       ],
       "id": "65e18104-7ed9-4fb4-83e8-24ff20e299be",
       "name": "Respond Favorite Error",
-      "notes": "Returns a controlled HTTP 502 response after a Firebase read failure."
+      "notes": "Returns a controlled HTTP 502 response after a Firebase favorite write failure."
     }
   ],
   "pinData": {},
@@ -658,7 +616,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "a73999fd-2f2f-4bd6-95c7-e0ee03638428",
+  "versionId": "17006215-a811-4a86-929d-cbf2bc86a60a",
   "meta": {
     "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
   },

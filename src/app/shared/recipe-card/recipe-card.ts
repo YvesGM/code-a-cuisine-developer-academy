@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { CUISINE_LABELS, DIET_LABELS, DIFFICULTIES } from '../../config/app.constants';
 import { Recipe } from '../../models/app.models';
 
-/** Stellt ein Rezept als wiederverwendbare Karte in Results und Library dar. */
+/** Renders a recipe as a reusable card in results and the library. */
 @Component({
   selector: 'app-recipe-card',
   imports: [RouterLink],

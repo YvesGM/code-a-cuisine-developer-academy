@@ -2,11 +2,19 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AppStateService } from '../services/app-state.service';
 
-/** Verhindert Preferences ohne mindestens eine gespeicherte Zutat. */
+/**
+ * Prevents preferences access without at least one stored ingredient.
+ *
+ * @returns {boolean|UrlTree} True when navigation is allowed; otherwise a redirect tree.
+ */
 export const ingredientsGuard: CanActivateFn = () =>
   inject(AppStateService).ingredients().length > 0 || inject(Router).parseUrl('/generate');
 
-/** Gibt die Loading-Seite nur für einen gestarteten Generierungsflow frei. */
+/**
+ * Allows the loading page only for a started generation flow.
+ *
+ * @returns {boolean|UrlTree} True when navigation is allowed; otherwise a redirect tree.
+ */
 export const generationGuard: CanActivateFn = () => {
   const state = inject(AppStateService);
   const router = inject(Router);
@@ -15,7 +23,11 @@ export const generationGuard: CanActivateFn = () => {
   return true;
 };
 
-/** Schützt Results vor direktem Aufruf ohne aktuelle Rezepte. */
+/**
+ * Protects results from direct access without current recipes.
+ *
+ * @returns {boolean|UrlTree} True when navigation is allowed; otherwise a redirect tree.
+ */
 export const recipesGuard: CanActivateFn = () => {
   const state = inject(AppStateService);
   const router = inject(Router);

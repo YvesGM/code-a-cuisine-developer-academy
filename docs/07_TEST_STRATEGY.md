@@ -1,14 +1,14 @@
 # 07 – Test Strategy
 
-Die Academy-Abgabe hält den Testaufbau bewusst klein. Der von Angular erzeugte App-Smoke-Test bleibt bestehen; projektspezifische Test-Framework-Strukturen werden nicht als eigene Architekturschicht geführt.
+The Academy submission intentionally keeps the test setup small. The Angular-generated application smoke test remains in place; project-specific test framework structures are not introduced as a separate architecture layer.
 
-Die entscheidende Abschlussprüfung ist der reale Flow:
+The decisive final validation is the real application flow:
 
-1. Angular Formulare und Navigation.
-2. n8n Request Validation.
-3. Gemini Generation.
-4. Firebase Recipe Write.
-5. Firebase Library/Detail/Favorite.
-6. Firebase Quota und Ingredient Catalog.
-7. Fehlerantworten und SMTP.
-8. Responsive Browser-QA.
+1. Angular forms and navigation.
+2. n8n request validation.
+3. Gemini generation.
+4. Firebase recipe write.
+5. Firebase library/detail/favorite.
+6. Firebase quota and ingredient catalog.
+7. Error responses and SMTP.
+8. Responsive browser QA.

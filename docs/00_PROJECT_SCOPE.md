@@ -1,17 +1,17 @@
 # 00 – Project Scope
 
-Code-a-Cuisine erzeugt aus vorhandenen Zutaten exakt drei Rezeptvorschläge und speichert alle generierten Rezepte in Firebase Realtime Database.
+Code-a-Cuisine creates exactly three recipe suggestions from available ingredients and stores every generated recipe in Firebase Realtime Database.
 
-## Technischer Scope
+## Technical Scope
 
 ```text
 Angular UI
 → n8n Webhooks
-→ serverseitige Validierung
-→ Firebase-Quota
+→ Server-side Validation
+→ Firebase Quota
 → Gemini
-→ Firebase Recipe-Persistenz
+→ Firebase Recipe Persistence
 → Firebase Library / Favorites / Ingredient Catalog / Workflow Logs
 ```
 
-Angular kommuniziert nicht direkt mit Firebase oder Gemini.
+Angular does not communicate directly with Firebase or Gemini.

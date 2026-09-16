@@ -1,21 +1,21 @@
 # 04 – Phase Plan
 
-| Phase | Status | Inhalt |
+| Phase | Status | Scope |
 | --- | --- | --- |
-| 1 Angular UI | [x] | Seiten, Formulare, Responsive/Figma abgeschlossen |
-| 2 n8n + Gemini | [x] | Generation, Validierung und kontrollierte Fehlerpfade implementiert |
-| 3 Firebase | [x] | Recipes, Favorites, Catalog, Quota und Workflow-Logs laufen über Firebase Realtime Database |
-| 4 Abschluss | [x] | Architektur bereinigt, Hauptflow geprüft und Abgabestand hergestellt |
+| 1 Angular UI | [x] | Pages, forms, and responsive/Figma implementation completed |
+| 2 n8n + Gemini | [x] | Generation, validation, and controlled error paths implemented |
+| 3 Firebase | [x] | Recipes, favorites, catalog, quota, and workflow logs use Firebase Realtime Database |
+| 4 Finalization | [x] | Architecture simplified, main flow verified, and submission state prepared |
 
-## Finaler technischer Stand
+## Final Technical State
 
-- Angular verwendet eine einfache Components-/Services-Struktur.
-- Angular kommuniziert ausschließlich mit n8n.
-- Firebase Realtime Database ist die einzige persistente Datenbank.
-- Die öffentlichen Webhook-Pfade bleiben stabil.
-- Design und Responsive-Verhalten bleiben auf dem final geprüften Stand.
+- Angular uses a simple components/services structure.
+- Angular communicates exclusively with n8n.
+- Firebase Realtime Database is the only persistent database.
+- Public webhook paths remain stable.
+- Design and responsive behavior remain at the final verified state.
 
-Vor dem finalen Push lokal einmal die bestehende Projektprüfung ausführen:
+Before the final push, run the existing project check locally:
 
 ```bash
 npm run check

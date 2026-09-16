@@ -39,8 +39,8 @@ export const routes: Routes = [
     loadComponent: () => import('./components/cuisine/cuisine').then((m) => m.CuisineComponent),
   },
   {
-    path: 'impressum',
-    loadComponent: () => import('./components/impressum/impressum').then((m) => m.ImpressumComponent),
+    path: 'legal-notice',
+    loadComponent: () => import('./components/legal-notice/legal-notice').then((m) => m.LegalNoticeComponent),
   },
   { path: '**', redirectTo: '' },
 ];

@@ -1,55 +1,55 @@
-# 08 – Academy-Checkliste: finaler Implementierungsstand
+# 08 – Academy Checklist: Final Implementation Status
 
-Stand: 15.09.2026.
+Status: 2026-09-15.
 
-## Allgemeine Anforderungen
+## General Requirements
 
-| Anforderung | Status | Umsetzung |
+| Requirement | Status | Implementation |
 | --- | --- | --- |
-| Angular Frontend | [x] | Angular 22, Standalone Components, Router, Reactive Forms, Signals |
-| Semantisches HTML | [x] | vorhandene semantische Struktur beibehalten |
-| Font-Size Standards | [x] | finaler Figma-/Responsive-Stand |
-| JSDoc | [x] | relevante eigene Funktionen und Methoden dokumentiert |
-| Alle generierten Rezepte in Firebase | [x] | Generation persistiert validierte Rezepte in Firebase Realtime Database |
+| Angular frontend | [x] | Angular 22, standalone components, router, reactive forms, signals |
+| Semantic HTML | [x] | Existing semantic structure retained |
+| Font-size standards | [x] | Final Figma/responsive implementation |
+| JSDoc | [x] | Custom functions and methods documented with complete JSDoc tags where applicable |
+| All generated recipes in Firebase | [x] | Generation persists validated recipes in Firebase Realtime Database |
 
-## Architektur
+## Architecture
 
-| Punkt | Status | Umsetzung |
+| Item | Status | Implementation |
 | --- | --- | --- |
-| Firebase-only | [x] | eine persistente Datenbank: Firebase Realtime Database |
-| Angular Services | [x] | AppState, Recipe, Ingredient, Quota |
-| Keine externe Kommunikation in Components | [x] | n8n-Aufrufe liegen in Services |
-| Verständliche Struktur | [x] | `components`, `shared`, `services`, `models`, `guards`, `config` |
-| Einfache Angular-Service-Struktur | [x] | keine Repository-/Provider-/InjectionToken-Zwischenschicht |
+| Firebase only | [x] | One persistent database: Firebase Realtime Database |
+| Angular services | [x] | AppState, Recipe, Ingredient, Quota |
+| No external communication in components | [x] | n8n requests live in services |
+| Clear structure | [x] | `components`, `shared`, `services`, `models`, `guards`, `config` |
+| Simple Angular service structure | [x] | No repository/provider/InjectionToken intermediary layer |
 
 ## n8n
 
-| Anforderung | Status | Umsetzung |
+| Requirement | Status | Implementation |
 | --- | --- | --- |
-| Projekt in Git | [x] | fünf Workflow-Exporte vorhanden |
-| Node-Namen/Beschreibungen | [x] | vorhanden |
-| Error Handling + E-Mail | [x] | kontrollierte Fehlerpfade, Firebase-Logs und SMTP-Nodes vorhanden |
-| Quota / Kostenairbag | [x] | Firebase Tageszähler: 3 Rezepte/IP und 12 Rezepte global |
-| Servervalidierung | [x] | Request und AI-Ausgabe werden in n8n geprüft |
-| Klare JSON-Strukturen | [x] | Schema Version 2 |
+| Project in Git | [x] | Five workflow exports present |
+| Node names/descriptions | [x] | Present |
+| Error handling + email | [x] | Controlled error paths, Firebase logs, and SMTP nodes |
+| Quota / cost protection | [x] | Firebase daily counters: 3 recipes/IP and 12 recipes globally |
+| Server validation | [x] | Request and AI output are validated in n8n |
+| Clear JSON structures | [x] | Schema version 2 |
 
 ## User Stories
 
-Die finalen UI-/Figma-Funktionen sind erhalten:
+The final UI/Figma functionality remains intact:
 
-- Ingredients CRUD mit Autocomplete und Usage-Zähler.
-- Portionswahl, Zeit, Cuisine, Diet und Helfer/Köche.
-- Exakt drei generierte Rezeptvorschläge.
-- Validierte Zutatenabdeckung und zusätzliche Basiszutaten.
-- Directions mit Aufgabenverteilung und Parallelisierung.
-- Nutrition pro Portion und gesamt.
-- Cookbook mit Cuisine-Filter, Pagination und Top-Likes.
-- Recipe Detail und Favorites.
-- Quota-Status und kontrollierte Backend-Fehlerantworten.
+- Ingredient CRUD with autocomplete and usage counter.
+- Serving count, time, cuisine, diet, and cook selection.
+- Exactly three generated recipe suggestions.
+- Validated ingredient coverage and additional pantry ingredients.
+- Directions with task assignment and parallelization.
+- Nutrition per serving and total.
+- Cookbook with cuisine filter, pagination, and top likes.
+- Recipe Detail and favorites.
+- Quota status and controlled backend error responses.
 
-## Abschlussprüfung
+## Final Check
 
-Vor dem finalen Push lokal ausführen:
+Run locally before the final push:
 
 ```bash
 npm run check

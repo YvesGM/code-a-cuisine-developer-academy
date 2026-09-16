@@ -1,6 +1,6 @@
-# 03 – Datenverträge
+# 03 – Data Contracts
 
-Verbindliche TypeScript-Quelle ist `src/app/models/app.models.ts`.
+The authoritative TypeScript source is `src/app/models/app.models.ts`.
 
 ## Generation Request
 
@@ -30,7 +30,7 @@ Verbindliche TypeScript-Quelle ist `src/app/models/app.models.ts`.
 }
 ```
 
-n8n validiert Request und AI-Ausgabe serverseitig. Erfolgreiche Generierungen liefern exakt drei Rezepte und werden vor der erfolgreichen Browser-Antwort in Firebase gespeichert.
+n8n validates both the request and the AI output server-side. Successful generations return exactly three recipes and are stored in Firebase before the browser receives a successful response.
 
 ## Library
 
@@ -46,7 +46,7 @@ n8n validiert Request und AI-Ausgabe serverseitig. Erfolgreiche Generierungen li
 }
 ```
 
-Mit `id=<recipe-id>` liefert derselbe Endpunkt `{ "recipe": ... }`.
+With `id=<recipe-id>`, the same endpoint returns `{ "recipe": ... }`.
 
 ## Ingredient Catalog
 
@@ -56,4 +56,4 @@ Register: `{ "action": "register", "name": "Pasta" }` → `{ "ok": true }`
 
 ## Quota
 
-Quota wird ausschließlich in Firebase gespeichert. Pro erfolgreicher Generierung werden drei Recipe-Einheiten gezählt: maximal 3 pro IP/Tag und 12 systemweit/Tag.
+Quota data is stored exclusively in Firebase. Each successful generation counts as three recipe units: a maximum of 3 per IP/day and 12 globally/day.

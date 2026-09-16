@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { DIET_LABELS, DIFFICULTIES, LIMITS } from '../../config/app.constants';
 import { Cuisine, RecipePage } from '../../models/app.models';
 import { RecipeService } from '../../services/recipe.service';
-/** Lädt und rendert wiederverwendbar eine paginierte Rezeptliste. */
+/** Reusably loads and renders a paginated recipe list. */
 @Component({
   selector: 'app-library-list',
   imports: [RouterLink],
@@ -23,7 +23,11 @@ export class LibraryListComponent {
   private readonly revision = signal(0);
   private readonly recipes = inject(RecipeService);
 
-  /** Setzt die Seite bei jedem Cuisine-Wechsel deterministisch auf den Anfang zurück. */
+  /**
+   * Deterministically resets the page to the beginning whenever the cuisine changes.
+   *
+   * @returns {void} No value is returned.
+   */
   private watchCuisine(): void {
     effect(() => {
       this.cuisine();
@@ -31,7 +35,12 @@ export class LibraryListComponent {
     });
   }
 
-  /** Liefert ein zentriertes Dreierfenster um die aktuelle Bibliotheksseite. */
+  /**
+   * Returns a centered three-page window around the current library page.
+   *
+   * @param {(RecipePage|null)} result - The current recipe page, or null before loading.
+   * @returns {ReadonlyArray<number>} The page numbers that should be displayed.
+   */
   private paginationWindow(result: RecipePage | null): readonly number[] {
     if (!result) return [];
     const windowSize = Math.min(3, result.pages);
@@ -39,28 +48,48 @@ export class LibraryListComponent {
     return Array.from({ length: windowSize }, (_, index) => start + index);
   }
 
-  /** Setzt sichtbare Ladeflags zurück, bevor eine Service-Seite angefordert wird. */
+  /**
+   * Resets visible loading flags before requesting a service page.
+   *
+   * @returns {void} No value is returned.
+   */
   private beginLoad(): void {
     this.loading.set(true);
     this.error.set('');
     this.result.set(null);
   }
 
-  /** Übernimmt eine geladene Seite nur solange der zugehörige Effect noch aktiv ist. */
+  /**
+   * Applies a loaded page only while its associated effect is still active.
+   *
+   * @param {RecipePage} result - The recipe page returned by the service.
+   * @param {{active: boolean}} token - The activity token used to ignore stale asynchronous results.
+   * @returns {void} No value is returned.
+   */
   private acceptResult(result: RecipePage, token: { active: boolean }): void {
     if (!token.active) return;
     this.result.set(result);
     this.loading.set(false);
   }
 
-  /** Zeigt einen Service-Lesefehler nur für den weiterhin aktiven Request. */
+  /**
+   * Shows a service read error only for the still-active request.
+   *
+   * @param {{active: boolean}} token - The activity token used to ignore stale asynchronous results.
+   * @returns {void} No value is returned.
+   */
   private rejectResult(token: { active: boolean }): void {
     if (!token.active) return;
-    this.error.set('Bibliothek konnte nicht geladen werden.');
+    this.error.set('Library could not be loaded.');
     this.loading.set(false);
   }
 
-  /** Startet genau eine Library-Abfrage für den aktuell reaktiven Filter- und Seitenstand. */
+  /**
+   * Starts exactly one library request for the current reactive filter and page state.
+   *
+   * @param {(cleanup: () => void) => void} registerCleanup - Angular effect cleanup registration callback.
+   * @returns {void} No value is returned.
+   */
   private requestPage(registerCleanup: (cleanup: () => void) => void): void {
     const query = { cuisine: this.cuisine(), page: this.page() };
     this.revision();
@@ -75,18 +104,29 @@ export class LibraryListComponent {
       .catch(() => this.rejectResult(token));
   }
 
-  /** Registriert Filter-Reset und Service-Lader als getrennte reaktive Verantwortlichkeiten. */
+  /**
+   * Registers filter reset and service loading as separate reactive responsibilities.
+   */
   constructor() {
     this.watchCuisine();
     effect((registerCleanup) => this.requestPage(registerCleanup));
   }
 
-  /** Fordert die gewünschte Seite an; das Service begrenzt ungültige Seitennummern. */
+  /**
+   * Requests the desired page; the service constrains invalid page numbers.
+   *
+   * @param {number} page - The desired library page number.
+   * @returns {void} No value is returned.
+   */
   changePage(page: number): void {
     this.page.set(page);
   }
 
-  /** Wiederholt dieselbe Abfrage nach einem sichtbaren Service-Fehler. */
+  /**
+   * Repeats the same request after a visible service error.
+   *
+   * @returns {void} No value is returned.
+   */
   reload(): void {
     this.revision.update((value) => value + 1);
   }

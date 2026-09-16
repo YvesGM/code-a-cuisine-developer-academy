@@ -1,18 +1,18 @@
 # 06 – Open Decisions
 
-Für den aktuellen Abgabestand bestehen keine offenen Architekturentscheidungen.
+There are no open architecture decisions for the current submission state.
 
-## Fest entschieden
+## Final Decisions
 
-- Firebase Realtime Database ist die einzige persistente Datenbank.
-- Angular kommuniziert ausschließlich mit n8n.
-- Externe Requests liegen in Angular-Services, nicht in UI-Komponenten.
-- Es gibt keinen zusätzlichen Repository-, Provider- oder InjectionToken-Layer.
-- Seitenkomponenten liegen unter `src/app/components/` jeweils in einem eigenen Ordner.
-- Wiederverwendbare UI-Bausteine liegen unter `src/app/shared/`.
-- Bestehendes Figma-Styling und Responsive-Verhalten bleiben unverändert, sofern keine explizite UI-Aufgabe vorliegt.
-- Die n8n-Workflows übernehmen Validierung, Gemini-Aufruf, Firebase-Zugriffe, Quota und technische Fehlerbehandlung.
+- Firebase Realtime Database is the only persistent database.
+- Angular communicates exclusively with n8n.
+- External requests belong in Angular services, not UI components.
+- There is no additional repository, provider, or InjectionToken layer.
+- Page components live under `src/app/components/`, each in its own folder.
+- Reusable UI components live under `src/app/shared/`.
+- Existing Figma styling and responsive behavior remain unchanged unless a task explicitly concerns UI.
+- n8n workflows handle validation, Gemini requests, Firebase access, quota handling, and technical error handling.
 
-## Abschluss
+## Finalization
 
-Der Hauptflow wurde nach dem Firebase-only-Umbau erneut geprüft. Weitere Architektur-Erweiterungen sind für die Academy-Abgabe nicht vorgesehen.
+The main flow was verified again after the Firebase-only refactor. No additional architecture extensions are planned for the Academy submission.

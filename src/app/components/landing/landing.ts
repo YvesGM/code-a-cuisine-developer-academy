@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-/** Zeigt die Landingpage und führt in den Rezept-Generierungsflow. */
+/** Displays the landing page and starts the recipe generation flow. */
 @Component({
   selector: 'app-landing',
   imports: [RouterLink],

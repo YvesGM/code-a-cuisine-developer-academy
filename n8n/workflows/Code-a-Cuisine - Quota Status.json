@@ -88,12 +88,6 @@
       "id": "a6b45779-b4dd-4d81-9297-40813a94462d",
       "name": "Get Daily Recipe Quota",
       "notesInFlow": true,
-      "credentials": {
-        "googleApi": {
-          "id": "wl2dRkJ0ULnTTKxT",
-          "name": "Code-a-Cuisine Firebase Service Account"
-        }
-      },
       "onError": "continueErrorOutput",
       "notes": "Reads the current quota counters without reserving an AI generation slot."
     },
@@ -119,7 +113,7 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ { error: { code: 'invalid_client_ip', message: 'Client-IP konnte nicht bestimmt werden.' } } }}",
+        "responseBody": "={{ { error: { code: 'invalid_client_ip', message: 'Client IP could not be determined.' } } }}",
         "options": {
           "responseCode": 400
         }
@@ -141,7 +135,7 @@
         "toEmail": "info@schniefs-portfolio.de",
         "subject": "Code-a-Cuisine: quota status error",
         "emailFormat": "text",
-        "text": "Der öffentliche Quota-Status konnte Firebase nicht erreichen.\n\nBitte n8n-Ausführung kontrollieren.",
+        "text": "The public quota status could not reach Firebase.\n\nPlease check the n8n execution.",
         "options": {
           "appendAttribution": false
         }
@@ -156,18 +150,12 @@
       "name": "Email Quota Status Error",
       "notesInFlow": true,
       "webhookId": "103d8f03-861e-4846-a29d-01c978c5dba3",
-      "credentials": {
-        "smtp": {
-          "id": "Tm9Jzpc5URqWeuZm",
-          "name": "SMTP account"
-        }
-      },
       "notes": "Notifies the operator when the quota-status backend request fails."
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ { error: { code: 'quota_backend_error', message: 'Nutzungslimit konnte nicht geladen werden.' } } }}",
+        "responseBody": "={{ { error: { code: 'quota_backend_error', message: 'Usage limit could not be loaded.' } } }}",
         "options": {
           "responseCode": 503
         }
@@ -203,12 +191,6 @@
       "id": "9fa3f392-9b62-45e3-b710-9bd961a34c34",
       "name": "Log Quota Status Error",
       "notesInFlow": true,
-      "credentials": {
-        "googleApi": {
-          "id": "wl2dRkJ0ULnTTKxT",
-          "name": "Code-a-Cuisine Firebase Service Account"
-        }
-      },
       "onError": "continueRegularOutput",
       "notes": "Logs quota-status failures to Firebase Realtime Database."
     }
@@ -305,7 +287,7 @@
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
   },
-  "versionId": "77056f1c-1318-43e0-8d41-42bc86684db0",
+  "versionId": "177c7978-e685-45e9-bc3a-59bfb4032ffd",
   "meta": {
     "instanceId": "23427d11fa6d6678862904d9134038534b3654749c5ad1fef23554ff5724cfa7"
   },

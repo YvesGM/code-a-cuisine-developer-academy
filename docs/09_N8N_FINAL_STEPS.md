@@ -1,24 +1,24 @@
 # 09 – n8n Final Steps
 
-## 1. Workflows importieren
+## 1. Import Workflows
 
-Alle fünf JSON-Dateien aus `n8n/workflows/` importieren.
+Import all five JSON files from `n8n/workflows/`.
 
-## 2. Credentials zuordnen
+## 2. Assign Credentials
 
-Firebase Service Account an alle Firebase HTTP Request Nodes binden.
+Assign the Firebase Service Account to every Firebase HTTP Request node.
 
-Gemini-Credential an:
+Assign the Gemini credential to:
 
 ```text
 Generate 3 Recipes with Gemini
 ```
 
-SMTP-Credential an alle `Email ... Error` Nodes binden.
+Assign the SMTP credential to every `Email ... Error` node.
 
-## 3. Firebase prüfen
+## 3. Verify Firebase
 
-Erwartete Pfade nach Tests:
+Expected paths after testing:
 
 ```text
 /code-a-cuisine/recipes
@@ -28,9 +28,9 @@ Erwartete Pfade nach Tests:
 /code-a-cuisine/workflow-runs
 ```
 
-## 4. Webhooks aktivieren
+## 4. Activate Webhooks
 
-Erwartete öffentliche Pfade:
+Expected public paths:
 
 ```text
 /webhook/code-a-cuisine-generate
@@ -40,8 +40,8 @@ Erwartete öffentliche Pfade:
 /webhook/code-a-cuisine-quota
 ```
 
-## 5. Smoke-Test
+## 5. Smoke Test
 
-Generate → drei Firebase-Rezepte → Results → Cookbook → Detail → Favorite → Quota → Ingredient Catalog.
+Generate → three Firebase recipes → Results → Cookbook → Detail → Favorite → Quota → Ingredient Catalog.
 
-Danach mindestens einen kontrollierten Fehlerpfad prüfen, damit Log + SMTP bestätigt sind.
+Then verify at least one controlled error path so that both logging and SMTP notification are confirmed.

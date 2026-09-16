@@ -14,7 +14,7 @@ interface AppStateData {
   error: string | null;
 }
 
-/** Hält den aktuellen Generierungsflow und koordiniert Änderungen am Frontend-State. */
+/** Holds the current generation flow and coordinates frontend state changes. */
 @Injectable({ providedIn: 'root' })
 export class AppStateService {
   private readonly recipesApi = inject(RecipeService);
@@ -39,41 +39,75 @@ export class AppStateService {
   readonly error = computed(() => this.data().error);
   readonly topResults = computed(() => [...this.recipes()].sort((a, b) => a.rank - b.rank));
 
-  /** Speichert eine neue oder bearbeitete Zutat im aktuellen Generierungsflow. */
+  /**
+   * Stores a new or edited ingredient in the current generation flow.
+   *
+   * @param {IngredientInput} input - The ingredient values to validate and store.
+   * @param {string} [id] - The existing ingredient identifier when editing.
+   * @returns {void} No value is returned.
+   * @throws {Error} When the ingredient is invalid or an edited ingredient does not exist.
+   */
   saveIngredient(input: IngredientInput, id?: string): void {
-    if (!this.validIngredient(input)) throw new Error('Ungültige Zutat.');
+    if (!this.validIngredient(input)) throw new Error('Invalid ingredient.');
     const ingredient = { ...input, name: input.name.trim(), id: id ?? crypto.randomUUID() };
-    if (id && !this.ingredients().some((item) => item.id === id)) throw new Error('Zutat fehlt.');
+    if (id && !this.ingredients().some((item) => item.id === id)) throw new Error('Ingredient not found.');
     const ingredients = id
       ? this.ingredients().map((item) => (item.id === id ? ingredient : item))
       : [ingredient, ...this.ingredients()];
     this.changeInput({ ingredients });
   }
 
-  /** Entfernt eine Zutat aus dem aktuellen Flow. */
+  /**
+   * Removes an ingredient from the current flow.
+   *
+   * @param {string} id - The ingredient identifier to remove.
+   * @returns {void} No value is returned.
+   */
   deleteIngredient(id: string): void {
     this.changeInput({ ingredients: this.ingredients().filter((item) => item.id !== id) });
   }
 
-  /** Speichert die gewählten Rezeptpräferenzen. */
+  /**
+   * Stores the selected recipe preferences.
+   *
+   * @param {Preferences} preferences - The complete selected recipe preferences.
+   * @returns {void} No value is returned.
+   * @throws {Error} When the supplied preferences are invalid.
+   */
   setPreferences(preferences: Preferences): void {
-    if (!this.validPreferences(preferences)) throw new Error('Ungültige Preferences.');
+    if (!this.validPreferences(preferences)) throw new Error('Invalid preferences.');
     this.changeInput({ preferences: { ...preferences } });
   }
 
-  /** Speichert die Portionszahl innerhalb der vorgegebenen Grenzen. */
+  /**
+   * Stores the serving count within the configured limits.
+   *
+   * @param {number} servings - The selected number of servings.
+   * @returns {void} No value is returned.
+   * @throws {Error} When the serving count is outside the configured limits.
+   */
   setServings(servings: number): void {
-    if (!this.validCount(servings, LIMITS.servings)) throw new Error('Ungültige Portionszahl.');
+    if (!this.validCount(servings, LIMITS.servings)) throw new Error('Invalid serving count.');
     this.changeInput({ servings });
   }
 
-  /** Speichert die Anzahl der kochenden Personen. */
+  /**
+   * Stores the number of cooks.
+   *
+   * @param {number} cookCount - The selected number of cooks.
+   * @returns {void} No value is returned.
+   * @throws {Error} When the cook count is outside the configured limits.
+   */
   setCookCount(cookCount: number): void {
-    if (!this.validCount(cookCount, LIMITS.cookCount)) throw new Error('Ungültige Helferzahl.');
+    if (!this.validCount(cookCount, LIMITS.cookCount)) throw new Error('Invalid cook count.');
     this.changeInput({ cookCount });
   }
 
-  /** Startet genau eine Generierung mit den aktuellen Eingaben. */
+  /**
+   * Starts exactly one generation with the current input.
+   *
+   * @returns {Promise<void>} A promise that resolves after the generation flow reaches a success or error state.
+   */
   async generate(): Promise<void> {
     if (this.status() === 'generating') return;
     const request = this.createRequest();
@@ -88,7 +122,12 @@ export class AppStateService {
     }
   }
 
-  /** Setzt Ergebnisdaten zurück, sobald sich eine Eingabe ändert. */
+  /**
+   * Resets result data as soon as an input changes.
+   *
+   * @param {Partial<AppStateData>} patch - The state fields changed by the user.
+   * @returns {void} No value is returned.
+   */
   private changeInput(patch: Partial<AppStateData>): void {
     this.data.update((state) => ({
       ...state,
@@ -100,7 +139,11 @@ export class AppStateService {
     }));
   }
 
-  /** Baut den n8n-Request aus dem aktuellen gültigen Flow. */
+  /**
+   * Builds the n8n request from the current valid flow.
+   *
+   * @returns {(GenerationRequest|null)} The request payload, or null when required input is missing.
+   */
   private createRequest(): GenerationRequest | null {
     const preferences = this.preferences();
     if (!preferences || !this.ingredients().length) return this.rejectMissingInput();
@@ -114,41 +157,72 @@ export class AppStateService {
     };
   }
 
-  /** Meldet fehlende Zutaten oder Preferences und bricht den Requestaufbau ab. */
+  /**
+   * Reports missing ingredients or preferences and aborts request construction.
+   *
+   * @returns {null} Always null after recording the missing-input state.
+   */
   private rejectMissingInput(): null {
     this.data.update((state) => ({
       ...state,
       status: 'error',
-      error: 'Bitte zuerst Zutaten und Preferences erfassen.',
+      error: 'Please add ingredients and preferences first.',
     }));
     return null;
   }
 
-  /** Markiert den aktiven Request für Loading und Race-Protection. */
+  /**
+   * Marks the active request for loading and race protection.
+   *
+   * @param {string} requestId - The client request identifier for the active generation.
+   * @returns {void} No value is returned.
+   */
   private beginGeneration(requestId: string): void {
     this.data.update((state) => ({ ...state, status: 'generating', requestId, recipes: [], error: null }));
   }
 
-  /** Übernimmt einen kontrollierten Servicefehler in den sichtbaren UI-State. */
+  /**
+   * Applies a controlled service error to the visible UI state.
+   *
+   * @param {unknown} error - The service error returned by recipe generation.
+   * @param {string} requestId - The client request identifier for the active generation.
+   * @returns {void} No value is returned.
+   */
   private rejectGeneration(error: unknown, requestId: string): void {
     if (this.requestId() !== requestId) return;
     const message = error instanceof RecipeApiError
       ? error.message
-      : 'Generierung oder Speicherung fehlgeschlagen. Bitte erneut versuchen.';
+      : 'Generation or storage failed. Please try again.';
     this.data.update((state) => ({ ...state, status: 'error', error: message }));
   }
 
-  /** Prüft eine Zutat vor dem Speichern im Frontend-State. */
+  /**
+   * Validates an ingredient before storing it in frontend state.
+   *
+   * @param {IngredientInput} input - The ingredient input to validate.
+   * @returns {boolean} True when the ingredient satisfies the domain validation rules.
+   */
   private validIngredient(input: IngredientInput): boolean {
     return Boolean(input.name.trim()) && Number.isFinite(input.amount) && input.amount > 0 && OPTIONS.units.includes(input.unit);
   }
 
-  /** Prüft die konfigurierten Preference-Werte. */
+  /**
+   * Validates the configured preference values.
+   *
+   * @param {Preferences} value - The value to normalize or validate.
+   * @returns {boolean} True when all selected preferences are supported.
+   */
   private validPreferences(value: Preferences): boolean {
     return OPTIONS.difficulties.includes(value.difficulty) && OPTIONS.cuisines.includes(value.cuisine) && OPTIONS.diets.includes(value.diet);
   }
 
-  /** Prüft ganzzahlige Zähler gegen ihre Grenzen. */
+  /**
+   * Validates integer counters against their limits.
+   *
+   * @param {number} value - The value to normalize or validate.
+   * @param {{min: number, max: number}} limits - The allowed minimum and maximum values.
+   * @returns {boolean} True when the value is an integer inside the supplied limits.
+   */
   private validCount(value: number, limits: { min: number; max: number }): boolean {
     return Number.isInteger(value) && value >= limits.min && value <= limits.max;
   }

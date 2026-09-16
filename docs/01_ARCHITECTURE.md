@@ -1,22 +1,22 @@
-# 01 – Architektur
+# 01 – Architecture
 
 ## Angular
 
-| Bereich | Verantwortung |
+| Area | Responsibility |
 | --- | --- |
-| `components/` | Seitenkomponenten, jeweils mit eigenem Ordner |
-| `shared/` | wiederverwendete UI-Komponenten und UI-Assets |
-| `services/app-state.service.ts` | aktueller Generierungsflow |
+| `components/` | Page components, each in its own folder |
+| `shared/` | Reusable UI components and UI assets |
+| `services/app-state.service.ts` | Current generation flow |
 | `services/recipe.service.ts` | Generate, Library, Detail, Favorite |
 | `services/ingredient.service.ts` | Ingredient Catalog |
-| `services/quota.service.ts` | Quota-Status |
-| `models/app.models.ts` | gemeinsame Datenverträge |
-| `config/app.constants.ts` | Optionen, Limits und Webhook-Pfade |
-| `guards/flow.guards.ts` | Navigation im Generierungsflow |
+| `services/quota.service.ts` | Quota status |
+| `models/app.models.ts` | Shared data contracts |
+| `config/app.constants.ts` | Options, limits, and webhook paths |
+| `guards/flow.guards.ts` | Navigation within the generation flow |
 
-Die Angular-Struktur bleibt bewusst direkt: UI in Components, Zustand und externe Kommunikation in Services.
+The Angular structure intentionally stays direct: UI belongs in components, while state and external communication belong in services.
 
-## Datenfluss
+## Data Flow
 
 ```text
 Component
@@ -51,8 +51,8 @@ Cookbook / Cuisine / Recipe Detail
 
 ## Ingredient Catalog
 
-Der Catalog wird über `IngredientService` einmal geladen und anschließend lokal gefiltert. Neue Verwendungen werden über n8n als Firebase-Increment gespeichert.
+`IngredientService` loads the catalog once and then filters it locally. New usages are stored through n8n as Firebase increments.
 
-## Fehlerhandling
+## Error Handling
 
-Erwartete Fehler erhalten kontrollierte HTTP-Antworten. Technische Workflow-Fehler werden in Firebase unter `workflow-runs` protokolliert; relevante Fehler können zusätzlich per SMTP gemeldet werden.
+Expected errors receive controlled HTTP responses. Technical workflow errors are logged in Firebase under `workflow-runs`; relevant errors can also trigger SMTP notifications.

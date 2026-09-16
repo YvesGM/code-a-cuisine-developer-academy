@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { AppStateService } from '../../services/app-state.service';
 import { CUISINE_LABELS, DIFFICULTIES } from '../../config/app.constants';
 import { RecipeCardComponent } from '../../shared/recipe-card/recipe-card';
-/** Zeigt die drei validierten Rezeptvorschläge des aktuellen Generierungsflows. */
+/** Displays the three validated recipe suggestions from the current generation flow. */
 @Component({
   selector: 'app-results',
   imports: [RecipeCardComponent, RouterLink],

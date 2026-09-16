@@ -2,7 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
-/** Stellt den globalen App-Rahmen mit Navigation, Footer und Router-Outlet bereit. */
+/** Provides the global app shell with navigation, footer, and router outlet. */
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, RouterLink],

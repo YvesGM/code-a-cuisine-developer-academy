@@ -1,16 +1,16 @@
-# Code-a-Cuisine: verbindliche Arbeitsregeln
+# Code-a-Cuisine: Mandatory Working Rules
 
-- Existing-System-First: vorhandene Komponenten, Services, Datenverträge und n8n-Flows zuerst nachvollziehen.
-- Root Cause vor Änderung; bestehende Owner direkt anpassen statt parallele Lösungen einzubauen.
-- Angular bleibt bewusst einfach: Components für UI, Services für State und externe Kommunikation, Models für Typen, Guards für Navigation.
-- Keine zusätzlichen Architektur- oder Abstraktionsschichten ohne konkreten Bedarf.
-- Externe Kommunikation findet ausschließlich in Angular-Services statt, nicht in Components.
-- Persistente Daten liegen ausschließlich in Firebase Realtime Database und werden ausschließlich serverseitig über n8n gelesen/geschrieben.
-- Keine Firebase-Service-Credentials, AI-Secrets oder SMTP-Secrets ins Angular-Bundle oder Repository einführen.
-- n8n ist der einzige Backend-Gateway des Frontends und validiert Requests serverseitig erneut.
-- Bestehendes Figma-/Responsive-Styling nicht nebenbei verändern. HTML/SCSS nur anfassen, wenn die Aufgabe ausdrücklich UI betrifft.
-- Eigene fachliche Funktionen und Methoden kurz und eindeutig halten; Ziel sind maximal 14 Zeilen pro Funktionskörper.
-- JSDoc für eigene fachliche Funktionen, Methoden und zentrale Klassen verwenden, wenn es die Verantwortung erklärt.
-- Handgeschriebene Anwendungscode-Dateien bleiben überschaubar und fachlich eindeutig.
-- Nach Änderungen: TypeScript/Lint, Tests soweit vorhanden und Production Build prüfen.
-- Textdateien als UTF-8 erhalten und Sonderzeichen nach Änderungen prüfen.
+- Existing-system-first: understand the existing components, services, data contracts, and n8n flows before changing them.
+- Identify the root cause before making changes; modify the existing owner instead of introducing parallel solutions.
+- Keep Angular intentionally simple: components for UI, services for state and external communication, models for types, and guards for navigation.
+- Do not add architecture or abstraction layers without a concrete need.
+- External communication belongs exclusively in Angular services, never in components.
+- Persistent data belongs exclusively in Firebase Realtime Database and is read or written server-side through n8n only.
+- Never add Firebase service credentials, AI secrets, or SMTP secrets to the Angular bundle or repository.
+- n8n is the frontend's only backend gateway and validates requests again on the server side.
+- Do not change established Figma or responsive styling as a side effect. Touch HTML/SCSS only when the task explicitly concerns UI.
+- Keep custom domain functions and methods short and focused; target a maximum of 14 lines per function body.
+- Use complete JSDoc for custom domain functions, methods, and central classes. Include `@param`, `@returns`, and `@throws` where applicable.
+- Keep handwritten application files focused and easy to understand.
+- After changes, run TypeScript/lint checks, existing tests, and the production build.
+- Keep text files in UTF-8 and verify special characters after changes.

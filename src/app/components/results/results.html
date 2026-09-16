@@ -13,9 +13,9 @@
         <span class="tag">{{ cuisines[state.preferences()!.cuisine] }}</span>
         <span class="tag">{{ difficulties[state.preferences()!.difficulty].label }}</span>
       </div>
-      <span class="visually-hidden">Beste Rezeptvorschläge</span>
+      <span class="visually-hidden">Best recipe suggestions</span>
     </div>
-    <img src="assets/img/gpt-image.png" alt="Ein Roboter serviert eine Mahlzeit" width="1148" height="444" />
+    <img src="assets/img/gpt-image.png" alt="A robot serves a meal" width="1148" height="444" />
   </div>
   <div class="results-grid">
     @for (recipe of state.topResults(); track recipe.id) {

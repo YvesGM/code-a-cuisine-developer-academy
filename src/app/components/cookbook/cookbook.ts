@@ -64,7 +64,6 @@ export class CookbookComponent {
     this.dragStartScroll = track.scrollLeft;
     this.dragging = true;
     this.dragMoved = false;
-    track.setPointerCapture(event.pointerId);
   }
 
   /**
@@ -77,8 +76,11 @@ export class CookbookComponent {
     if (!this.dragging) return;
     const track = event.currentTarget as HTMLElement;
     const distance = event.clientX - this.dragStartX;
-    this.dragMoved ||= Math.abs(distance) > 4;
-    track.scrollLeft = this.dragStartScroll - distance;
+    if (Math.abs(distance) > 4 && !this.dragMoved) {
+      this.dragMoved = true;
+      track.setPointerCapture(event.pointerId);
+    }
+    if (this.dragMoved) track.scrollLeft = this.dragStartScroll - distance;
   }
 
   /**

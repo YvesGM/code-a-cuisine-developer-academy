@@ -31,7 +31,8 @@
         }
       </div>
 
-      <fieldset class="serving-fields">
+      <fieldset class="serving-fields"
+        [class.serving-fields--wide]="form.controls.amount.value.length >= 4">
         <legend>Serving size</legend>
         <div class="quantity-field">
           <label class="visually-hidden" for="amount">Amount</label>
@@ -77,7 +78,7 @@
         @for (ingredient of state.ingredients(); track ingredient.id) {
         <li [class.ingredient-row--editing]="editDraft(ingredient.id) !== undefined">
           @if (editDraft(ingredient.id); as draft) {
-          <div class="ingredient-edit-fields">
+          <div class="ingredient-edit-fields" [class.ingredient-edit-fields--wide]="draft.amount.length >= 4">
             <span class="ingredient-edit-bullet" aria-hidden="true"></span>
             <input #editAmountInput class="ingredient-edit-amount" type="text" inputmode="decimal"
               [value]="draft.amount" [attr.aria-label]="'Amount for ' + ingredient.name"

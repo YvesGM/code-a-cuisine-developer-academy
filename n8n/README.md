@@ -7,7 +7,7 @@ Code-a-Cuisine uses n8n as its only backend gateway. Persistent data is stored e
 Assign these credentials after importing the workflows:
 
 - Google API / Firebase Service Account: all Firebase HTTP Request nodes.
-- Gemini / Google AI: `Generate 3 Recipes with Gemini`.
+- Gemini / Google AI: `Google Gemini Chat Model`.
 - SMTP: all `Email ... Error` nodes.
 
 The exports intentionally contain no account-specific credential IDs or secrets.

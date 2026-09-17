@@ -26,7 +26,8 @@
       <div #mostLikedTrack class="most-liked__track" (pointerdown)="startDrag($event)" (pointermove)="moveDrag($event)"
         (pointerup)="endDrag($event)" (pointercancel)="endDrag($event)">
         @for (recipe of mostLiked(); track recipe.id) {
-        <a class="liked-card" [routerLink]="['/recipe', recipe.id]" (click)="protectLikedClick($event)">
+        <a class="liked-card" [routerLink]="['/recipe', recipe.id]" draggable="false"
+          (click)="protectLikedClick($event)">
           <div class="liked-card__meta">
             <span>
               <img src="assets/icons/clock-icon.svg" alt="" width="18" height="18" />

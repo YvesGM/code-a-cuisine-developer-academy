@@ -11,7 +11,7 @@ Assign the Firebase Service Account to every Firebase HTTP Request node.
 Assign the Gemini credential to:
 
 ```text
-Generate 3 Recipes with Gemini
+Google Gemini Chat Model
 ```
 
 Assign the SMTP credential to every `Email ... Error` node.

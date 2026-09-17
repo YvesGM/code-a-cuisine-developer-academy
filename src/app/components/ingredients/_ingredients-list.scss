@@ -78,6 +78,7 @@ li {
     grid-template-columns: 5px 54px 84px;
     align-items: start;
     gap: 8px;
+
   }
 
   &-bullet {
@@ -91,14 +92,18 @@ li {
 
   &-amount {
     width: 54px;
-    min-width: 54px;
-    padding-inline: 8px;
+    justify-self: end;
     text-align: center;
+    transition: width 180ms ease;
   }
 
   &-unit {
     width: 84px;
   }
+}
+
+.ingredient-edit-fields--wide .ingredient-edit-amount {
+  width: 72px;
 }
 
 .ingredient-actions {

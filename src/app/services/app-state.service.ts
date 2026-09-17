@@ -45,16 +45,76 @@ export class AppStateService {
    * @param {IngredientInput} input - The ingredient values to validate and store.
    * @param {string} [id] - The existing ingredient identifier when editing.
    * @returns {void} No value is returned.
-   * @throws {Error} When the ingredient is invalid or an edited ingredient does not exist.
+   * @throws {Error} When the ingredient is invalid, missing, or conflicts with an existing unit.
    */
   saveIngredient(input: IngredientInput, id?: string): void {
     if (!this.validIngredient(input)) throw new Error('Invalid ingredient.');
-    const ingredient = { ...input, name: input.name.trim(), id: id ?? crypto.randomUUID() };
-    if (id && !this.ingredients().some((item) => item.id === id)) throw new Error('Ingredient not found.');
-    const ingredients = id
-      ? this.ingredients().map((item) => (item.id === id ? ingredient : item))
-      : [ingredient, ...this.ingredients()];
+    const normalized = { ...input, name: this.normalizeIngredientName(input.name) };
+    if (id) return this.updateIngredient(normalized, id);
+    const existing = this.ingredientByName(normalized.name);
+    if (!existing) return this.insertIngredient(normalized);
+    if (existing.unit !== normalized.unit) throw new Error('Ingredient already exists with another unit.');
+    this.mergeIngredient(existing, normalized.amount);
+  }
+
+  /**
+   * Finds an ingredient by its normalized visible name.
+   *
+   * @param {string} name - The ingredient name to look up.
+   * @returns {(Ingredient|undefined)} The matching ingredient, or undefined when none exists.
+   */
+  ingredientByName(name: string): Ingredient | undefined {
+    const key = this.ingredientNameKey(name);
+    return this.ingredients().find((item) => this.ingredientNameKey(item.name) === key);
+  }
+
+  /**
+   * Replaces an existing ingredient by its stable identifier.
+   *
+   * @param {IngredientInput} input - The normalized replacement values.
+   * @param {string} id - The ingredient identifier to update.
+   * @returns {void} No value is returned.
+   * @throws {Error} When the ingredient identifier does not exist.
+   */
+  private updateIngredient(input: IngredientInput, id: string): void {
+    if (!this.ingredients().some((item) => item.id === id)) throw new Error('Ingredient not found.');
+    const ingredient = { ...input, id };
+    const ingredients = this.ingredients().map((item) => (item.id === id ? ingredient : item));
     this.changeInput({ ingredients });
+  }
+
+  /**
+   * Inserts one genuinely new ingredient at the start of the current list.
+   *
+   * @param {IngredientInput} input - The normalized ingredient to insert.
+   * @returns {void} No value is returned.
+   */
+  private insertIngredient(input: IngredientInput): void {
+    const ingredient = { ...input, id: crypto.randomUUID() };
+    this.changeInput({ ingredients: [ingredient, ...this.ingredients()] });
+  }
+
+  /**
+   * Adds a repeated amount to the already stored ingredient.
+   *
+   * @param {Ingredient} existing - The ingredient that already exists.
+   * @param {number} amount - The amount to add using the same unit.
+   * @returns {void} No value is returned.
+   */
+  private mergeIngredient(existing: Ingredient, amount: number): void {
+    const merged = { ...existing, amount: existing.amount + amount };
+    const ingredients = this.ingredients().map((item) => (item.id === existing.id ? merged : item));
+    this.changeInput({ ingredients });
+  }
+
+  /**
+   * Builds a case-insensitive comparison key for ingredient names.
+   *
+   * @param {string} name - The raw ingredient name.
+   * @returns {string} The normalized comparison key.
+   */
+  private ingredientNameKey(name: string): string {
+    return this.normalizeIngredientName(name).toLocaleLowerCase('en');
   }
 
   /**
@@ -194,6 +254,16 @@ export class AppStateService {
       ? error.message
       : 'Generation or storage failed. Please try again.';
     this.data.update((state) => ({ ...state, status: 'error', error: message }));
+  }
+
+  /**
+   * Normalizes user-facing ingredient names before comparison or storage.
+   *
+   * @param {string} name - The raw ingredient name.
+   * @returns {string} The trimmed name with repeated whitespace collapsed.
+   */
+  private normalizeIngredientName(name: string): string {
+    return name.trim().replace(/\s+/g, ' ');
   }
 
   /**

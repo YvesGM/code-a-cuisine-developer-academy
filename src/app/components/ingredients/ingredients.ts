@@ -223,6 +223,12 @@ export class IngredientsComponent implements OnInit {
     this.unitMenuOpen.set(false);
   }
 
+  /** Sanitizes amount text. @param {string} value - Raw amount text. @returns {string} Digits with at most one decimal separator. */
+  sanitizeAmount(value: string): string {
+    const cleaned = value.replace(/[^0-9.,]/g, '');
+    const separator = cleaned.search(/[.,]/);
+    return separator < 0 ? cleaned : cleaned.slice(0, separator + 1) + cleaned.slice(separator + 1).replace(/[.,]/g, '');
+  }
   /** Converts the editable amount string to a domain number only when saving.
    * @param {string} value - The raw amount text.
    * @returns {(number|null)} The parsed positive amount, or null when the value is invalid. */
@@ -255,6 +261,8 @@ export class IngredientsComponent implements OnInit {
   save(): void {
     const draft = this.ingredientDraft();
     if (!draft) return this.showValidationError();
+    const existing = this.state.ingredientByName(draft.name);
+    if (existing && existing.unit !== draft.unit) return this.useExistingIngredient(existing);
     try {
       this.state.saveIngredient(draft);
       this.resetAddForm();
@@ -264,6 +272,15 @@ export class IngredientsComponent implements OnInit {
     } catch {
       this.error.set('Ingredient could not be saved. Please check the input.');
     }
+  }
+
+  /** Reuses the existing row when the same ingredient is entered with another unit.
+   * @param {Ingredient} ingredient - The already stored ingredient to edit.
+   * @returns {void} No value is returned. */
+  private useExistingIngredient(ingredient: Ingredient): void {
+    this.resetAddForm();
+    this.edit(ingredient);
+    this.error.set(`${ingredient.name} already exists. Edit the existing ingredient instead.`);
   }
 
   /** Marks the complete add draft and shows the existing validation message.
@@ -304,7 +321,7 @@ export class IngredientsComponent implements OnInit {
    * @param {string} value - The new raw amount value.
    * @returns {void} No value is returned. */
   updateEditAmount(id: string, value: string): void {
-    this.patchEditDraft(id, { amount: value });
+    this.patchEditDraft(id, { amount: this.sanitizeAmount(value) });
   }
 
   /** Opens or closes the unit selector only for the specified ingredient row.

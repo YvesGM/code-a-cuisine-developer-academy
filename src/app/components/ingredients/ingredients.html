@@ -37,7 +37,8 @@
         <div class="quantity-field">
           <label class="visually-hidden" for="amount">Amount</label>
           <div>
-            <input id="amount" type="text" inputmode="decimal" formControlName="amount" placeholder="100" required />
+            <input #amountInput id="amount" type="text" inputmode="decimal" formControlName="amount" placeholder="100" required
+              (input)="form.controls.amount.setValue(sanitizeAmount(amountInput.value))" />
           </div>
         </div>
         <div class="unit-field">
@@ -51,16 +52,15 @@
               alt="" />
           </button>
 
-          @if (unitMenuOpen()) {
-          <div class="unit-menu" role="listbox" aria-label="Unit">
+          <div class="unit-menu" [class.unit-menu--open]="unitMenuOpen()" role="listbox" aria-label="Unit"
+            [attr.inert]="unitMenuOpen() ? null : ''">
             @for (unit of units; track unit) {
             <button type="button" role="option" [attr.aria-selected]="form.controls.unit.value === unit"
-              (click)="selectUnit(unit)">
+              [attr.tabindex]="unitMenuOpen() ? 0 : -1" (click)="selectUnit(unit)">
               {{ unitLabels[unit] }}
             </button>
             }
           </div>
-          }
         </div>
         <button class="add-ingredient" type="submit" aria-label="Add ingredient">
           <img src="assets/icons/add-icon.svg" alt="" width="18" height="18" />
@@ -91,16 +91,15 @@
                 <img class="unit-arrow" [class.unit-arrow--open]="draft.unitMenuOpen" src="assets/icons/arrow-icon.svg"
                   alt="" />
               </button>
-              @if (draft.unitMenuOpen) {
-              <div class="unit-menu" role="listbox" [attr.aria-label]="'Unit for ' + ingredient.name">
+              <div class="unit-menu" [class.unit-menu--open]="draft.unitMenuOpen" role="listbox"
+                [attr.aria-label]="'Unit for ' + ingredient.name" [attr.inert]="draft.unitMenuOpen ? null : ''">
                 @for (unit of units; track unit) {
                 <button type="button" role="option" [attr.aria-selected]="draft.unit === unit"
-                  (click)="selectEditUnit(ingredient.id, unit)">
+                  [attr.tabindex]="draft.unitMenuOpen ? 0 : -1" (click)="selectEditUnit(ingredient.id, unit)">
                   {{ unitLabels[unit] }}
                 </button>
                 }
               </div>
-              }
             </div>
           </div>
           <span class="ingredient-name ingredient-name--editing">{{ ingredient.name }}</span>

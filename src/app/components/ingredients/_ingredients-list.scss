@@ -70,6 +70,11 @@ li {
 
 .ingredient-row--editing {
   grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+
+  .ingredient-actions {
+    margin-top: 6px;
+  }
 }
 
 .ingredient-edit {
@@ -85,7 +90,8 @@ li {
     width: 5px;
     height: 5px;
     flex-shrink: 0;
-    align-self: center;
+    align-self: start;
+    margin-top: 15px;
     border-radius: 50%;
     background: v.$green-dark;
   }
@@ -99,12 +105,18 @@ li {
 
   &-unit {
     width: 84px;
+
+    .unit-menu {
+      position: static;
+      z-index: auto;
+    }
   }
 }
 
 .ingredient-edit-fields--wide .ingredient-edit-amount {
   width: 72px;
 }
+
 
 .ingredient-actions {
   display: flex;

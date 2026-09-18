@@ -96,6 +96,21 @@ h1 {
   }
 }
 
+@media (max-width: 1220px) {
+  .hero {
+    &__heading {
+      p {
+        max-width: 500px;
+      }
+    }
+
+    &__cookbook {
+      max-width: 500px;
+
+    }
+  }
+}
+
 @media (min-height: 1080px) {
   .hero {
     height: max(100dvh, 1080px);
@@ -133,11 +148,9 @@ h1 {
     }
 
     &__cookbook {
-      max-width: 200px;
-
       h2 {
-        max-width: 164px;
-        font-size: 24px;
+        max-width: 200px;
+        font-size: 26px;
       }
     }
 

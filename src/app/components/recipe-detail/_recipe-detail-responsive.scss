@@ -63,7 +63,7 @@
     .illustrated-heading {
       min-height: 120px;
       margin-bottom: 12px;
-      background-size: 100% 88px;
+      background-size: 100% auto;
 
       h2 {
         font-size: 26px;
@@ -182,6 +182,24 @@
 
     .detail-actions {
       display: none;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .illustrated-heading {
+      background-size: contain;
+
+      h2 {
+        color: transparent;
+      }
+
+      &--ingredients {
+        background-image: url('/assets/img/ingredients-mobile.png');
+      }
+
+      &--directions {
+        background-image: url('/assets/img/directions-mobile.png');
+      }
     }
   }
 }

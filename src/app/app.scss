@@ -11,8 +11,9 @@
   }
 
   &--landing {
-    min-height: 100dvh;
-    overflow-x: hidden;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
 
     .site-header {
       position: absolute;
